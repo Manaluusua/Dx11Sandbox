@@ -1,0 +1,41 @@
+#ifndef DX11SANDBOX_MATERIAL_H
+#define DX11SANDBOX_MATERIAL_H
+
+#include <map>
+#include "CommonUtilities.h"
+#include "DXUT.h"
+#include "SDKmisc.h"
+#include <d3dx11effect.h>
+
+
+namespace Dx11Sandbox
+{
+    class Material
+    {
+    public:
+
+        Material();
+        ~Material();
+
+        bool loadAndInitializeMaterial(const wstring& effectName, ID3D11Device* pd3dDevice);
+
+        void setTexture(const string shaderVariable, const wstring textureName);
+        ID3DX11Effect* getEffect(){return m_effect;}
+        ID3D11InputLayout* getInputLayout(){return m_layout;}
+
+        std::map<string,wstring>& getTextureReferences(){return m_textureRefs;}
+
+    private:
+
+        HRESULT CompileShaderFromFile( WCHAR* szFileName, DWORD flags, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut );
+
+
+        //key: name of the samplervariable, value: name of the referenced tex to be bind in to the samplervariable
+        std::map<string, wstring> m_textureRefs;
+
+        ID3DX11Effect* m_effect;
+        ID3D11InputLayout* m_layout;
+    };
+
+}
+#endif
