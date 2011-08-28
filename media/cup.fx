@@ -107,38 +107,11 @@ float4 PS( PS_INPUT input, uniform bool bTexture ) : SV_Target
 //--------------------------------------------------------------------------------------
 // Techniques
 //--------------------------------------------------------------------------------------
-technique10 NoSpecular
+technique11 Basic
 {
     pass P0
     {
         SetVertexShader( CompileShader( vs_4_0, VS(false) ) );
-        SetGeometryShader( NULL );
-        SetPixelShader( CompileShader( ps_4_0, PS(false) ) );
-    }
-}
-technique10 Specular
-{
-    pass P0
-    {
-        SetVertexShader( CompileShader( vs_4_0, VS(true) ) );
-        SetGeometryShader( NULL );
-        SetPixelShader( CompileShader( ps_4_0, PS(false) ) );
-    }
-}
-technique10 TexturedNoSpecular
-{
-    pass P0
-    {
-        SetVertexShader( CompileShader( vs_4_0, VS(false) ) );
-        SetGeometryShader( NULL );
-        SetPixelShader( CompileShader( ps_4_0, PS(true) ) );
-    }
-}
-technique10 TexturedSpecular
-{
-    pass P0
-    {
-        SetVertexShader( CompileShader( vs_4_0, VS(true) ) );
         SetGeometryShader( NULL );
         SetPixelShader( CompileShader( ps_4_0, PS(true) ) );
     }

@@ -40,10 +40,13 @@ namespace Dx11Sandbox
         virtual void addRenderObject(RenderObject* obj, RenderQueueFlag priority = RDEFAULT);
         virtual void addRenderListener(RenderListener* l);
         virtual void removeRenderListener(RenderListener* l);
-        virtual void renderScene(ID3D11Device* pd3dDevice, double fTime, float fElapsedTime, Material* forcemat=0);
-        virtual void renderQueue(ID3D11Device* pd3dDevice, double fTime, float fElapsedTime, Material* forcemat,RenderQueueFlag flag);
+        virtual void renderScene(ID3D11Device* pd3dDevice,ID3D11DeviceContext* context, double fTime, float fElapsedTime, Material* forcemat=0);
+        virtual void renderQueue(ID3D11Device* pd3dDevice,ID3D11DeviceContext* context, double fTime, float fElapsedTime, const CBaseCamera* cam,  Material* forcemat,RenderQueueFlag flag);
 
         virtual CBaseCamera& getMainCamera(){return m_mainCamera;};
+
+        UINT32 getRenderObjectMask(){return m_renderObjectMask;}
+        void setRenderObjectMask(UINT32 mask){m_renderObjectMask=mask;}
 
     protected:
         virtual void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
@@ -62,6 +65,7 @@ namespace Dx11Sandbox
         std::set<RenderListener*> m_renderListeners;
         Root* m_root;
         CModelViewerCamera  m_mainCamera;
+        UINT32 m_renderObjectMask;
 
     private:
         SceneManager(Root* root);

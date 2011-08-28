@@ -12,7 +12,7 @@ namespace Dx11Sandbox
     }
 
 
-    bool Material::loadAndInitializeMaterial(const wstring& effectName, ID3D11Device* pd3dDevice)
+    bool Material::loadAndInitializeMaterial(const wstring& effectName, ID3D11Device* pd3dDevice, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type)
     {
         bool succesfull = true;
         DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
@@ -26,7 +26,7 @@ namespace Dx11Sandbox
         ID3DBlob* effectBuffer = 0;
 
         if(FAILED( CompileShaderFromFile( (WCHAR*)effectName.c_str(), 0,
-                                    NULL, "fx_4_0", &effectBuffer ) ))
+                                    NULL, "fx_5_0", &effectBuffer ) ))
         {
             errMsg = L"Failed to compile effect file";
             errMsg += effectName.c_str();
@@ -53,19 +53,13 @@ namespace Dx11Sandbox
         if(!succesfull)
             return succesfull;
 
-        //create inputlayout
-        const D3D11_INPUT_ELEMENT_DESC inputLayout[] =
-        {
-            { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-            { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        } ;
-        UINT numElements = sizeof( inputLayout ) / sizeof( inputLayout[0] );
 
         D3DX11_PASS_DESC PassDesc;
         m_effect->GetTechniqueByIndex(0)->GetPassByIndex( 0 )->GetDesc( &PassDesc );
-        hr =  pd3dDevice->CreateInputLayout( inputLayout, numElements, PassDesc.pIAInputSignature,
-                                                    PassDesc.IAInputSignatureSize, &m_layout );
+        hr =  pd3dDevice->CreateInputLayout( Dx11Sandbox::MeshInputLayouts::getElementDescForType(type),
+            Dx11Sandbox::MeshInputLayouts::getElementCountForType(type), PassDesc.pIAInputSignature,
+            PassDesc.IAInputSignatureSize, &m_layout );
+
         if(FAILED(hr))
             showErrorDialog("Failed to create input layout (Material ctor)");
 

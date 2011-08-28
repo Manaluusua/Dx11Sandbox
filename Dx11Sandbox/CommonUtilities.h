@@ -4,9 +4,6 @@
 #include <windows.h>
 #include <string>
 
-struct ID3D11Device;
-struct ID3DX11Mesh;
-
 namespace Dx11Sandbox
 {
 #define MAX_ERROR_LEN 120

@@ -1,27 +1,34 @@
 #ifndef DX11SANDBOX_RENDEROBJECT_H
 #define DX11SANDBOX_RENDEROBJECT_H
+
 #include "CommonUtilities.h"
-#include "Mesh.h"
 class CBaseCamera;
+
+struct ID3D11Device;
+struct ID3D11DeviceContext;
 
 namespace Dx11Sandbox
 {
     class Material;
-    
+    class Mesh;
 
     class RenderObject
     {
         Material* m_material;
         Mesh* m_mesh;
+        UINT32 m_renderObjectMask;
 
     public:
-        Material* const getMaterial(){return m_material;}
-        Mesh* const getMesh(){return m_mesh;}
+        virtual Material* const getMaterial(){return m_material;}
+        virtual Mesh* const getMesh(){return m_mesh;}
+
+        UINT32 getRenderObjectMask(){return m_renderObjectMask;}
+        void setRenderObjectMask(UINT32 mask){m_renderObjectMask=mask;}
 
         RenderObject(Mesh* mesh, Material* material);
-        ~RenderObject();
+        virtual ~RenderObject();
 
-        void render(ID3D11Device* pd3dDevice, const CBaseCamera* cam, double fTime, float fElapsedTime, Material* forcemat=0);
+        void render(ID3D11Device* pd3dDevice,ID3D11DeviceContext* context, const CBaseCamera* cam, double fTime, float fElapsedTime, Material* forcemat=0);
     };
 
 }

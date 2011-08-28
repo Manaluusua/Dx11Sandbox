@@ -4,11 +4,12 @@
 #include "TextureManager.h"
 #include "Material.h"
 #include "MeshUtility.h"
-
+#include "Mesh.h"
 namespace Dx11Sandbox
 {
     SceneManager::SceneManager(Root* root)
-        :m_root(root)
+        :m_root(root),
+        m_renderObjectMask(0xFFFFFFFF)
     {
        
     }
@@ -68,18 +69,25 @@ namespace Dx11Sandbox
     void SceneManager::createWorld(ID3D11Device* pd3dDevice, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc)
     {
 
+        //general scenemanager config
+        setRenderObjectMask(0xF);
+
         //camera
         D3DXVECTOR3 vecEye( 2.0f, 1.0f, 0.0f );
         D3DXVECTOR3 vecAt ( 0.0f, 0.0f, -0.0f );
         m_mainCamera.SetViewParams( &vecEye, &vecAt );
 
 
-
         
-        //RenderObject* ro = new RenderObject(0, 0);
+        //objects
+        Material* mat = new Material();
+        mat->loadAndInitializeMaterial(L"cup.fx", pd3dDevice);
         TextureManager::getSingleton()->createTexture2D(pd3dDevice, L"cup.jpg", L"cup.jpg");
-        //ro->getMaterial()->setTexture("g_MeshTexture", L"cup.jpg");
-        //addRenderObject(ro);
+        Mesh* mesh = MeshUtility::createSkyBoxMesh(pd3dDevice);
+        RenderObject *ro = new RenderObject(mesh, mat);
+        
+        ro->getMaterial()->setTexture("g_MeshTexture", L"cup.jpg");
+        addRenderObject(ro);
     }
 
     void SceneManager::destroyWorld()
@@ -121,15 +129,15 @@ namespace Dx11Sandbox
         float ClearColor[4] = { 0.176f, 0.196f, 0.667f, 0.0f };
         pd3dImmediateContext->ClearRenderTargetView( DXUTGetD3D11RenderTargetView(), ClearColor );
         pd3dImmediateContext->ClearDepthStencilView( DXUTGetD3D11DepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0 );
-        renderScene(pd3dDevice, fTime,fElapsedTime);
+        renderScene(pd3dDevice, pd3dImmediateContext, fTime,fElapsedTime);
     }
 
-    void SceneManager::renderScene(ID3D11Device* pd3dDevice, double fTime, float fElapsedTime, Material* forcemat)
+    void SceneManager::renderScene(ID3D11Device* pd3dDevice,ID3D11DeviceContext* context, double fTime, float fElapsedTime, Material* forcemat)
     {
         //normal objects
-        renderQueue(pd3dDevice, fTime, fElapsedTime,forcemat, RINITIAL);
-        renderQueue(pd3dDevice, fTime, fElapsedTime,forcemat, RDEFAULT);
-        renderQueue(pd3dDevice, fTime, fElapsedTime,forcemat, RTRANSPARENT);
+        renderQueue(pd3dDevice,context, fTime, fElapsedTime,&m_mainCamera,forcemat, RINITIAL);
+        renderQueue(pd3dDevice,context, fTime, fElapsedTime,&m_mainCamera,forcemat, RDEFAULT);
+        renderQueue(pd3dDevice,context, fTime, fElapsedTime,&m_mainCamera,forcemat, RTRANSPARENT);
 
         //objects using information from the previous objects rendered
         //TO DO
@@ -141,12 +149,13 @@ namespace Dx11Sandbox
         m_mainCamera.HandleMessages( hWnd, uMsg, wParam, lParam );
     }
 
-   void SceneManager::renderQueue(ID3D11Device* pd3dDevice, double fTime, float fElapsedTime, Material* forcemat,RenderQueueFlag flag)
+   void SceneManager::renderQueue(ID3D11Device* pd3dDevice,ID3D11DeviceContext* context, double fTime, float fElapsedTime, const CBaseCamera* cam, Material* forcemat,RenderQueueFlag flag)
    {
        std::vector<RenderObject*> * vec = m_renderObjects[flag];
         for(unsigned int i=0;i<vec->size();i++)
         {
-            vec->at(i)->render(pd3dDevice, &m_mainCamera,  fTime, fElapsedTime, forcemat);
+            if(getRenderObjectMask() & vec->at(i)->getRenderObjectMask())
+                vec->at(i)->render(pd3dDevice,context, cam,  fTime, fElapsedTime, forcemat);
         }
    }
 }

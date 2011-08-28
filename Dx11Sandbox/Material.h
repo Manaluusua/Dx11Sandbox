@@ -6,7 +6,7 @@
 #include "DXUT.h"
 #include "SDKmisc.h"
 #include <d3dx11effect.h>
-
+#include "ILDescriptions.h"
 
 namespace Dx11Sandbox
 {
@@ -15,15 +15,16 @@ namespace Dx11Sandbox
     public:
 
         Material();
-        ~Material();
+        virtual ~Material();
 
-        bool loadAndInitializeMaterial(const wstring& effectName, ID3D11Device* pd3dDevice);
+        virtual bool loadAndInitializeMaterial(const wstring& effectName, ID3D11Device* pd3dDevice,
+            Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE =  Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
 
-        void setTexture(const string shaderVariable, const wstring textureName);
-        ID3DX11Effect* getEffect(){return m_effect;}
-        ID3D11InputLayout* getInputLayout(){return m_layout;}
+        virtual void setTexture(const string shaderVariable, const wstring textureName);
+        virtual ID3DX11Effect* getEffect(){return m_effect;}
+        virtual ID3D11InputLayout* getInputLayout(){return m_layout;}
 
-        std::map<string,wstring>& getTextureReferences(){return m_textureRefs;}
+        virtual std::map<string,wstring>& getTextureReferences(){return m_textureRefs;}
 
     private:
 

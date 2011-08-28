@@ -17,13 +17,13 @@ namespace Dx11Sandbox
         };
 
         PixelBox();
-        ~PixelBox();
-        void allocatePixelBox(UINT width,UINT height);
+        virtual ~PixelBox();
+        virtual void allocatePixelBox(UINT width,UINT height);
 
         //only getters. Only way to set members on pixelbox is to use allocatePixelBox function
-        UINT getHeight(){return m_height;}
-        UINT getWidth(){return m_width;}
-        Pixel* getPixels(){return m_pixels;}
+        virtual UINT getHeight(){return m_height;}
+        virtual UINT getWidth(){return m_width;}
+        virtual Pixel* getPixels(){return m_pixels;}
 
     private:
         

@@ -97,6 +97,7 @@ namespace Dx11Sandbox
         {
             SAFE_DELETE(tex);
             m_loadedTextures.erase(texname);
+            return true;
         }else
         {
             return false;
