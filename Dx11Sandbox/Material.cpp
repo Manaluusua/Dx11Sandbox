@@ -61,7 +61,7 @@ namespace Dx11Sandbox
             PassDesc.IAInputSignatureSize, &m_layout );
 
         if(FAILED(hr))
-            showErrorDialog("Failed to create input layout (Material ctor)");
+            showErrorDialog("Failed to create input layout");
 
         return succesfull;
     }

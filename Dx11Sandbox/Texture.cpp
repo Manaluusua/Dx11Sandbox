@@ -75,6 +75,7 @@ namespace Dx11Sandbox
             srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
             srvDesc.Texture2D.MipLevels = desc.MipLevels;
             srvDesc.Texture2D.MostDetailedMip = desc.MipLevels -1;
+            
 
             device->CreateShaderResourceView( tex->m_texture, &srvDesc, &tex->m_shaderView );
         }
@@ -93,20 +94,37 @@ namespace Dx11Sandbox
         D3DX11_IMAGE_LOAD_INFO info;
         info.CpuAccessFlags = cpuAccess;
         info.Usage = usage;
+        info.Filter = D3DX11_FILTER_POINT | D3DX11_FILTER_SRGB_IN ;
         tex->m_cpuAccess = cpuAccess;
         tex->m_usage = usage;
         WCHAR wstr[MAX_PATH];
 
         if FAILED( DXUTFindDXSDKMediaFileCch( wstr, MAX_PATH, filename.c_str()))
         {
+            showErrorDialog("Tex not found!");
             return 0;
         }
-        if ( FAILED( D3DX11CreateShaderResourceViewFromFile(  device, wstr, &info, NULL, &tex->m_shaderView, NULL ) ) )
+
+        if(usage!=D3D11_USAGE_STAGING)
         {
-            return 0;
+
+            if ( FAILED( D3DX11CreateShaderResourceViewFromFile(  device, wstr, &info, NULL, &tex->m_shaderView, NULL ) ) )
+            {
+                showErrorDialog("Failed to create resource view!");
+                return 0;
+            }
+            tex->m_shaderView->GetResource(&tex->m_texture);
+        }else
+        {
+            info.BindFlags = 0;
+            if(FAILED(D3DX11CreateTextureFromFile(device, wstr, &info, 0,&tex->m_texture, 0)))
+            {
+                showErrorDialog("Failed to create resource texture!");
+                return 0;
+            }
         }
         
-        tex->m_shaderView->GetResource(&tex->m_texture);
+        
 
         D3D11_RESOURCE_DIMENSION type;
         tex->m_texture->GetType(&type);
@@ -143,7 +161,7 @@ namespace Dx11Sandbox
         PixelBox* pixBox;
 
 
-        if(m_format != DXGI_FORMAT_R32G32B32A32_FLOAT)
+        if(!(m_format & DXGI_FORMAT_R8G8B8A8_TYPELESS))
         {
             showErrorDialog("Incompatible format, only 32bit float supported atm");
             return 0;
@@ -197,6 +215,8 @@ namespace Dx11Sandbox
                 }
                
                 context->Unmap( m_texture,D3D11CalcSubresource(mipSlice, arrayIndex, mips) );
+                context->Release();
+                device->Release();
 
             }
             break;

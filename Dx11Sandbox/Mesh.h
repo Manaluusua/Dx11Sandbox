@@ -2,6 +2,7 @@
 #define DX11SANDBOX_MESH_H
 #include <D3D11.h>
 #include "ILDescriptions.h"
+#include <vector>
 struct ID3D11Buffer;
 struct ID3D11Device;
 

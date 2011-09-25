@@ -13,6 +13,7 @@ namespace Dx11Sandbox
 
     void showErrorDialog(WCHAR* msg);
     void showErrorDialog(char* msg);
+
 }
 
 #endif

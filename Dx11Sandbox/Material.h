@@ -14,11 +14,11 @@ namespace Dx11Sandbox
     {
     public:
 
-        Material();
+        friend class MaterialManager;
         virtual ~Material();
 
         virtual bool loadAndInitializeMaterial(const wstring& effectName, ID3D11Device* pd3dDevice,
-            Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE =  Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
+            Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type =  Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
 
         virtual void setTexture(const string shaderVariable, const wstring textureName);
         virtual ID3DX11Effect* getEffect(){return m_effect;}
@@ -27,7 +27,7 @@ namespace Dx11Sandbox
         virtual std::map<string,wstring>& getTextureReferences(){return m_textureRefs;}
 
     private:
-
+        Material();
         HRESULT CompileShaderFromFile( WCHAR* szFileName, DWORD flags, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut );
 
 

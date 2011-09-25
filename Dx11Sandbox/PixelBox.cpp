@@ -25,4 +25,9 @@ namespace Dx11Sandbox
     {
         SAFE_DELETE(m_pixels);
     }
+
+    PixelBox::Pixel& PixelBox::getPixel(int x, int y) const
+    {
+        return m_pixels[y*m_width + x];
+    }
 }

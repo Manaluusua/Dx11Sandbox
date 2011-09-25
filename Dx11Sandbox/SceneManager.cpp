@@ -1,10 +1,12 @@
 #include "SceneManager.h"
-#include "RenderObject.h"
+#include "BasicRenderObject.h"
 #include "Root.h"
 #include "TextureManager.h"
 #include "Material.h"
+#include "MaterialManager.h"
 #include "MeshUtility.h"
 #include "Mesh.h"
+#include "CompositeObject.h"
 namespace Dx11Sandbox
 {
     SceneManager::SceneManager(Root* root)
@@ -40,6 +42,7 @@ namespace Dx11Sandbox
     void SceneManager::destroyManagers()
     {
         TextureManager::destroyTextureManager();
+        MaterialManager::destroyMaterialManager();
     }
 
     void SceneManager::addRenderObject(RenderObject* obj, RenderQueueFlag priority)
@@ -61,7 +64,8 @@ namespace Dx11Sandbox
          // Setup the camera's projection parameters
         float fAspectRatio = pBackBufferSurfaceDesc->Width / ( FLOAT )pBackBufferSurfaceDesc->Height;
         m_mainCamera.SetProjParams( D3DX_PI / 4, fAspectRatio, 0.1f, 1000.0f );
-        m_mainCamera.SetWindow( pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height );
+        //m_mainCamera.SetWindow( pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height );
+        
     }
 
 
@@ -73,21 +77,37 @@ namespace Dx11Sandbox
         setRenderObjectMask(0xF);
 
         //camera
-        D3DXVECTOR3 vecEye( 2.0f, 1.0f, 0.0f );
+        D3DXVECTOR3 vecEye( 0.0f, 20.0f, -2.0f );
         D3DXVECTOR3 vecAt ( 0.0f, 0.0f, -0.0f );
         m_mainCamera.SetViewParams( &vecEye, &vecAt );
+        
 
 
         
         //objects
-        Material* mat = new Material();
-        mat->loadAndInitializeMaterial(L"cup.fx", pd3dDevice);
-        TextureManager::getSingleton()->createTexture2D(pd3dDevice, L"cup.jpg", L"cup.jpg");
-        Mesh* mesh = MeshUtility::createSkyBoxMesh(pd3dDevice);
-        RenderObject *ro = new RenderObject(mesh, mat);
+        Material* mat; 
+        Mesh* mesh; 
+        RenderObject *ro;
+
+        //skybox
+        mat = MaterialManager::getSingleton()->getOrCreateMaterial(pd3dDevice, L"skybox.fx", L"skybox",MeshInputLayouts::POS3TEX3);
+        mesh = MeshUtility::createSkyBoxMesh(pd3dDevice);
+        ro = new BasicRenderObject(mesh, mat);
+
+        mat->setTexture("cubemap", L"skyboxCube.dds");
+        TextureManager::getSingleton()->createTexture(pd3dDevice, L"skyboxCube.dds", L"skyboxCube.dds");
         
-        ro->getMaterial()->setTexture("g_MeshTexture", L"cup.jpg");
+        addRenderObject(ro,Dx11Sandbox::RFINAL);
+       
+        //terrain
+        mat = MaterialManager::getSingleton()->getOrCreateMaterial(pd3dDevice, L"terrain.fx", L"terrain1",MeshInputLayouts::POS3NORM3TEX2);
+        mat->setTexture("texture1", L"grass.jpg");
+        TextureManager::getSingleton()->createTexture(pd3dDevice, L"grass.jpg", L"grass.jpg");
+        ro = MeshUtility::createTerrainFromHeightMap(pd3dDevice, L"heightmapTerrain.png", mat,500,500,150,20,20,20);
+ 
         addRenderObject(ro);
+        
+
     }
 
     void SceneManager::destroyWorld()
@@ -126,8 +146,8 @@ namespace Dx11Sandbox
             ++it;
         }
         // Clear render target and the depth stencil 
-        float ClearColor[4] = { 0.176f, 0.196f, 0.667f, 0.0f };
-        pd3dImmediateContext->ClearRenderTargetView( DXUTGetD3D11RenderTargetView(), ClearColor );
+        //float ClearColor[4] = { 0.f, 0.f, 0.f, 0.0f };
+        //pd3dImmediateContext->ClearRenderTargetView( DXUTGetD3D11RenderTargetView(), ClearColor );
         pd3dImmediateContext->ClearDepthStencilView( DXUTGetD3D11DepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0 );
         renderScene(pd3dDevice, pd3dImmediateContext, fTime,fElapsedTime);
     }
@@ -141,6 +161,9 @@ namespace Dx11Sandbox
 
         //objects using information from the previous objects rendered
         //TO DO
+        renderQueue(pd3dDevice,context, fTime, fElapsedTime,&m_mainCamera,forcemat, RSCENEINPUT);
+        //Final
+        renderQueue(pd3dDevice,context, fTime, fElapsedTime,&m_mainCamera,forcemat, RFINAL);
     }
 
     void SceneManager::handleWindowMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,

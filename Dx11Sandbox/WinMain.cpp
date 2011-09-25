@@ -48,6 +48,7 @@
     void CALLBACK OnD3D11FrameRender( ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext,
                                   double fTime, float fElapsedTime, void* pUserContext )
     {
+        
         root->OnD3D11FrameRender(pd3dDevice,pd3dImmediateContext, fTime, fElapsedTime, pUserContext);
     }
 
@@ -133,9 +134,9 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
     // Perform any application-level initialization here
 
     DXUTInit( true, true, NULL ); // Parse the command line, show msgboxes on error, no extra command line params
-    DXUTSetCursorSettings( true, true ); // Show the cursor and clip it when in full screen
+    DXUTSetCursorSettings( false, false ); // Show the cursor and clip it when in full screen
     DXUTCreateWindow( L"Dx11Sandbox" );
-    DXUTCreateDevice(D3D_FEATURE_LEVEL_10_1, true, 640, 480 );
+    DXUTCreateDevice(D3D_FEATURE_LEVEL_10_0, true, 640, 480 );
     DXUTMainLoop(); // Enter into the DXUT render loop
 
     // Perform any application-level cleanup here

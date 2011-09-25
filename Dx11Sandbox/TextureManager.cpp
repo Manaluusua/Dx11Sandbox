@@ -41,7 +41,7 @@ namespace Dx11Sandbox
         return false;
     }
 
-    bool TextureManager::createTexture2D(ID3D11Device* device, const wstring& filename,const wstring& texname,
+    bool TextureManager::createTexture(ID3D11Device* device, const wstring& filename,const wstring& texname,
         UINT cpuAccess, D3D11_USAGE usage)
     {
         //names must be UNIQUE
@@ -81,7 +81,7 @@ namespace Dx11Sandbox
         Texture* tex = getTexture(texname);
         if(!tex)
         {
-            if(createTexture2D(device,filename, texname, cpuAccess,usage))
+            if(createTexture(device,filename, texname, cpuAccess,usage))
             {
                 tex = getTexture(texname);
             }
