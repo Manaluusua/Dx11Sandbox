@@ -9,6 +9,10 @@
 
 namespace Dx11Sandbox
 {
+    class RenderObject;
+    class Material;
+    class Renderer;
+    class RenderContext;
     
     enum RenderQueueFlag{
         RINITIAL, //first objects, background?
@@ -23,11 +27,10 @@ namespace Dx11Sandbox
     class RenderListener
     {
     public:
-        virtual void renderingStarted(ID3D11Device* pd3dDevice, double fTime, float fElapsedTime)=0;
+        virtual void renderingStarted(RenderContext* context, double fTime, float fElapsedTime)=0;
+        virtual void renderingQueue(RenderQueueFlag flag) = 0;
     };
 
-    class RenderObject;
-    class Material;
 
     class SceneManager
     {
@@ -40,8 +43,8 @@ namespace Dx11Sandbox
         void addRenderObject(RenderObject* obj, RenderQueueFlag priority = RDEFAULT);
         void addRenderListener(RenderListener* l);
         void removeRenderListener(RenderListener* l);
-        inline void renderScene(ID3D11Device* pd3dDevice,ID3D11DeviceContext* context, double fTime, float fElapsedTime, Material* forcemat=0);
-        inline void renderQueue(ID3D11Device* pd3dDevice,ID3D11DeviceContext* context, double fTime, float fElapsedTime, const CBaseCamera* cam,  Material* forcemat,RenderQueueFlag flag);
+        inline void renderScene( double fTime, float fElapsedTime);
+        inline void renderQueue( double fTime, float fElapsedTime, const CBaseCamera* cam,RenderQueueFlag flag);
 
         CBaseCamera& getMainCamera(){return m_mainCamera;};
 
@@ -58,10 +61,11 @@ namespace Dx11Sandbox
                               bool* pbNoFurtherProcessing, void* pUserContext );
        
         void destroyWorld();
-        void clearRenderQueue(RenderQueueFlag flag);
+        void clearRenderQueues();
         void destroyManagers();
 
-        std::map<RenderQueueFlag, std::vector<RenderObject*>* > m_renderObjects;
+        std::vector<RenderObject*> m_renderObjects;
+        std::map<RenderQueueFlag, std::vector<RenderObject*>* > m_renderqueues;
         std::set<RenderListener*> m_renderListeners;
         Root* m_root;
         CFirstPersonCamera  m_mainCamera;
@@ -69,6 +73,8 @@ namespace Dx11Sandbox
 
     private:
         SceneManager(Root* root);
+        Renderer* m_renderer;
+        RenderContext* m_renderContext;
 
     };
 }

@@ -47,27 +47,7 @@ namespace Dx11Sandbox
         D3DXMATRIXA16 view;
         D3DXMATRIXA16 proj;
         D3DXMATRIXA16 worldViewProjection;
-        D3DX11_EFFECT_DESC effectDesc;
-        D3DX11_TECHNIQUE_DESC techDesc;
-        D3DX11_PASS_DESC passDesc;
-
-        ID3DX11Effect* effect;
-   
-        Material* mat = forcemat==0?m_material:forcemat;
-        std::map<string, wstring> &textures = mat->getTextureReferences();
-
-
         
-        effect = mat->getEffect();
-        effect->GetDesc(&effectDesc);
-        
-        //for now use first tech
-        ID3DX11EffectTechnique* tech = effect->GetTechniqueByIndex(0);
-        tech->GetDesc(&techDesc);
-
-        tech->GetPassByIndex(0)->GetDesc(&passDesc);
-        
-        context->IASetInputLayout( mat->getInputLayout() );
 
         // Get the projection & view matrix from the camera class
         view = *cam->GetViewMatrix();

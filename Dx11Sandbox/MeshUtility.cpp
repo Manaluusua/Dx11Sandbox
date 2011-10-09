@@ -178,7 +178,7 @@ namespace Dx11Sandbox
                 x = xx + offsetX;
                 z = zz + offsetZ;
                 y=getHeightForPosition(pixb, xx/scaleX,zz/scaleZ, scaleY);
-                positions[i*totalPointsZ + j] = D3DXVECTOR3(x,y,z);
+                positions[i*totalPointsX + j] = D3DXVECTOR3(x,y,z);
             }
         }
 
@@ -189,9 +189,9 @@ namespace Dx11Sandbox
             for(j=0,xx=0;j<totalPointsX;++j, xx+=segmentX)
             {
                 
-                normals[i*totalPointsZ + j] = D3DXVECTOR3(0,1,0);
-                UV[i*totalPointsZ*2 + j*2] = 3*((float)(j))/tesselationFactor;
-                UV[i*totalPointsZ*2 + j*2 + 1] = 3*((float)(i))/tesselationFactor;
+                normals[i*totalPointsX + j] = D3DXVECTOR3(0,1,0);
+                UV[i*totalPointsX*2 + j*2] = 0.5*((float)(j))/tesselationFactor;
+                UV[i*totalPointsX*2 + j*2 + 1] = 0.5*((float)(i))/tesselationFactor;
             }
         }
         
@@ -254,9 +254,28 @@ namespace Dx11Sandbox
 
     float MeshUtility::getHeightForPosition(const PixelBox * const map, float x, float y, float scale)
     {
-        UINT x1 = std::floor(map->getWidth()*x);
-        UINT y1 = std::floor(map->getHeight()*y);
+        float heights[4];
+        float temp,frac1 = map->getWidth()*x, frac2 = map->getHeight()*y;
 
-        return (((float)(map->getPixel(x1,y1).r))/256)*scale;
+        UINT x1 = std::floor(frac1);
+        UINT y1 = std::floor(frac2);
+        UINT x2 = std::ceil(frac1);
+        UINT y2 = std::ceil(frac2);
+
+        x2 = min(x2, map->getWidth()-1);
+        y2 = min(y2, map->getHeight()-1);
+
+        frac1 = std::modf(frac1,&temp); 
+        frac2 = std::modf(frac2,&temp);
+
+        frac1 = frac1*0.5 + (1.f-std::cos(frac1*PI))*0.25f;
+        frac2 = frac2*0.5 + (1.f-std::cos(frac2*PI))*0.25f;
+
+        heights[0] = (((float)(map->getPixel(x1,y1).r))/256)*scale;
+        heights[1] = (((float)(map->getPixel(x2,y1).r))/256)*scale;
+        heights[2] = (((float)(map->getPixel(x1,y2).r))/256)*scale;
+        heights[3] = (((float)(map->getPixel(x2,y2).r))/256)*scale;
+
+        return ((1-frac1)*heights[0] + frac1*heights[1])*(1-frac2) + ((1-frac1)*heights[2] + frac1*heights[3])*(frac2);
     }
 }

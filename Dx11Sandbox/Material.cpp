@@ -1,5 +1,8 @@
 #include "Material.h"
 #include <iostream>
+#include "RenderContext.h"
+#include "Texture.h"
+#include "TextureManager.h"
 namespace Dx11Sandbox
 {
 
@@ -78,7 +81,45 @@ namespace Dx11Sandbox
         m_textureRefs[shaderVariable] = textureName;
     }
 
+    bool Material::bind(RenderContext* context)
+    {
+        
 
+        if( this == context->getBoundMaterial() ) 
+        {
+            return;
+        }
+        D3DX11_EFFECT_DESC effectDesc;
+        D3DX11_TECHNIQUE_DESC techDesc;
+        D3DX11_PASS_DESC passDesc;
+        
+        
+        m_effect->GetDesc(&effectDesc);
+        
+        //for now use first tech
+        ID3DX11EffectTechnique* tech = m_effect->GetTechniqueByIndex(0);
+        tech->GetDesc(&techDesc);
+
+        tech->GetPassByIndex(0)->GetDesc(&passDesc);
+        
+        context->getImmediateContext()->IASetInputLayout( m_layout );
+
+  
+        for(std::map<string, wstring>::iterator iter = m_textureRefs.begin(); iter!=m_textureRefs.end(); ++iter)
+        {
+           
+            ID3DX11EffectVariable* var = m_effect->GetVariableByName(iter->first.c_str());
+            if(var->IsValid())
+            {
+                ID3DX11EffectShaderResourceVariable* texResource = var->AsShaderResource();
+                Texture* tex = TextureManager::getSingleton()->getTexture(iter->second);
+                if(tex)
+                    texResource->SetResource(tex->GetShaderResourceView());
+            }
+        }
+
+
+    }
 
 
 

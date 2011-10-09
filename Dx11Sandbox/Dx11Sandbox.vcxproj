@@ -84,6 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="CommonUtilities.cpp" />
     <ClCompile Include="ILDescriptions.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -92,7 +93,9 @@
     <ClCompile Include="MeshUtility.cpp" />
     <ClCompile Include="PixelBox.cpp" />
     <ClCompile Include="BasicRenderObject.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObject.cpp" />
+    <ClCompile Include="RenderContext.cpp" />
     <ClCompile Include="Root.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="CompositeObject.cpp" />
@@ -101,6 +104,7 @@
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BasicRenderer.h" />
     <ClInclude Include="CommonUtilities.h" />
     <ClInclude Include="ILDescriptions.h" />
     <ClInclude Include="Material.h" />
@@ -109,7 +113,9 @@
     <ClInclude Include="MeshUtility.h" />
     <ClInclude Include="PixelBox.h" />
     <ClInclude Include="BasicRenderObject.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderObject.h" />
+    <ClInclude Include="RenderContext.h" />
     <ClInclude Include="Root.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="CompositeObject.h" />

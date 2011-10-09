@@ -8,6 +8,7 @@ struct ID3D11Device;
 
 namespace Dx11Sandbox
 {
+    class RenderContext;
     class Mesh
     {
 
@@ -30,26 +31,41 @@ namespace Dx11Sandbox
         Mesh();
         virtual ~Mesh();
 
-        virtual VertexBuffer& getVertexBuffer(){return m_vertices;}
-        virtual IndexBuffer& getIndexBuffer(){return m_indices;}
-        virtual void setVertexBuffer(VertexBuffer vertices){m_vertices = vertices;}
-        virtual void setIndexBuffer(IndexBuffer indices){m_indices = indices;}
+        VertexBuffer& getVertexBuffer(){return m_vertices;}
+        IndexBuffer& getIndexBuffer(){return m_indices;}
+        void setVertexBuffer(VertexBuffer vertices){m_vertices = vertices;}
+        void setIndexBuffer(IndexBuffer indices){m_indices = indices;}
         
-        virtual void setPrimType(D3D11_PRIMITIVE_TOPOLOGY type){m_primType = type;}
-        virtual D3D11_PRIMITIVE_TOPOLOGY getPrimType(){return m_primType;}
+        void setPrimType(D3D11_PRIMITIVE_TOPOLOGY type){m_primType = type;}
+        D3D11_PRIMITIVE_TOPOLOGY getPrimType(){return m_primType;}
 
+        void setSharedVertices(bool val){m_sharedVertices = val;}
+        bool isSharedVertices(){return m_sharedVertices ;}
 
-
-        virtual void createMeshFromBuffers(ID3D11Device* device,BYTE** vbuffers, BYTE* ibuffer, UINT numVertices, UINT numIndices,
+        void createMeshFromBuffers(ID3D11Device* device,BYTE** vbuffers, BYTE* ibuffer, UINT numVertices, UINT numIndices,
             DXGI_FORMAT indexFormat,MeshInputLayouts::MESH_LAYOUT_TYPE type);
 
-        virtual bool commitMeshDataToDevice(ID3D11Device* device, void* vertices, UINT stride, UINT numVertices, void* indices,
+        void createVertexBuffer(ID3D11Device* device,BYTE** vbuffers, UINT numVertices, 
+            MeshInputLayouts::MESH_LAYOUT_TYPE type);
+
+         void createIndexBuffer(ID3D11Device* device, BYTE* ibuffer, UINT numIndices,
+            DXGI_FORMAT indexFormat);
+
+
+
+        bool commitIndexDataToDevice(ID3D11Device* device,void* indices,
             DXGI_FORMAT indexFormat,UINT numIndices,D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccess = 0,
             bool createSOBuffer = false);
+
+        bool commitVertexDataToDevice(ID3D11Device* device, void* vertices, UINT stride, UINT numVertices,D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccess = 0,
+            bool createSOBuffer = false);
+
+        bool bind(RenderContext *context);
 
     private:
          IndexBuffer m_indices;
          VertexBuffer m_vertices;
+         bool m_sharedVertices;
          D3D11_PRIMITIVE_TOPOLOGY m_primType;
     };
 

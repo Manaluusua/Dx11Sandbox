@@ -10,6 +10,7 @@
 
 namespace Dx11Sandbox
 {
+    class RenderContext;
     class Material
     {
     public:
@@ -20,11 +21,13 @@ namespace Dx11Sandbox
         virtual bool loadAndInitializeMaterial(const wstring& effectName, ID3D11Device* pd3dDevice,
             Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type =  Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
 
-        virtual void setTexture(const string shaderVariable, const wstring textureName);
-        virtual ID3DX11Effect* getEffect(){return m_effect;}
-        virtual ID3D11InputLayout* getInputLayout(){return m_layout;}
+        void setTexture(const string shaderVariable, const wstring textureName);
+        ID3DX11Effect* getEffect(){return m_effect;}
+        ID3D11InputLayout* getInputLayout(){return m_layout;}
 
-        virtual std::map<string,wstring>& getTextureReferences(){return m_textureRefs;}
+        bool bind(RenderContext* context);
+
+        std::map<string,wstring>& getTextureReferences(){return m_textureRefs;}
 
     private:
         Material();

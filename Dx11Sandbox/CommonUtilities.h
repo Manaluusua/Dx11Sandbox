@@ -8,6 +8,8 @@ namespace Dx11Sandbox
 {
 #define MAX_ERROR_LEN 120
 
+    const float PI = 3.14159265;
+
     typedef std::basic_string<TCHAR> wstring;
     typedef std::string string;
 

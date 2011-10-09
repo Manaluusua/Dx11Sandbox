@@ -67,7 +67,7 @@ technique11 Terrain
     pass P0
     {
 
-		SetRasterizerState( rsWireframe );
+		//SetRasterizerState( rsWireframe );
         SetVertexShader( CompileShader( vs_4_0, VS() ) );
         SetGeometryShader( NULL );
         SetPixelShader( CompileShader( ps_4_0, PS() ) );
