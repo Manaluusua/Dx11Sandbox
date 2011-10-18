@@ -6,6 +6,8 @@
 #include <set>
 #include <vector>
 #include "DXUTcamera.h"
+#include "CommonUtilities.h"
+#include "RenderContext.h"
 
 namespace Dx11Sandbox
 {
@@ -14,14 +16,6 @@ namespace Dx11Sandbox
     class Renderer;
     class RenderContext;
     
-    enum RenderQueueFlag{
-        RINITIAL, //first objects, background?
-        RDEFAULT, //opaque
-        RTRANSPARENT, //transparent
-        RSCENEINPUT, //here the previous scene is available for input
-        RFINAL //last
-    };
-
     
     // renderer listener to listen and act for rendering events
     class RenderListener
@@ -40,16 +34,18 @@ namespace Dx11Sandbox
         static SceneManager* createSceneManager(Root* root);
 
         virtual ~SceneManager(void);
-        void addRenderObject(RenderObject* obj, RenderQueueFlag priority = RDEFAULT);
         void addRenderListener(RenderListener* l);
         void removeRenderListener(RenderListener* l);
-        inline void renderScene( double fTime, float fElapsedTime);
+        inline void renderScene( double fTime, float fElapsedTime, const CBaseCamera* cam);
         inline void renderQueue( double fTime, float fElapsedTime, const CBaseCamera* cam,RenderQueueFlag flag);
 
         CBaseCamera& getMainCamera(){return m_mainCamera;};
 
         UINT32 getRenderObjectMask(){return m_renderObjectMask;}
         void setRenderObjectMask(UINT32 mask){m_renderObjectMask=mask;}
+
+        bool allocateRenderObjects(unsigned int count, RenderObject** objectPointers, bool adjacent);
+        bool allocateRenderObject( RenderObject** objectPointer);
 
     protected:
         void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
@@ -59,22 +55,25 @@ namespace Dx11Sandbox
 
         void handleWindowMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
                               bool* pbNoFurtherProcessing, void* pUserContext );
-       
+        
+        void cullObjectsToRenderQueues();
+
         void destroyWorld();
         void clearRenderQueues();
         void destroyManagers();
 
-        std::vector<RenderObject*> m_renderObjects;
-        std::map<RenderQueueFlag, std::vector<RenderObject*>* > m_renderqueues;
+        std::vector<RenderObject> m_renderObjects;
+        std::map<RenderQueueFlag, std::vector<RenderObject*> > m_renderqueues;
         std::set<RenderListener*> m_renderListeners;
         Root* m_root;
         CFirstPersonCamera  m_mainCamera;
         UINT32 m_renderObjectMask;
 
     private:
+        DISABLE_COPY(SceneManager)
         SceneManager(Root* root);
         Renderer* m_renderer;
-        RenderContext* m_renderContext;
+        RenderContext m_renderContext;
 
     };
 }

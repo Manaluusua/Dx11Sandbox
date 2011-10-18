@@ -28,7 +28,7 @@ namespace Dx11Sandbox
     private:
 
         MaterialManager();
-        
+        DISABLE_COPY(MaterialManager)
 
         static MaterialManager* m_instance;
         std::map<wstring, Material*> m_loadedMaterials;

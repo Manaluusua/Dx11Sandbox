@@ -31,6 +31,7 @@ namespace Dx11Sandbox
 
     private:
         Material();
+        DISABLE_COPY(Material)
         HRESULT CompileShaderFromFile( WCHAR* szFileName, DWORD flags, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut );
 
 

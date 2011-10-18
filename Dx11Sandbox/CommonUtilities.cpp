@@ -1,5 +1,6 @@
 #include "CommonUtilities.h"
 #include "DXUT.h"
+#include <sstream>
 namespace Dx11Sandbox
 {
     void showErrorDialog(WCHAR* msg)
@@ -12,5 +13,18 @@ namespace Dx11Sandbox
         MultiByteToWideChar( CP_ACP, 0, msg, -1, wstr, MAX_ERROR_LEN );
         showErrorDialog(wstr);
 
+    }
+
+    unsigned long generateID()
+    {
+       static unsigned long i = 0;
+       ++i;
+       return i;
+    }
+    string numberToString(int number)
+    {
+        std::ostringstream stream;
+        stream << number;
+        return stream.str(); 
     }
 }

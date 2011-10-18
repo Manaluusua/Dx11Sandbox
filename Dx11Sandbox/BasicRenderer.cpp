@@ -1,13 +1,13 @@
 #include "BasicRenderer.h"
 #include "RenderObject.h"
-#include "DXUTcamera.h"
+
 #include "RenderContext.h"
 #include "Mesh.h"
 #include "Material.h"
 #include <D3D11.h>
 #include <d3dx9math.h>
 #include "d3dx11effect.h"
-
+#include "DXUTcamera.h"
 namespace Dx11Sandbox
 {
     BasicRenderer::BasicRenderer(void)
@@ -23,12 +23,18 @@ namespace Dx11Sandbox
     {
         Mesh* mesh = object->mesh;
         Material* mat = object->mat;
+        
+        if(!mesh || !mat)
+            return;
+        
         ID3DX11Effect* effect = mat->getEffect();
         ID3D11DeviceContext* context = state->getImmediateContext();
 
-        D3DXMATRIXA16 world;
-        D3DXMATRIXA16 view;
-        D3DXMATRIXA16 proj;
+
+
+        D3DXMATRIXA16 *world;
+        const D3DXMATRIX *view = camera->GetViewMatrix();;
+        const D3DXMATRIX *proj = camera->GetProjMatrix();
         D3DXMATRIXA16 worldViewProjection;
         D3DX11_EFFECT_DESC effectDesc;
         D3DX11_TECHNIQUE_DESC techDesc;
@@ -45,9 +51,7 @@ namespace Dx11Sandbox
         
 
         // Get the projection & view matrix from the camera class
-        view = *camera->GetViewMatrix();
-        proj = *camera->GetProjMatrix();
-        worldViewProjection = world *view * proj;
+        worldViewProjection = (*view) * (*proj);
 
         state->bindMesh(mesh);
         state->bindMaterial(mat);
@@ -56,7 +60,7 @@ namespace Dx11Sandbox
 
         for ( UINT passInd = 0; passInd < techDesc.Passes; ++passInd )
         {
-            tech->GetPassByIndex(passInd)->Apply(0, );
+            tech->GetPassByIndex(passInd)->Apply(0, context );
             context->DrawIndexed(mesh->getIndexBuffer().indexCount, 0, 0);
         }
 

@@ -51,12 +51,6 @@ namespace Dx11Sandbox
     }
 
 
-    bool Mesh::bind(RenderContext *context)
-    {
-
-    }
-
-
     void Mesh::createVertexBuffer(ID3D11Device* device,BYTE** vbuffers, UINT numVertices, MeshInputLayouts::MESH_LAYOUT_TYPE type)
     {
         UINT stride = 0;
@@ -204,7 +198,7 @@ namespace Dx11Sandbox
     bool Mesh::bind(RenderContext *context)
     {
         Mesh* boundMesh = context->getBoundMesh();
-        if(&boundMesh->getVertexBuffer() != &m_vertices)
+        if(!boundMesh || &boundMesh->getVertexBuffer() != &m_vertices)
         {
             UINT* strides = &m_vertices.stride;
             UINT offsets[1];
@@ -213,14 +207,15 @@ namespace Dx11Sandbox
             buffers[0] = m_vertices.buffer;
             context->getImmediateContext()->IASetVertexBuffers(0,1,buffers,strides, offsets);
         }
-        if(&boundMesh->getIndexBuffer() != &m_indices)
+        if(!boundMesh || &boundMesh->getIndexBuffer() != &m_indices)
         {
             context->getImmediateContext()->IASetIndexBuffer(m_indices.buffer,m_indices.format, 0);
         }
 
-        if(boundMesh->getPrimType() != m_primType)
+        if(!boundMesh || boundMesh->getPrimType() != m_primType)
         {
             context->getImmediateContext()->IASetPrimitiveTopology( m_primType );
         }
+        return true;
     }
 }

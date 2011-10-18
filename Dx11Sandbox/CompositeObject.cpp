@@ -1,4 +1,4 @@
-#include "CompositeObject.h"
+/*#include "CompositeObject.h"
 #include "DXUT.h"
 #include "Material.h"
 #include "TextureManager.h"
@@ -124,4 +124,4 @@ namespace Dx11Sandbox
     
         
     }
-}
+}*/

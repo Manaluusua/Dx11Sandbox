@@ -28,7 +28,7 @@ namespace Dx11Sandbox
         PixelBox* readPixelBoxFromTexture(UINT arrayIndex=0, UINT mipSlice=0, UINT mips=1);
 
     private:
-
+        DISABLE_COPY(Texture)
 
         static Texture* CreateEmptyTexture2D(ID3D11Device* device, const wstring& texname, UINT texWidth, UINT texHeight,
             UINT arraySize, UINT bindFlags, DXGI_FORMAT format = DXGI_FORMAT_R32G32B32A32_FLOAT, UINT cpuAccess = 0,

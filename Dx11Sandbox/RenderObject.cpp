@@ -5,6 +5,7 @@ namespace Dx11Sandbox
         :mesh(0),
         mat(0),
         renderObjectMask(0xFFFFFFFF),
+        renderQueueFlag(RDEFAULT)
     {
 
     }

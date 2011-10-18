@@ -1,4 +1,4 @@
-#ifndef DX11SANDBOX_COMPOSITEOBJECT_H
+/*#ifndef DX11SANDBOX_COMPOSITEOBJECT_H
 #define DX11SANDBOX_COMPOSITEOBJECT_H
 
 #include "renderobject.h"
@@ -35,4 +35,4 @@ namespace Dx11Sandbox
     };
 }
 
-#endif
+#endif*/

@@ -86,13 +86,16 @@
   <ItemGroup>
     <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="CommonUtilities.cpp" />
+    <ClCompile Include="DynamicPoolAllocator.cpp" />
     <ClCompile Include="ILDescriptions.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="MeshUtility.cpp" />
     <ClCompile Include="PixelBox.cpp" />
     <ClCompile Include="BasicRenderObject.cpp" />
+    <ClCompile Include="StaticPoolAllocator.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="RenderContext.cpp" />
@@ -106,13 +109,16 @@
   <ItemGroup>
     <ClInclude Include="BasicRenderer.h" />
     <ClInclude Include="CommonUtilities.h" />
+    <ClInclude Include="DynamicPoolAllocator.h" />
     <ClInclude Include="ILDescriptions.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialManager.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshManager.h" />
     <ClInclude Include="MeshUtility.h" />
     <ClInclude Include="PixelBox.h" />
     <ClInclude Include="BasicRenderObject.h" />
+    <ClInclude Include="StaticPoolAllocator.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderObject.h" />
     <ClInclude Include="RenderContext.h" />

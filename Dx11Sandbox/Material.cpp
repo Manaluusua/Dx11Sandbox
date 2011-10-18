@@ -87,7 +87,7 @@ namespace Dx11Sandbox
 
         if( this == context->getBoundMaterial() ) 
         {
-            return;
+            return false;
         }
         D3DX11_EFFECT_DESC effectDesc;
         D3DX11_TECHNIQUE_DESC techDesc;
@@ -118,7 +118,7 @@ namespace Dx11Sandbox
             }
         }
 
-
+        return true;
     }
 
 

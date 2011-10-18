@@ -6,9 +6,9 @@
 #include "PixelBox.h"
 #include "Material.h"
 #include <cmath>
-#include "CompositeObject.h"
-#include "BasicRenderObject.h"
-
+#include "RenderObject.h"
+#include "MeshManager.h"
+#include "SceneManager.h"
 namespace Dx11Sandbox
 {
 
@@ -22,9 +22,12 @@ namespace Dx11Sandbox
     }
 
 
-    Mesh* MeshUtility::createSkyBoxMesh(ID3D11Device *device)
+    Mesh* MeshUtility::createSkyBoxMesh(ID3D11Device *device, const string& name)
     {
-        Mesh *mesh = new Mesh();
+        Mesh *mesh = MeshManager::getSingleton()->createMesh(name);
+        if(!mesh)
+            return 0;
+
         D3DXVECTOR3 positions[8];
         D3DXVECTOR3 UV[8];
         UINT16 indices[36];
@@ -115,7 +118,7 @@ namespace Dx11Sandbox
     }
 
 
-    CompositeObject* MeshUtility::createTerrainFromHeightMap(ID3D11Device *device,const  wstring& heightmapName,Material* mat, float scaleX, float scaleZ,float scaleY, unsigned int pagesX, unsigned int pagesZ, unsigned int tesselationFactor)
+    RenderObject* MeshUtility::createTerrainFromHeightMap(ID3D11Device *device, SceneManager* mngr, const  wstring& heightmapName,Material* mat, float scaleX, float scaleZ,float scaleY, unsigned int pagesX, unsigned int pagesZ, unsigned int tesselationFactor)
     {
         TextureManager::getSingleton()->createTexture(device, heightmapName, heightmapName, D3D11_CPU_ACCESS_READ, D3D11_USAGE_STAGING);
         Texture *tex = TextureManager::getSingleton()->getTexture(heightmapName);
@@ -148,14 +151,14 @@ namespace Dx11Sandbox
             return 0;
         }
 
-        CompositeObject* composite = new CompositeObject();
-        composite->setMaterial(mat);
-        Mesh* vertices = new Mesh;
-        Mesh* pages = new Mesh[pagesZ*pagesX];
-        composite->setVertexBuffers(vertices);
-        composite->setIndexBuffers(pages,pagesZ*pagesX);
-        
+        //allocate renderObjects
+        string terrainName("terrain");
+        terrainName = terrainName + numberToString(generateID());
+        RenderObject* objects;
+        mngr->allocateRenderObjects(pagesZ*pagesX, &objects,true);
 
+        Mesh* vertices = MeshManager::getSingleton()->createMesh(terrainName + "Vertices");
+        
         //
         float x, y, z;
         float xx,zz;
@@ -195,8 +198,10 @@ namespace Dx11Sandbox
             }
         }
         
-        vertices->createMeshFromBuffers(device, ptr, 0,totalPointsX*totalPointsZ,0,DXGI_FORMAT_R32_UINT,MeshInputLayouts::POS3NORM3TEX2);
+        vertices->createVertexBuffer(device,ptr,totalPointsX*totalPointsZ,MeshInputLayouts::POS3NORM3TEX2);
 
+        terrainName = terrainName + "Incides";
+        Mesh* mesh;
         UINT32 *indices = new UINT32[(tesselationFactor)*(tesselationFactor)*6];
         unsigned int pwidth, pheight;
         //separate to pages and triangulate
@@ -231,8 +236,13 @@ namespace Dx11Sandbox
                         indices[(i*(pwidth) + j)*6 +5] = (UINT32)j+px*tesselationFactor+1+(i+1)*totalPointsX+ pz*totalPointsX*tesselationFactor;
                     }
                 }
-
-                pages[pz*pagesX + px].createMeshFromBuffers(device,0,(BYTE*)indices,0,(tesselationFactor)*(tesselationFactor)*6,DXGI_FORMAT_R32_UINT,MeshInputLayouts::POS3NORM3TEX2);
+                
+                Mesh* mesh = MeshManager::getSingleton()->createMesh(terrainName + numberToString(pz*pagesX + px));
+                mesh->setSharedVertices(true);
+                mesh->createIndexBuffer(device,(BYTE*)indices,(tesselationFactor)*(tesselationFactor)*6,DXGI_FORMAT_R32_UINT);
+                mesh->setVertexBuffer(vertices->getVertexBuffer());
+                objects[pz*pagesX + px].mesh = mesh;
+                objects[pz*pagesX + px].mat = mat;
 
             }
         }
@@ -248,7 +258,7 @@ namespace Dx11Sandbox
         
         TextureManager::getSingleton()->releaseTexture(heightmapName);
 
-        return composite;
+        return 0;
     }
 
 

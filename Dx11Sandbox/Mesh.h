@@ -3,6 +3,7 @@
 #include <D3D11.h>
 #include "ILDescriptions.h"
 #include <vector>
+#include "CommonUtilities.h"
 struct ID3D11Buffer;
 struct ID3D11Device;
 
@@ -63,10 +64,13 @@ namespace Dx11Sandbox
         bool bind(RenderContext *context);
 
     private:
-         IndexBuffer m_indices;
-         VertexBuffer m_vertices;
-         bool m_sharedVertices;
-         D3D11_PRIMITIVE_TOPOLOGY m_primType;
+
+        DISABLE_COPY(Mesh)
+        
+        IndexBuffer m_indices;
+        VertexBuffer m_vertices;
+        bool m_sharedVertices;
+        D3D11_PRIMITIVE_TOPOLOGY m_primType;
     };
 
    

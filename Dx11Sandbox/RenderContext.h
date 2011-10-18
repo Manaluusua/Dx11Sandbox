@@ -26,6 +26,8 @@ namespace Dx11Sandbox
         void bindMesh(Mesh* mesh);
         void bindMaterial(Material* mat);
 
+        void clearState();
+
     private:
 
         Mesh* m_boundMesh;

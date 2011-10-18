@@ -42,6 +42,7 @@ namespace Dx11Sandbox
 
     private:
         Root();
+        DISABLE_COPY(Root)
         SceneManager* m_sceneMngr;
         wstring m_mediaFolder;
     };

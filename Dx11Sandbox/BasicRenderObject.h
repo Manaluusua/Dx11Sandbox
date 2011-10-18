@@ -1,4 +1,4 @@
-#ifndef DX11SANDBOX_BASICRENDEROBJECT_H
+/*#ifndef DX11SANDBOX_BASICRENDEROBJECT_H
 #define DX11SANDBOX_BASICRENDEROBJECT_H
 
 
@@ -37,4 +37,4 @@ namespace Dx11Sandbox
 
 
 
-#endif
+#endif*/

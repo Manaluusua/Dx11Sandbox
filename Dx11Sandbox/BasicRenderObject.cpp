@@ -1,4 +1,4 @@
-#include "BasicRenderObject.h"
+/*#include "BasicRenderObject.h"
 #include "DXUT.h"
 #include "Material.h"
 #include "TextureManager.h"
@@ -93,4 +93,4 @@ namespace Dx11Sandbox
 
     }
 
-}
+}*/

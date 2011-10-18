@@ -17,13 +17,24 @@ namespace Dx11Sandbox
     {
     }
 
+
+
     void RenderContext::bindMesh(Mesh* mesh)
     {
+
         if(mesh->bind(this))
             m_boundMesh = mesh;
     }
+
+    void RenderContext::clearState()
+    {
+        m_boundMesh = 0;
+        m_boundMaterial = 0;
+    }
     void RenderContext::bindMaterial(Material* mat)
     {
+
+
         if(mat->bind(this))
             m_boundMaterial = mat;
     }
