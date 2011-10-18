@@ -88,10 +88,12 @@ namespace Dx11Sandbox
         {
             --m_headPool;
         }
-        
-        std::swap(*unit, *m_headPool);
-
-        (*unit->proxy) = &unit;
+        if(unit!=m_headPool)
+        {
+            std::swap(*unit, *m_headPool);
+            (*unit->proxy) = &unit;
+        }
+        m_pool[m_indexPool].count -= 1;
     }
 
 }
