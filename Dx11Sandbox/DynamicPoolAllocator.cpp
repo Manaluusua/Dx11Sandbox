@@ -1,5 +1,6 @@
 #include "DynamicPoolAllocator.h"
 #include <algorithm>
+#include <cstddef>
 namespace Dx11Sandbox
 {
     template <typename T>
@@ -78,7 +79,7 @@ namespace Dx11Sandbox
     template <typename T>
     void DynamicPoolAllocator<T>::deallocateDynamic(T** obj)
     {
-        AllocationUnit<T>* unit = ((reinterpret_cast<void*>(*obj)) - sizeof(AllocationUnit<T>::data));
+        AllocationUnit<T>* unit = ((reinterpret_cast<void*>(*obj)) - offsetof(AllocationUnit<T>,data));
         deallocateProxy(obj);
         if(m_headPool == m_pool[m_indexPool].vector[0])
         {
