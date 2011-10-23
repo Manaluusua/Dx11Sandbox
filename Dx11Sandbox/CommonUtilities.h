@@ -22,6 +22,14 @@ namespace Dx11Sandbox
 #ifndef DISABLE_COPY
 #define DISABLE_COPY(T)     T(const T&); T& operator=(const T&);
 #endif
+
+#ifndef CACHE_LINE
+#define CACHE_LINE  32
+#endif
+#ifndef CACHE_ALIGN
+#define CACHE_ALIGN __declspec(align(CACHE_LINE))
+#endif
+
     enum RenderQueueFlag{
         RINITIAL, //first objects, background?
         RDEFAULT, //opaque

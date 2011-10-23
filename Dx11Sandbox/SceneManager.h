@@ -8,6 +8,8 @@
 #include "DXUTcamera.h"
 #include "CommonUtilities.h"
 #include "RenderContext.h"
+#include "DynamicPoolAllocator.h"
+#include "StaticPoolAllocator.h"
 
 namespace Dx11Sandbox
 {

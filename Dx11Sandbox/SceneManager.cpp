@@ -23,6 +23,7 @@ namespace Dx11Sandbox
        m_renderqueues[RTRANSPARENT];
        m_renderqueues[RSCENEINPUT];
        m_renderqueues[RFINAL];
+
     }
 
     SceneManager* SceneManager::createSceneManager(Root* root)

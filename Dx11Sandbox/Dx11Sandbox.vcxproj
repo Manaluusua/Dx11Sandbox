@@ -86,7 +86,6 @@
   <ItemGroup>
     <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="CommonUtilities.cpp" />
-    <ClCompile Include="DynamicPoolAllocator.cpp" />
     <ClCompile Include="ILDescriptions.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
@@ -95,7 +94,6 @@
     <ClCompile Include="MeshUtility.cpp" />
     <ClCompile Include="PixelBox.cpp" />
     <ClCompile Include="BasicRenderObject.cpp" />
-    <ClCompile Include="StaticPoolAllocator.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="RenderContext.cpp" />
