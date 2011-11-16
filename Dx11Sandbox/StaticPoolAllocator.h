@@ -16,8 +16,8 @@ namespace Dx11Sandbox
         StaticPoolAllocator();
         ~StaticPoolAllocator(void);
 
-        const std::vector<T>* const getPoolVector(size_t index);
-        size_t getNumberOfPoolVectors();
+        const std::vector<T>* const getStaticPoolVector(size_t index);
+        size_t getNumberOfStaticPoolVectors();
 
         T* allocateStatic(unsigned int numObjects);
         void deallocateStatic();
@@ -41,32 +41,32 @@ namespace Dx11Sandbox
     template <class T>
     T* StaticPoolAllocator<T>::allocateStatic(unsigned int numObjects)
     {
+        T* retVal;
         m_pool.resize(m_pool.size()+1);
-        
         m_pool[m_index].resize(numObjects);
-        retVal = m_pool[m_index][0];
+        retVal = &m_pool[m_index][0];
         ++m_index;
         return retVal;
     }
    
     template <class T>
-    void deallocateStatic()
+    void StaticPoolAllocator<T>::deallocateStatic()
     {
         m_pool.resize(0);
         m_index = 0;
     }
 
     template <typename T>
-    const std::vector<T>* const StaticPoolAllocator<T>::getPoolVector(size_t index)
+    const std::vector<T>* const StaticPoolAllocator<T>::getStaticPoolVector(size_t index)
     {
         assert(index <= m_index);
         return &m_pool.at(index);
     }
 
     template <typename T>
-    size_t StaticPoolAllocator<T>::getNumberOfPoolVectors()
+    size_t StaticPoolAllocator<T>::getNumberOfStaticPoolVectors()
     {
-        return m_index + 1;
+        return m_index;
     }
 
 }

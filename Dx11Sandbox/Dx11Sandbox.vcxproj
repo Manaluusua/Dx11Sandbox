@@ -85,7 +85,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BasicRenderer.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommonUtilities.cpp" />
+    <ClCompile Include="DemoApplication.cpp" />
     <ClCompile Include="ILDescriptions.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
@@ -93,20 +95,20 @@
     <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="MeshUtility.cpp" />
     <ClCompile Include="PixelBox.cpp" />
-    <ClCompile Include="BasicRenderObject.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="RenderContext.cpp" />
     <ClCompile Include="Root.cpp" />
     <ClCompile Include="SceneManager.cpp" />
-    <ClCompile Include="CompositeObject.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicRenderer.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="CommonUtilities.h" />
+    <ClInclude Include="DemoApplication.h" />
     <ClInclude Include="DynamicPoolAllocator.h" />
     <ClInclude Include="ILDescriptions.h" />
     <ClInclude Include="Material.h" />
@@ -115,14 +117,12 @@
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="MeshUtility.h" />
     <ClInclude Include="PixelBox.h" />
-    <ClInclude Include="BasicRenderObject.h" />
     <ClInclude Include="StaticPoolAllocator.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderObject.h" />
     <ClInclude Include="RenderContext.h" />
     <ClInclude Include="Root.h" />
     <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="CompositeObject.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>

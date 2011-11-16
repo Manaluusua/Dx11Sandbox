@@ -155,7 +155,7 @@ namespace Dx11Sandbox
         string terrainName("terrain");
         terrainName = terrainName + numberToString(generateID());
         RenderObject* objects;
-        mngr->allocateRenderObjects(pagesZ*pagesX, &objects,true);
+        objects = mngr->allocateStatic(pagesZ*pagesX);
 
         Mesh* vertices = MeshManager::getSingleton()->createMesh(terrainName + "Vertices");
         

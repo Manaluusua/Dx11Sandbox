@@ -1,8 +1,13 @@
 #ifndef DX11SANDBOX_RENDERER_H
 #define DX11SANDBOX_RENDERER_H
-class CBaseCamera;
+
+#include <vector>
+#include <BaseTsd.h>
+
+
 namespace Dx11Sandbox
 {
+    class Camera;
     class RenderObject;
     class RenderContext;
 
@@ -12,7 +17,11 @@ namespace Dx11Sandbox
         Renderer(void);
         ~Renderer(void);
 
-        virtual void render(RenderObject* object, RenderContext* state, CBaseCamera* camera) = 0;
+        UINT32 rendererMask;
+
+        virtual void render(std::vector<const RenderObject*>& objects, RenderContext* state, Camera* camera) = 0;
+        
+
     };
 }
 
