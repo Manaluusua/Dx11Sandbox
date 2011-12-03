@@ -38,7 +38,7 @@ namespace Dx11Sandbox
         RFINAL //last
     };
 
-    const double PI = 3.14159265;
+    
 
     typedef std::basic_string<TCHAR> wstring;
     typedef std::string string;

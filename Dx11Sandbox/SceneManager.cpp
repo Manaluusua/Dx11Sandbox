@@ -66,11 +66,6 @@ namespace Dx11Sandbox
         
     }
 
-    void SceneManager::handleWindowMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
-                              bool* pbNoFurtherProcessing, void* pUserContext )
-    {
-        
-    }
 
 
 
@@ -98,7 +93,7 @@ namespace Dx11Sandbox
 
     void SceneManager::update(double fTime, float fElapsedTime)
     {
-        // Update the camera's position based on user input 
+        
        
     }
 

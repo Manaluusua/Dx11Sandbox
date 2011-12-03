@@ -49,9 +49,6 @@ namespace Dx11Sandbox
         void initialize(ID3D11Device* pd3dDevice, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
         void update(double fTime, float fElapsedTime);
         void beginDraw(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime, float fElapsedTime);
-
-        void handleWindowMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
-                              bool* pbNoFurtherProcessing, void* pUserContext );
         
         void cullObjectsToRenderQueues();
 

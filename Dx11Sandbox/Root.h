@@ -19,6 +19,8 @@ namespace Dx11Sandbox
         virtual void createWorld(SceneManager* mngr)=0;
         virtual void update(SceneManager* mngr,double fTime, float fElapsedTime)=0;
         virtual void shutDown(SceneManager* mngr)=0;
+        virtual void handleWindowMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+                              bool* pbNoFurtherProcessing, void* pUserContext )=0;
     };
 
 

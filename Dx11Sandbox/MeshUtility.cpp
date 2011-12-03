@@ -1,4 +1,5 @@
 #include "MeshUtility.h"
+#include "MathUtil.h"
 #include "DXUT.h"
 #include "Mesh.h"
 #include "TextureManager.h"
@@ -258,7 +259,7 @@ namespace Dx11Sandbox
         
         TextureManager::getSingleton()->releaseTexture(heightmapName);
 
-        return 0;
+        return objects;
     }
 
 
@@ -278,8 +279,8 @@ namespace Dx11Sandbox
         frac1 = std::modf(frac1,&temp); 
         frac2 = std::modf(frac2,&temp);
 
-        frac1 = frac1*0.5 + (1.f-std::cos(frac1*PI))*0.25f;
-        frac2 = frac2*0.5 + (1.f-std::cos(frac2*PI))*0.25f;
+        frac1 = frac1*0.5 + (1.f-std::cos(frac1*MathUtil::PI))*0.25f;
+        frac2 = frac2*0.5 + (1.f-std::cos(frac2*MathUtil::PI))*0.25f;
 
         heights[0] = (((float)(map->getPixel(x1,y1).r))/256)*scale;
         heights[1] = (((float)(map->getPixel(x2,y1).r))/256)*scale;

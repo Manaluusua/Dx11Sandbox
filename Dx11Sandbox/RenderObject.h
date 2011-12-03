@@ -16,9 +16,10 @@ namespace Dx11Sandbox
         Material* mat;
         UINT32 renderObjectMask;
         RenderQueueFlag renderQueueFlag;
-        float position[4];
+        float translation[3];
         float scale[3];
-        float rotation[4];
+        float rotation[3];
+        float boundingSphere[4];
     };
 }
 #endif

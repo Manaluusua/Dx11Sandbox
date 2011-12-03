@@ -7,6 +7,7 @@ namespace Dx11Sandbox
         m_aspectRatio(0),
         m_near(0),
         m_far(0),
+        m_up(0,1,0),
         m_translation(0,0,0),
         m_cacheValid(false)
     {
@@ -32,9 +33,11 @@ namespace Dx11Sandbox
     {
         if(!m_cacheValid)
         {
+            D3DXMATRIX rot;
             D3DXMatrixIdentity(&m_viewMatrix);
             D3DXMatrixTranslation(&m_viewMatrix,m_translation.x, m_translation.y, m_translation.z);
-            D3DXMatrixRotationQuaternion(&m_viewMatrix, &m_orientation);
+            D3DXMatrixRotationQuaternion(&rot, &m_orientation);
+            m_viewMatrix *= rot;
         }
         return &m_viewMatrix;
     }
@@ -111,15 +114,62 @@ namespace Dx11Sandbox
         //calculate transforms
         m_translation = -eye;
         D3DXVECTOR3 ref = D3DXVECTOR3(0,0,1);
+        D3DXVECTOR3 rotAxis;
+        D3DXVec3Cross(&rotAxis,&axisTo,&ref);
+        D3DXVec3Normalize(&rotAxis, &rotAxis);
         float angle;
         
 
-        angle = -D3DXVec3Dot( &ref, &axisTo )*0.5;
+        angle = acos(D3DXVec3Dot( &ref, &axisTo ))*0.5;
 
-        m_orientation = D3DXQUATERNION(sin(angle)*axisUp.x, sin(angle)*axisUp.y, sin(angle)*axisUp.z, cos(angle));
+        m_orientation = D3DXQUATERNION(sin(angle)*rotAxis.x, sin(angle)*rotAxis.y, sin(angle)*rotAxis.z, cos(angle));
+
+        //check if up vector is still "up"
+        
+        D3DXVECTOR3 rotatedUp = MathUtil::rotateVec3ByQuat(&axisUp, &m_orientation);
+        if(D3DXVec3Dot(&rotatedUp,&up)<0)
+        {
+            m_orientation = D3DXQUATERNION(axisTo.x*sin(MathUtil::PI*0.5),axisTo.y*sin(MathUtil::PI*0.5), axisTo.z*sin(MathUtil::PI*0.5), cos(MathUtil::PI*0.5)) * m_orientation;
+        }
 
 
         m_cacheValid = true;
     }
 
+
+    void Camera::moveCameraViewRelative(FLOAT x, FLOAT y, FLOAT z)
+    {
+        D3DXVECTOR3 dir(0,0,1);
+        D3DXVECTOR3 up = m_up;
+        D3DXVECTOR3 right;
+
+        D3DXQUATERNION conj;
+        D3DXQuaternionConjugate(&conj, &m_orientation);
+        
+        dir = MathUtil::rotateVec3ByQuat(&dir,&conj);
+        up = MathUtil::rotateVec3ByQuat(&up,&conj);
+        D3DXVec3Cross(&right, &up, &dir);
+
+        m_translation -= x*right + y*up + z*dir;
+        m_cacheValid = false;
+    }
+
+    void Camera::rotateCameraViewRelative(FLOAT x, FLOAT y, FLOAT z)
+    {
+        D3DXVECTOR3 dir(0,0,1);
+        D3DXVECTOR3 up(0,1,0);
+        D3DXVECTOR3 right;
+
+
+        
+
+        D3DXVec3Cross(&right, &up, &dir);
+
+        D3DXQUATERNION xrot(right.x*sin(x*0.5),right.y*sin(x*0.5), right.z*sin(x*0.5), cos(x*0.5));
+        D3DXQUATERNION yrot(up.x*sin(y*0.5),up.y*sin(y*0.5), up.z*sin(y*0.5), cos(y*0.5));
+        D3DXQUATERNION zrot(dir.x*sin(z*0.5),dir.y*sin(z*0.5), dir.z*sin(z*0.5), cos(z*0.5));
+
+        m_orientation =  yrot * m_orientation * xrot * zrot;
+        m_cacheValid = false;
+    }
 }

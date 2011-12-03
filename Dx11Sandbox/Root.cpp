@@ -243,7 +243,7 @@ namespace Dx11Sandbox
     LRESULT Root::MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
                               bool* pbNoFurtherProcessing, void* pUserContext )
     {
-        m_sceneMngr->handleWindowMessages(hWnd, uMsg, wParam, lParam,pbNoFurtherProcessing,pUserContext);
+        //m_application->handleWindowMessages(hWnd, uMsg, wParam, lParam,pbNoFurtherProcessing,pUserContext);
         return 0;
     }
 
