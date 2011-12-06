@@ -82,7 +82,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
     D3DXVECTOR3 up (0.0f,1.0f,0.0f);
     cam.lookAt(vecEye, vecAt, up);
         
-
+    mngr->setRenderObjectListener(this);
 
         
     //objects
@@ -112,7 +112,7 @@ void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime
 {
 
   handleInput(mngr,fElapsedTime, fTime);
-
+  m_lastMaterial = 0;
 
 }
 
@@ -125,7 +125,7 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
     //keyboard
     D3DXVECTOR3 mov(0,0,0);
     float speed = 40;
-    float mouseSens = 0.3;
+    float mouseSens = 1;
 
     if(m_leftDown)
     {
@@ -200,4 +200,26 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 void DemoApplication::shutDown(SceneManager* mngr)
 {
 
+}
+
+
+void DemoApplication::renderingObject(const RenderObject* object, RenderContext* state,SceneManager* mngr)
+{
+    Material* mat = object->mat;
+    if(mat==m_lastMaterial)
+        return;
+    m_lastMaterial = mat;
+
+    //D3DXMATRIX *world;
+    const D3DXMATRIX *view = mngr->getMainCamera().getViewMatrix();
+    const D3DXMATRIX *proj = mngr->getMainCamera().getProjectionMatrix();
+    D3DXMATRIX viewProj =  (*view) * (*proj);
+
+    ID3DX11Effect* effect =  mat->getEffect();
+    ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("sceneInfo");
+    if(buffer->IsValid())
+    {
+        ID3DX11EffectMatrixVariable* mat =  buffer->GetMemberByName("viewProj")->AsMatrix();
+        mat->SetMatrix((float*)&viewProj);
+    }
 }

@@ -1,17 +1,4 @@
-
-static const float3 ambient   = float3( 0.0f, 0.0f, 0.0f );  
-float3 diffuse   = float3( 0.8f, 0.8f, 0.8f );   
-float3 specular  = float3( 1.0f, 1.0f, 1.0f );   
-int    shininess = 32;
-
-float3 lightColor       = float3( 1.0f, 1.0f, 1.0f ); 
-float3 lightDirection     = float3( 50.0f, 10.0f, 0.0f ); 
-float3 cameraPosition = float3(0.0f,0.0f,0.0f) ;
-
-matrix worldViewProj ;
-
-Texture2D texture1;  
-
+//sampler states etc
 SamplerState samLinear
 {
     Filter = ANISOTROPIC;
@@ -20,6 +7,26 @@ SamplerState samLinear
 };
 
 RasterizerState rsWireframe { FillMode = WireFrame; };
+
+//shader impl and uniforms
+
+static const float3 ambient   = float3( 0.0f, 0.0f, 0.0f );  
+float3 diffuse   = float3( 0.8f, 0.8f, 0.8f );   
+float3 specular  = float3( 1.0f, 1.0f, 1.0f );   
+int    shininess = 32;
+
+cbuffer sceneInfo
+{
+	float4x4 viewProj;
+    float3	sunDirection;
+	float3	sunColor;
+};
+
+matrix worldViewProj ;
+
+Texture2D texture1;  
+
+
 
 struct VS_INPUT
 {
@@ -41,7 +48,7 @@ PS_INPUT VS( VS_INPUT input )
 {
     PS_INPUT output;
     
-    output.position = mul( float4(input.position,1), worldViewProj );
+    output.position = mul( float4(input.position,1), viewProj );
 	output.normal = input.normal;
 	
     output.uv = input.uv;
@@ -57,6 +64,10 @@ float4 PS( PS_INPUT input) : SV_Target
 	output.rgb += ambient;
     return output;
 }
+
+
+
+
 
 //--------------------------------------------------------------------------------------
 // Techniques

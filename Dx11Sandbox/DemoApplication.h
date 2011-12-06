@@ -3,8 +3,9 @@
 
 #include "MathUtil.h"
 #include "Root.h"
+#include "SceneManager.h"
 using namespace Dx11Sandbox;
-class DemoApplication: public Application
+class DemoApplication: public Application, public RenderObjectListener
 {
 public:
 
@@ -18,6 +19,11 @@ public:
     virtual void update(SceneManager* mngr,double fTime, float fElapsedTime);
     virtual void shutDown(SceneManager* mngr);
     virtual void handleWindowMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing, void* pUserContext );
+
+
+
+    virtual void renderingObject(const RenderObject* object, RenderContext* state,SceneManager* mngr);
+
 private:
 
     void handleInput(SceneManager* mngr,float dt, float elapsedTime);
@@ -32,6 +38,14 @@ private:
 
     D3DXVECTOR2 m_lastMousePos;
     D3DXVECTOR2 m_mouseDelta;
+
+
+
+
+    //
+    Material* m_lastMaterial;
+    
+
 };
 
 #endif

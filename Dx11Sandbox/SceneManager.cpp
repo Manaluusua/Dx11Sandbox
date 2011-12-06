@@ -15,7 +15,8 @@ namespace Dx11Sandbox
     SceneManager::SceneManager(Root* root)
         :m_root(root),
         m_renderer( new BasicRenderer() ),
-        m_renderContext()
+        m_renderContext(),
+        m_renderObjectListener(0)
     {
        m_renderqueues[RINITIAL];
        m_renderqueues[RDEFAULT];
@@ -48,15 +49,23 @@ namespace Dx11Sandbox
         MeshManager::destroyMeshManager();
     }
 
-    void SceneManager::addRenderListener(RenderListener* l)
+    void SceneManager::addRenderStartListener(RenderStartListener* l)
     {
-        m_renderListeners.insert(l);
+        m_renderStartListeners.insert(l);
     }
 
-    void SceneManager::removeRenderListener(RenderListener* l)
+    void SceneManager::removeRenderStartListener(RenderStartListener* l)
     {
-        m_renderListeners.erase(l);
+        m_renderStartListeners.erase(l);
     }
+
+
+    void SceneManager::setRenderObjectListener(RenderObjectListener* l)
+    {
+        m_renderObjectListener = l;
+    }
+
+
 
     void SceneManager::windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc)
     {
@@ -106,10 +115,10 @@ namespace Dx11Sandbox
         
 
         //first notify all listeners and let them render what they need
-        std::set<RenderListener*>::iterator it = m_renderListeners.begin();
-        while(it != m_renderListeners.end())
+        std::set<RenderStartListener*>::iterator it = m_renderStartListeners.begin();
+        while(it != m_renderStartListeners.end())
         {
-            (*it)->renderingStarted( &m_renderContext,  fTime, fElapsedTime);
+            (*it)->renderingStarted( &m_renderContext, this, fTime, fElapsedTime);
             ++it;
         }
         // Clear render target and the depth stencil 
@@ -168,7 +177,14 @@ namespace Dx11Sandbox
    void SceneManager::renderQueue( double fTime, float fElapsedTime,  Camera* cam,RenderQueueFlag flag)
    {
         std::vector<const RenderObject*> & vec = m_renderqueues[flag];
-        m_renderer->render(vec,&m_renderContext,cam);
+        for(size_t i = 0;i<vec.size();++i)
+        {
+            if(m_renderObjectListener)
+            {
+                m_renderObjectListener->renderingObject(vec.at(i),&m_renderContext,this);
+            }
+            m_renderer->render(vec.at(i),&m_renderContext,cam);
+        }
       
    }
 }

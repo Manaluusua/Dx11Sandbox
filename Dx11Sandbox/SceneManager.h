@@ -17,16 +17,21 @@ namespace Dx11Sandbox
     class Material;
     class Renderer;
     class RenderContext;
-    
+    class SceneManager;
     
     // renderer listener to listen and act for rendering events
-    class RenderListener
+    class RenderStartListener
     {
     public:
-        virtual void renderingStarted(RenderContext* context, double fTime, float fElapsedTime)=0;
-        virtual void renderingQueue(RenderQueueFlag flag) = 0;
+        virtual void renderingStarted(RenderContext* context,SceneManager* mngr, double fTime, float fElapsedTime)=0;
+        
     };
 
+    class RenderObjectListener
+    {
+    public:
+        virtual void renderingObject(const RenderObject* object, RenderContext* state,SceneManager* mngr)=0;
+    };
 
     class SceneManager: public DynamicPoolAllocator<RenderObject>, public StaticPoolAllocator<RenderObject>
     {
@@ -36,13 +41,20 @@ namespace Dx11Sandbox
        
 
         virtual ~SceneManager(void);
-        void addRenderListener(RenderListener* l);
-        void removeRenderListener(RenderListener* l);
+
         inline void renderScene( double fTime, float fElapsedTime,  Camera* cam);
         inline void renderQueue( double fTime, float fElapsedTime,  Camera* cam,RenderQueueFlag flag);
 
         Camera& getMainCamera(){return m_mainCamera;};
         ID3D11Device* getDevice(){return m_renderContext.getDevice();}
+
+
+        //listeners
+        void addRenderStartListener(RenderStartListener* l);
+        void removeRenderStartListener(RenderStartListener* l);
+
+        void setRenderObjectListener(RenderObjectListener* l);
+
 
     protected:
         void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
@@ -57,7 +69,14 @@ namespace Dx11Sandbox
         void destroyManagers();
 
         std::map<RenderQueueFlag, std::vector<const RenderObject*> > m_renderqueues;
-        std::set<RenderListener*> m_renderListeners;
+
+        std::set<RenderStartListener*> m_renderStartListeners;
+
+        //only 1 renderlistener can be assigned. Application itself can propagate the event to multiple recepients (with the possible killing of perf)
+        RenderObjectListener* m_renderObjectListener;
+
+
+
         Root* m_root;
         Camera  m_mainCamera;
         

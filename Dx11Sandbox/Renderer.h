@@ -19,7 +19,7 @@ namespace Dx11Sandbox
 
         UINT32 rendererMask;
 
-        virtual void render(std::vector<const RenderObject*>& objects, RenderContext* state, Camera* camera) = 0;
+        virtual void render(const RenderObject* object, RenderContext* state, Camera* camera) = 0;
         
 
     };
