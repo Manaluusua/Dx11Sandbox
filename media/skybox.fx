@@ -7,7 +7,7 @@ SamplerState samLinear
 	AddressW = MIRROR;
 };
 
-RasterizerState rsSolid { FillMode = Solid; };
+
 
 //shader impl and uniforms
 
@@ -19,6 +19,9 @@ cbuffer sceneInfo
 	float4x4 viewProj;
     float3	sunDirection;
 	float3	sunColor;
+	float3 camPos;
+	float4 clipPlane;
+	float time;
 };
 
 
@@ -71,7 +74,6 @@ technique11 SkyBox
     pass P0
     {
 
-		SetRasterizerState( rsSolid );
         SetVertexShader( CompileShader( vs_4_0, VS() ) );
         SetGeometryShader( NULL );
         SetPixelShader( CompileShader( ps_4_0, PS() ) );

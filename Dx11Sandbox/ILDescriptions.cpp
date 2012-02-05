@@ -16,6 +16,8 @@ namespace Dx11Sandbox
                 return POS3NORM3TEX3_DESC;
             case POS3TEX3:
                 return POS3TEX3_DESC;
+            case POS3TEX2:
+                return POS3TEX2_DESC;
 
             default:
                 return 0;
@@ -33,6 +35,8 @@ namespace Dx11Sandbox
                 return POS3NORM3TEX3_ELEM_NUM;
             case POS3TEX3:
                 return POS3TEX3_ELEM_NUM;
+            case POS3TEX2:
+                return POS3TEX2_ELEM_NUM;
             default:
                 return 0;
      
@@ -49,6 +53,8 @@ namespace Dx11Sandbox
                 return POS3NORM3TEX3_ELEM_SIZES;
             case POS3TEX3:
                 return POS3TEX3_ELEM_SIZES;
+            case POS3TEX2:
+                return POS3TEX2_ELEM_SIZES;
             default:
                 return 0;
      

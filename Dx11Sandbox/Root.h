@@ -17,6 +17,7 @@ namespace Dx11Sandbox
                            bool bSideButton1Down, bool bSideButton2Down, int nMouseWheelDelta,
                            int xPos, int yPos )=0;
         virtual void createWorld(SceneManager* mngr)=0;
+        virtual void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc)=0;
         virtual void update(SceneManager* mngr,double fTime, float fElapsedTime)=0;
         virtual void shutDown(SceneManager* mngr)=0;
         virtual void handleWindowMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,

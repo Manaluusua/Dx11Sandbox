@@ -6,23 +6,21 @@ SamplerState samLinear
     AddressV = WRAP;
 };
 
-RasterizerState rsWireframe { FillMode = WireFrame; };
+
 
 //shader impl and uniforms
 
-static const float3 ambient   = float3( 0.0f, 0.0f, 0.0f );  
-float3 diffuse   = float3( 0.8f, 0.8f, 0.8f );   
-float3 specular  = float3( 1.0f, 1.0f, 1.0f );   
-int    shininess = 32;
+static const float3 ambient   = float3( 0.1f, 0.1f, 0.1f );  
 
 cbuffer sceneInfo
 {
 	float4x4 viewProj;
     float3	sunDirection;
 	float3	sunColor;
+	float3 camPos;
+	float4 clipPlane;
+	float time;
 };
-
-matrix worldViewProj ;
 
 Texture2D texture1;  
 
@@ -41,7 +39,9 @@ struct PS_INPUT
 	float4 position : SV_POSITION;
 	float3 normal : NORMAL;
     float2 uv   : TEXCOORD0;
+	float clipDistance: SV_ClipDistance0;
 };
+
 
 
 PS_INPUT VS( VS_INPUT input )
@@ -52,7 +52,9 @@ PS_INPUT VS( VS_INPUT input )
 	output.normal = input.normal;
 	
     output.uv = input.uv;
-
+	
+	output.clipDistance = dot(float4(input.position,1),clipPlane);
+	
     return output;
 }
 
@@ -61,7 +63,10 @@ float4 PS( PS_INPUT input) : SV_Target
     
 
     float4 output = texture1.Sample( samLinear, input.uv );
-	output.rgb += ambient;
+	output.rgb *= ambient + sunColor*saturate(dot(input.normal,sunDirection));
+
+	
+	
     return output;
 }
 
@@ -78,7 +83,6 @@ technique11 Terrain
     pass P0
     {
 
-		//SetRasterizerState( rsWireframe );
         SetVertexShader( CompileShader( vs_4_0, VS() ) );
         SetGeometryShader( NULL );
         SetPixelShader( CompileShader( ps_4_0, PS() ) );

@@ -9,13 +9,17 @@ namespace Dx11Sandbox
         m_far(0),
         m_up(0,1,0),
         m_translation(0,0,0),
-        m_cacheValid(false)
+        m_cacheValid(false),
+        m_reflected(false)
+        
     {
        
 
         D3DXQuaternionIdentity(&m_orientation);
         D3DXMatrixIdentity(&m_viewMatrix);
         D3DXMatrixIdentity(&m_projMatrix);
+        D3DXMatrixIdentity(&m_reflMatrix);
+        
     }
 
 
@@ -25,6 +29,7 @@ namespace Dx11Sandbox
 
     const D3DXMATRIX* Camera::getProjectionMatrix()
     {
+
         return &m_projMatrix;
     }
 
@@ -35,9 +40,21 @@ namespace Dx11Sandbox
         {
             D3DXMATRIX rot;
             D3DXMatrixIdentity(&m_viewMatrix);
-            D3DXMatrixTranslation(&m_viewMatrix,m_translation.x, m_translation.y, m_translation.z);
+
+            D3DXVECTOR4 transl(m_translation,1);
             D3DXMatrixRotationQuaternion(&rot, &m_orientation);
+
+            D3DXMatrixTranslation(&m_viewMatrix,transl.x, transl.y, transl.z);
+
             m_viewMatrix *= rot;
+
+            if(m_reflected)
+            {
+                m_viewMatrix =  m_reflMatrix * m_viewMatrix;
+
+            }
+
+            m_cacheValid = true;
         }
         return &m_viewMatrix;
     }
@@ -171,5 +188,22 @@ namespace Dx11Sandbox
 
         m_orientation =  yrot * m_orientation * xrot * zrot;
         m_cacheValid = false;
+    }
+
+
+    void Camera::setReflectionPlane(D3DXVECTOR3& normal, float d)
+    {
+        D3DXPLANE plane(normal.x, normal.y, normal.z, d);
+        D3DXMatrixReflect(&m_reflMatrix, &plane);
+
+        
+    }
+    void Camera::setReflectionEnabled(bool val)
+    {
+        if(val!= m_reflected)
+        {
+            m_cacheValid = false;
+        }
+        m_reflected = val;
     }
 }

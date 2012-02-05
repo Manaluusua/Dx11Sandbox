@@ -5,6 +5,7 @@
 #include "Root.h"
 #include "SceneManager.h"
 using namespace Dx11Sandbox;
+class WaterPlane;
 class DemoApplication: public Application, public RenderObjectListener
 {
 public:
@@ -19,7 +20,7 @@ public:
     virtual void update(SceneManager* mngr,double fTime, float fElapsedTime);
     virtual void shutDown(SceneManager* mngr);
     virtual void handleWindowMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing, void* pUserContext );
-
+    virtual void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
 
 
     virtual void renderingObject(const RenderObject* object, RenderContext* state,SceneManager* mngr);
@@ -40,11 +41,12 @@ private:
     D3DXVECTOR2 m_mouseDelta;
 
 
-
+    float m_time;
 
     //
     Material* m_lastMaterial;
-    
+    UINT16 m_lastPassID;
+    WaterPlane* m_waterPlane;
 
 };
 

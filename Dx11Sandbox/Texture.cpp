@@ -40,6 +40,7 @@ namespace Dx11Sandbox
         tex->m_usage = usage;
 
         D3D11_TEXTURE2D_DESC desc;
+        memset(&desc,0,sizeof(desc));
         desc.Width = texWidth;
         desc.Height = texHeight;
         desc.MipLevels = 1;
@@ -49,6 +50,7 @@ namespace Dx11Sandbox
         desc.CPUAccessFlags = cpuAccess;
         desc.Usage = usage;
         desc.BindFlags = bindFlags;
+        desc.MiscFlags = 0x0;
 
         ID3D11Texture2D *pEmptyTex = NULL;
         if(FAILED( device->CreateTexture2D( &desc, NULL, &pEmptyTex ) ) )

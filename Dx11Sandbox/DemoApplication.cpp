@@ -6,7 +6,7 @@
 #include "Material.h"
 #include "MeshManager.h"
 #include "RenderObject.h"
-
+#include "WaterPlane.h"
 
 DemoApplication::DemoApplication()
     :m_leftDown(false),
@@ -17,7 +17,9 @@ DemoApplication::DemoApplication()
     m_downDown(false),
     m_moveMouse(false),
     m_lastMousePos(-1,-1),
-    m_mouseDelta(0,0)
+    m_mouseDelta(0,0),
+    m_lastPassID(0),
+    m_time(0)
 {
 
 }
@@ -70,6 +72,12 @@ void DemoApplication::OnMouse( bool bLeftButtonDown, bool bRightButtonDown, bool
 
     
 }
+
+
+void DemoApplication::windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc)
+{
+
+}
 void DemoApplication::createWorld(SceneManager* mngr)
 {
     
@@ -105,14 +113,20 @@ void DemoApplication::createWorld(SceneManager* mngr)
     mat = MaterialManager::getSingleton()->getOrCreateMaterial(device, L"terrain.fx", L"terrain1",MeshInputLayouts::POS3NORM3TEX2);
     mat->setTexture("texture1", L"grass.jpg");
     TextureManager::getSingleton()->createTexture(device, L"grass.jpg", L"grass.jpg");
-    MeshUtility::createTerrainFromHeightMap(device,mngr, L"heightmapTerrain.png", mat,500,500,50,30,30,20);
+    MeshUtility::createTerrainFromHeightMap(device,mngr, L"heightmapTerrain.png", mat,500,500,80,30,30,10);
+    
+    //waterplane
+    Dx11Sandbox::string name("waterPlane1");
+    m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-20,220,250);
+
+   
 
 }
 void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime)
 {
-
-  handleInput(mngr,fElapsedTime, fTime);
-  m_lastMaterial = 0;
+    m_time = fElapsedTime;
+    handleInput(mngr,fElapsedTime, fTime);
+    m_lastMaterial = 0;
 
 }
 
@@ -199,13 +213,21 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 
 void DemoApplication::shutDown(SceneManager* mngr)
 {
-
+    delete m_waterPlane;
 }
 
 
 void DemoApplication::renderingObject(const RenderObject* object, RenderContext* state,SceneManager* mngr)
 {
     Material* mat = object->mat;
+
+    //new pass, don't try to skip effect state setting
+    if(m_lastPassID != state->m_renderPassID)
+    {
+        m_lastPassID = state->m_renderPassID;
+        m_lastMaterial = 0;
+    }
+
     if(mat==m_lastMaterial)
         return;
     m_lastMaterial = mat;
@@ -215,11 +237,22 @@ void DemoApplication::renderingObject(const RenderObject* object, RenderContext*
     const D3DXMATRIX *proj = mngr->getMainCamera().getProjectionMatrix();
     D3DXMATRIX viewProj =  (*view) * (*proj);
 
+    //temp
+    D3DXVECTOR3 sunDir(0.3f,1.f,0.3f);
+    D3DXVec3Normalize(&sunDir, &sunDir);
+    D3DXVECTOR3 sunCol(1.0f,1.0f,1.5f);
+    D3DXVECTOR3 transl = -(*mngr->getMainCamera().getTranslation());
+
     ID3DX11Effect* effect =  mat->getEffect();
     ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("sceneInfo");
     if(buffer->IsValid())
     {
         ID3DX11EffectMatrixVariable* mat =  buffer->GetMemberByName("viewProj")->AsMatrix();
         mat->SetMatrix((float*)&viewProj);
+        buffer->GetMemberByName("sunDirection")->AsVector()->SetFloatVector((float*)&sunDir);
+        buffer->GetMemberByName("sunColor")->AsVector()->SetFloatVector((float*)&sunCol);
+        buffer->GetMemberByName("camPos")->AsVector()->SetFloatVector((float*)&transl);
+        buffer->GetMemberByName("clipPlane")->AsVector()->SetFloatVector((float*)&state->getCustomClipPlane());
+        buffer->GetMemberByName("time")->AsScalar()->SetFloat(m_time);
     }
 }

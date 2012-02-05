@@ -13,6 +13,53 @@
 namespace Dx11Sandbox
 {
 
+    //inlines
+    D3DXVECTOR3 getNormalForPosition(int indexX, int indexY, int maxX, int maxY, D3DXVECTOR3 *positions)
+    {
+        int startX = max(indexX-1,0);
+        int endX = min(indexX+1,maxX-1);
+        int startY = max(indexY-1,0);
+        int endY = min(indexY+1,maxY-1);
+
+        D3DXVECTOR3 vec1 = positions[indexY * maxX +  startX] -  positions[indexY * maxX +  endX];
+        D3DXVECTOR3 vec2 = positions[startY * maxX +  indexX] -  positions[endY * maxX +  indexX];
+        D3DXVECTOR3 normal;
+        D3DXVec3Cross(&normal,&vec2, &vec1);
+        D3DXVec3Normalize(&normal, &normal);
+
+        return normal;
+    }
+
+    
+    float getHeightForPosition(const PixelBox * const map, float x, float y, float scale)
+    {
+        float heights[4];
+        float temp,frac1 = map->getWidth()*x, frac2 = map->getHeight()*y;
+
+        UINT x1 = std::floor(frac1);
+        UINT y1 = std::floor(frac2);
+        UINT x2 = std::ceil(frac1);
+        UINT y2 = std::ceil(frac2);
+
+        x2 = min(x2, map->getWidth()-1);
+        y2 = min(y2, map->getHeight()-1);
+
+        frac1 = std::modf(frac1,&temp); 
+        frac2 = std::modf(frac2,&temp);
+
+        frac1 = frac1*0.5 + (1.f-std::cos(frac1*MathUtil::PI))*0.25f;
+        frac2 = frac2*0.5 + (1.f-std::cos(frac2*MathUtil::PI))*0.25f;
+
+        heights[0] = (((float)(map->getPixel(x1,y1).r))/256)*scale;
+        heights[1] = (((float)(map->getPixel(x2,y1).r))/256)*scale;
+        heights[2] = (((float)(map->getPixel(x1,y2).r))/256)*scale;
+        heights[3] = (((float)(map->getPixel(x2,y2).r))/256)*scale;
+
+        return ((1-frac1)*heights[0] + frac1*heights[1])*(1-frac2) + ((1-frac1)*heights[2] + frac1*heights[3])*(frac2);
+    }
+    
+
+    //MeshUtility
     MeshUtility::MeshUtility(void)
     {
     }
@@ -119,6 +166,56 @@ namespace Dx11Sandbox
     }
 
 
+    Mesh* MeshUtility::createFinitePlane(ID3D11Device *device, const string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2)
+    {
+        Mesh *mesh = MeshManager::getSingleton()->createMesh(name);
+        if(!mesh)
+            return 0;
+
+        D3DXVECTOR3 pos[4];
+        D3DXVECTOR3 norm[4];
+        D3DXVECTOR2 UV[4];
+
+        BYTE* ptr[3];
+
+        ptr[0] = (BYTE*)pos;
+        ptr[1] = (BYTE*)norm;
+        ptr[2] = (BYTE*)UV;
+
+
+        //normalize just in case
+        D3DXVec3Normalize(&normal, &normal);
+        D3DXVECTOR3 vec1;
+        D3DXVECTOR3 vec2;
+        MathUtil::calculateOrthogonalVector(normal, vec1);
+        D3DXVec3Cross(&vec2,&normal, &vec1);
+
+        D3DXVec3Normalize(&vec1,&vec1);
+        D3DXVec3Normalize(&vec2,&vec2);
+
+        pos[0] = normal*-d - vec1*extends1 - vec2*extends2;
+        pos[1] = normal*-d + vec1*extends1 - vec2*extends2;
+        pos[2] = normal*-d - vec1*extends1 + vec2*extends2;
+        pos[3] = normal*-d + vec1*extends1 + vec2*extends2;
+
+        UV[0] = D3DXVECTOR2(0,0);
+        UV[1] = D3DXVECTOR2(1,0);
+        UV[2] = D3DXVECTOR2(0,1);
+        UV[3] = D3DXVECTOR2(1,1);
+
+        for(int i=0;i<4;++i)
+        {
+            norm[i] = normal;
+        }
+
+
+
+        mesh->createMeshFromBuffers(device, ptr, 0, 4,0,DXGI_FORMAT_R16_UINT,MeshInputLayouts::POS3NORM3TEX2);
+        mesh->setPrimType(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+        return mesh;
+    }
+
+
     RenderObject* MeshUtility::createTerrainFromHeightMap(ID3D11Device *device, SceneManager* mngr, const  wstring& heightmapName,Material* mat, float scaleX, float scaleZ,float scaleY, unsigned int pagesX, unsigned int pagesZ, unsigned int tesselationFactor)
     {
         TextureManager::getSingleton()->createTexture(device, heightmapName, heightmapName, D3D11_CPU_ACCESS_READ, D3D11_USAGE_STAGING);
@@ -193,7 +290,7 @@ namespace Dx11Sandbox
             for(j=0,xx=0;j<totalPointsX;++j, xx+=segmentX)
             {
                 
-                normals[i*totalPointsX + j] = D3DXVECTOR3(0,1,0);
+                normals[i*totalPointsX + j] = getNormalForPosition(j,i,totalPointsX, totalPointsZ,positions);
                 UV[i*totalPointsX*2 + j*2] = 0.5*((float)(j))/tesselationFactor;
                 UV[i*totalPointsX*2 + j*2 + 1] = 0.5*((float)(i))/tesselationFactor;
             }
@@ -263,30 +360,6 @@ namespace Dx11Sandbox
     }
 
 
-    float MeshUtility::getHeightForPosition(const PixelBox * const map, float x, float y, float scale)
-    {
-        float heights[4];
-        float temp,frac1 = map->getWidth()*x, frac2 = map->getHeight()*y;
 
-        UINT x1 = std::floor(frac1);
-        UINT y1 = std::floor(frac2);
-        UINT x2 = std::ceil(frac1);
-        UINT y2 = std::ceil(frac2);
-
-        x2 = min(x2, map->getWidth()-1);
-        y2 = min(y2, map->getHeight()-1);
-
-        frac1 = std::modf(frac1,&temp); 
-        frac2 = std::modf(frac2,&temp);
-
-        frac1 = frac1*0.5 + (1.f-std::cos(frac1*MathUtil::PI))*0.25f;
-        frac2 = frac2*0.5 + (1.f-std::cos(frac2*MathUtil::PI))*0.25f;
-
-        heights[0] = (((float)(map->getPixel(x1,y1).r))/256)*scale;
-        heights[1] = (((float)(map->getPixel(x2,y1).r))/256)*scale;
-        heights[2] = (((float)(map->getPixel(x1,y2).r))/256)*scale;
-        heights[3] = (((float)(map->getPixel(x2,y2).r))/256)*scale;
-
-        return ((1-frac1)*heights[0] + frac1*heights[1])*(1-frac2) + ((1-frac1)*heights[2] + frac1*heights[3])*(frac2);
-    }
 }
+

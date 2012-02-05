@@ -196,6 +196,7 @@ namespace Dx11Sandbox
                                           const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext )
     {
         m_sceneMngr->windowResized(pd3dDevice,pSwapChain,pBackBufferSurfaceDesc);
+        m_application->windowResized(pd3dDevice,pSwapChain,pBackBufferSurfaceDesc);
         return S_OK;
     }
 

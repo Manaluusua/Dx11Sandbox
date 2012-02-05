@@ -32,6 +32,9 @@ namespace Dx11Sandbox
         void setUp(D3DXVECTOR3& up){m_up = up;}
         const D3DXVECTOR3& getUp(){return m_up;}
 
+        void setReflectionPlane(D3DXVECTOR3& normal, float d);
+        void setReflectionEnabled(bool val);
+
     private:
 
         FLOAT m_fovy;
@@ -46,8 +49,13 @@ namespace Dx11Sandbox
 
         bool m_cacheValid;
 
+
         D3DXMATRIX m_viewMatrix;
         D3DXMATRIX m_projMatrix;
+
+        D3DXMATRIX m_reflMatrix;
+
+        bool m_reflected;
     };
 }
 #endif

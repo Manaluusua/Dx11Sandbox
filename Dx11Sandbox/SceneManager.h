@@ -42,18 +42,22 @@ namespace Dx11Sandbox
 
         virtual ~SceneManager(void);
 
-        inline void renderScene( double fTime, float fElapsedTime,  Camera* cam);
-        inline void renderQueue( double fTime, float fElapsedTime,  Camera* cam,RenderQueueFlag flag);
+        inline void renderScene( double fTime, float fElapsedTime,  Camera* cam, Renderer* renderer);
+        inline void renderQueue( double fTime, float fElapsedTime,  Camera* cam,RenderQueueFlag flag, Renderer* renderer);
 
         Camera& getMainCamera(){return m_mainCamera;};
         ID3D11Device* getDevice(){return m_renderContext.getDevice();}
 
+        Renderer* getDefaultRenderer(){return m_renderer;};
 
         //listeners
         void addRenderStartListener(RenderStartListener* l);
         void removeRenderStartListener(RenderStartListener* l);
 
         void setRenderObjectListener(RenderObjectListener* l);
+
+        UINT getScreenWidth(){return m_screenWidth;}
+        UINT getScreenHeight(){return m_screenHeight;}
 
 
     protected:
@@ -79,6 +83,8 @@ namespace Dx11Sandbox
 
         Root* m_root;
         Camera  m_mainCamera;
+
+        UINT m_screenWidth, m_screenHeight;
         
 
     private:

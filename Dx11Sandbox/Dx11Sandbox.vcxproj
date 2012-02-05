@@ -87,6 +87,7 @@
     <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommonUtilities.cpp" />
+    <ClCompile Include="Compositor.cpp" />
     <ClCompile Include="DemoApplication.cpp" />
     <ClCompile Include="ILDescriptions.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -110,6 +111,7 @@
     <ClInclude Include="BasicRenderer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CommonUtilities.h" />
+    <ClInclude Include="Compositor.h" />
     <ClInclude Include="DemoApplication.h" />
     <ClInclude Include="DynamicPoolAllocator.h" />
     <ClInclude Include="ILDescriptions.h" />

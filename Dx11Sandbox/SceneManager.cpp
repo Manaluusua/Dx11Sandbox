@@ -16,7 +16,9 @@ namespace Dx11Sandbox
         :m_root(root),
         m_renderer( new BasicRenderer() ),
         m_renderContext(),
-        m_renderObjectListener(0)
+        m_renderObjectListener(0),
+        m_screenWidth(0),
+        m_screenHeight(0)
     {
        m_renderqueues[RINITIAL];
        m_renderqueues[RDEFAULT];
@@ -72,6 +74,9 @@ namespace Dx11Sandbox
          // Setup the camera's projection parameters
         float aspectRatio = pBackBufferSurfaceDesc->Width / ( FLOAT )pBackBufferSurfaceDesc->Height;
         m_mainCamera.setProjection(D3DX_PI / 4, aspectRatio, 0.1f, 1000.0f);
+
+        m_screenWidth = pBackBufferSurfaceDesc->Width;
+        m_screenHeight = pBackBufferSurfaceDesc->Height;
         
     }
 
@@ -80,7 +85,8 @@ namespace Dx11Sandbox
 
     void SceneManager::initialize(ID3D11Device* pd3dDevice, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc)
     {
-
+        m_screenWidth = pBackBufferSurfaceDesc->Width;
+        m_screenHeight = pBackBufferSurfaceDesc->Height;
         m_renderContext.setDevice(pd3dDevice);
     }
 
@@ -123,32 +129,34 @@ namespace Dx11Sandbox
         }
         // Clear render target and the depth stencil 
         float ClearColor[4] = { 0.f, 0.f, 0.f, 0.0f };
-        pd3dImmediateContext->ClearRenderTargetView( DXUTGetD3D11RenderTargetView(), ClearColor );
+        //pd3dImmediateContext->ClearRenderTargetView( DXUTGetD3D11RenderTargetView(), ClearColor );
         pd3dImmediateContext->ClearDepthStencilView( DXUTGetD3D11DepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0 );
-        renderScene( fTime,fElapsedTime, &m_mainCamera);
+        m_renderContext.m_renderPassID = 0;
+        renderScene( fTime,fElapsedTime, &m_mainCamera, m_renderer);
     }
 
-    void SceneManager::renderScene( double fTime, float fElapsedTime, Camera* cam)
+    void SceneManager::renderScene( double fTime, float fElapsedTime, Camera* cam, Renderer* renderer)
     {
-        clearRenderQueues();
+        
         m_renderContext.clearState();
         cullObjectsToRenderQueues();
 
         //normal objects
-        renderQueue( fTime, fElapsedTime,cam, RINITIAL);
-        renderQueue(fTime, fElapsedTime,cam, RDEFAULT);
-        renderQueue( fTime, fElapsedTime,cam, RTRANSPARENT);
+        renderQueue( fTime, fElapsedTime,cam, RINITIAL,renderer);
+        renderQueue(fTime, fElapsedTime,cam, RDEFAULT,renderer);
+        renderQueue( fTime, fElapsedTime,cam, RTRANSPARENT,renderer);
 
         //objects using information from the previous objects rendered
         //TO DO
-        renderQueue( fTime, fElapsedTime,cam, RSCENEINPUT);
+        renderQueue( fTime, fElapsedTime,cam, RSCENEINPUT,renderer);
         //Final
-        renderQueue( fTime, fElapsedTime,cam,RFINAL);
+        renderQueue( fTime, fElapsedTime,cam,RFINAL,renderer);
     }
 
     //TO DO: the actual culling
     void SceneManager::cullObjectsToRenderQueues()
     {
+        clearRenderQueues();
         //static scene
         for(int i=0;i<getNumberOfStaticPoolVectors();i++)
         {
@@ -174,7 +182,7 @@ namespace Dx11Sandbox
     }
 
 
-   void SceneManager::renderQueue( double fTime, float fElapsedTime,  Camera* cam,RenderQueueFlag flag)
+   void SceneManager::renderQueue( double fTime, float fElapsedTime,  Camera* cam,RenderQueueFlag flag, Renderer* renderer)
    {
         std::vector<const RenderObject*> & vec = m_renderqueues[flag];
         for(size_t i = 0;i<vec.size();++i)
@@ -183,7 +191,7 @@ namespace Dx11Sandbox
             {
                 m_renderObjectListener->renderingObject(vec.at(i),&m_renderContext,this);
             }
-            m_renderer->render(vec.at(i),&m_renderContext,cam);
+            renderer->render(vec.at(i),&m_renderContext,cam);
         }
       
    }

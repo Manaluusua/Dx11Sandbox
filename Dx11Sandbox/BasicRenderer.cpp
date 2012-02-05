@@ -40,7 +40,7 @@ namespace Dx11Sandbox
         ID3D11DeviceContext* context = state->getImmediateContext();
 
 
-
+        
 
         
         
@@ -59,13 +59,19 @@ namespace Dx11Sandbox
         state->bindMaterial(mat);
 
             
-
+        
         
 
         for ( UINT passInd = 0; passInd < techDesc.Passes; ++passInd )
         {
             tech->GetPassByIndex(passInd)->Apply(0, context );
-            context->DrawIndexed(mesh->getIndexBuffer().indexCount, 0, 0);
+            if(mesh->getIndexBuffer().indexCount > 0)
+            {
+                context->DrawIndexed(mesh->getIndexBuffer().indexCount, 0, 0);
+            }else
+            {
+                context->Draw(mesh->getVertexBuffer().numVertices,0);
+            }
         }
         
     }

@@ -9,6 +9,7 @@ namespace Dx11Sandbox
         const double PI = 3.14159265;
         D3DXVECTOR3 rotateVec3ByQuat(const D3DXVECTOR3 *vec, const D3DXQUATERNION *quat);
 
+        void calculateOrthogonalVector(const D3DXVECTOR3& vec, D3DXVECTOR3& orthogonal);
 
 
     }

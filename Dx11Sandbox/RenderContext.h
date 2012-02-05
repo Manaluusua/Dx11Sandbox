@@ -1,9 +1,15 @@
 #ifndef DX11SANDBOX_RENDERSTATE_H
 #define DX11SANDBOX_RENDERSTATE_H
 
-struct ID3D11Device;
-struct ID3D11DeviceContext;
 
+
+/*struct ID3D11Device;
+struct ID3D11DeviceContext;
+struct ID3D11DepthStencilView;
+struct ID3D11RenderTargetView;
+*/
+#include <D3D11.h>
+#include <d3dx9math.h>
 namespace Dx11Sandbox
 {
     class Mesh;
@@ -13,6 +19,7 @@ namespace Dx11Sandbox
     public:
         RenderContext(void);
         ~RenderContext(void);
+
 
         ID3D11Device* getDevice(){return m_device;}
         void setDevice(ID3D11Device* device){m_device = device;}
@@ -26,7 +33,17 @@ namespace Dx11Sandbox
         void bindMesh(Mesh* mesh);
         void bindMaterial(Material* mat);
 
+
+        void setCustomClipPlane(D3DXVECTOR4& plane){m_customClipPlane = plane;}
+        const D3DXVECTOR4& getCustomClipPlane(){return m_customClipPlane;}
+
+        void bindRenderTargets(UINT num, ID3D11RenderTargetView *const *renderTargetViews, ID3D11DepthStencilView *depthStencilView);
+        void bindBackBuffer();
+
         void clearState();
+
+        UINT32 m_customFlags;
+        UINT16 m_renderPassID;
 
     private:
 
@@ -35,8 +52,8 @@ namespace Dx11Sandbox
 
         ID3D11Device* m_device;
         ID3D11DeviceContext* m_imContext;
-
-
+       
+        D3DXVECTOR4 m_customClipPlane;
     };
 }
 

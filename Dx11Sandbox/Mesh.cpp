@@ -209,7 +209,8 @@ namespace Dx11Sandbox
         }
         if(!boundMesh || &boundMesh->getIndexBuffer() != &m_indices)
         {
-            context->getImmediateContext()->IASetIndexBuffer(m_indices.buffer,m_indices.format, 0);
+            if(m_indices.indexCount>0)
+                context->getImmediateContext()->IASetIndexBuffer(m_indices.buffer,m_indices.format, 0);
         }
 
         if(!boundMesh || boundMesh->getPrimType() != m_primType)
