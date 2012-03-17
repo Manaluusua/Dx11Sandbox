@@ -300,7 +300,8 @@ namespace Dx11Sandbox
 
         terrainName = terrainName + "Incides";
         Mesh* mesh;
-        UINT32 *indices = new UINT32[(tesselationFactor)*(tesselationFactor)*6];
+        UINT indicesCount = (tesselationFactor)*(tesselationFactor)*6;
+        UINT32 *indices = new UINT32[indicesCount];
         unsigned int pwidth, pheight;
         //separate to pages and triangulate
         for(unsigned int pz = 0;pz < pagesZ;++pz)
@@ -337,10 +338,11 @@ namespace Dx11Sandbox
                 
                 Mesh* mesh = MeshManager::getSingleton()->createMesh(terrainName + numberToString(pz*pagesX + px));
                 mesh->setSharedVertices(true);
-                mesh->createIndexBuffer(device,(BYTE*)indices,(tesselationFactor)*(tesselationFactor)*6,DXGI_FORMAT_R32_UINT);
+                mesh->createIndexBuffer(device,(BYTE*)indices,indicesCount,DXGI_FORMAT_R32_UINT);
                 mesh->setVertexBuffer(vertices->getVertexBuffer());
                 objects[pz*pagesX + px].mesh = mesh;
                 objects[pz*pagesX + px].mat = mat;
+                objects[pz*pagesX + px].boundingSphere = calculateBoundingSphereForPositions(indices,indicesCount , positions);
 
             }
         }
@@ -360,6 +362,32 @@ namespace Dx11Sandbox
     }
 
 
+    D3DXVECTOR4 MeshUtility::calculateBoundingSphereForPositions(const UINT32 *indices,UINT numIndices,const D3DXVECTOR3* positions)
+    {
+        
+        float minimum[3] = {FLT_MAX,FLT_MAX,FLT_MAX};
+        float maximum[3] = {FLT_MIN,FLT_MIN,FLT_MIN};
+        
+        //find point cloud extends
+        for(int i=0;i<numIndices;++i)
+        {
+            const float *position = (float*)&positions[ indices[i] ];
+            for(int j=0;j<3;++j)
+            {
+                if(position[j]<minimum[j])
+                {
+                    minimum[j] = position[j];
+                }
+                if(position[j]>maximum[j])
+                {
+                    maximum[j] = position[j];
+                }
+            }
+        }
 
+        D3DXVECTOR4 sphere((minimum[0] + maximum[0])*0.5, (minimum[1] + maximum[1])*0.5,(minimum[2] + maximum[2])*0.5,1);
+
+        return sphere;
+    }
 }
 

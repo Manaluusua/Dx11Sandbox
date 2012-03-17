@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "CommonUtilities.h"
 #include "RenderContext.h"
+#include "RenderObject.h"
 #include "DynamicPoolAllocator.h"
 #include "StaticPoolAllocator.h"
 
@@ -18,6 +19,10 @@ namespace Dx11Sandbox
     class Renderer;
     class RenderContext;
     class SceneManager;
+    class Frustrum;
+    class Culler;
+
+    
     
     // renderer listener to listen and act for rendering events
     class RenderStartListener
@@ -60,13 +65,15 @@ namespace Dx11Sandbox
         UINT getScreenHeight(){return m_screenHeight;}
 
 
+         void cullObjectsToRenderQueues(Frustrum& frust);
+
     protected:
         void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
         void initialize(ID3D11Device* pd3dDevice, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
         void update(double fTime, float fElapsedTime);
         void beginDraw(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime, float fElapsedTime);
         
-        void cullObjectsToRenderQueues();
+       
 
         void destroyWorld();
         void clearRenderQueues();
@@ -79,7 +86,7 @@ namespace Dx11Sandbox
         //only 1 renderlistener can be assigned. Application itself can propagate the event to multiple recepients (with the possible killing of perf)
         RenderObjectListener* m_renderObjectListener;
 
-
+        Culler* m_culler;
 
         Root* m_root;
         Camera  m_mainCamera;

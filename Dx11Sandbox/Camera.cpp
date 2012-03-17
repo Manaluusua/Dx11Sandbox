@@ -182,9 +182,9 @@ namespace Dx11Sandbox
 
         D3DXVec3Cross(&right, &up, &dir);
 
-        D3DXQUATERNION xrot(right.x*sin(x*0.5),right.y*sin(x*0.5), right.z*sin(x*0.5), cos(x*0.5));
-        D3DXQUATERNION yrot(up.x*sin(y*0.5),up.y*sin(y*0.5), up.z*sin(y*0.5), cos(y*0.5));
-        D3DXQUATERNION zrot(dir.x*sin(z*0.5),dir.y*sin(z*0.5), dir.z*sin(z*0.5), cos(z*0.5));
+        D3DXQUATERNION xrot(right.x*sin(x*0.5f),right.y*sin(x*0.5f), right.z*sin(x*0.5f), cos(x*0.5f));
+        D3DXQUATERNION yrot(up.x*sin(y*0.5f),up.y*sin(y*0.5f), up.z*sin(y*0.5f), cos(y*0.5f));
+        D3DXQUATERNION zrot(dir.x*sin(z*0.5f),dir.y*sin(z*0.5f), dir.z*sin(z*0.5f), cos(z*0.5f));
 
         m_orientation =  yrot * m_orientation * xrot * zrot;
         m_cacheValid = false;
@@ -205,5 +205,47 @@ namespace Dx11Sandbox
             m_cacheValid = false;
         }
         m_reflected = val;
+    }
+
+    void Camera::calculateFrustrum(Dx11Sandbox::Frustrum* frustrum)
+    {
+        D3DXMATRIX viewProj(m_viewMatrix * m_projMatrix);
+        
+        frustrum->rightPlane.a = viewProj._14 - viewProj._11;
+        frustrum->rightPlane.b = viewProj._24 - viewProj._21;
+        frustrum->rightPlane.c = viewProj._34 - viewProj._31;
+        frustrum->rightPlane.d = viewProj._44 - viewProj._41;
+
+        frustrum->leftPlane.a = viewProj._14 + viewProj._11;
+        frustrum->leftPlane.b = viewProj._24 + viewProj._21;
+        frustrum->leftPlane.c = viewProj._34 + viewProj._31;
+        frustrum->leftPlane.d = viewProj._44 + viewProj._41;
+ 
+        frustrum->topPlane.a = viewProj._14 - viewProj._12;
+        frustrum->topPlane.b = viewProj._24 - viewProj._22;
+        frustrum->topPlane.c = viewProj._34 - viewProj._32;
+        frustrum->topPlane.d = viewProj._44 - viewProj._42;
+ 
+        frustrum->bottomPlane.a = viewProj._14 + viewProj._12;
+        frustrum->bottomPlane.b = viewProj._24 + viewProj._22;
+        frustrum->bottomPlane.c = viewProj._34 + viewProj._32;
+        frustrum->bottomPlane.d = viewProj._44 + viewProj._42;
+ 
+        frustrum->nearPlane.a = viewProj._13;
+        frustrum->nearPlane.b = viewProj._23;
+        frustrum->nearPlane.c = viewProj._33;
+        frustrum->nearPlane.d = viewProj._43;
+ 
+        frustrum->farPlane.a = viewProj._14 - viewProj._13;
+        frustrum->farPlane.b = viewProj._24 - viewProj._23;
+        frustrum->farPlane.c = viewProj._34 - viewProj._33;
+        frustrum->farPlane.d = viewProj._44 - viewProj._43;
+ 
+        D3DXPlaneNormalize( &frustrum->leftPlane, &frustrum->leftPlane );
+        D3DXPlaneNormalize( &frustrum->rightPlane, &frustrum->rightPlane );
+        D3DXPlaneNormalize( &frustrum->topPlane, &frustrum->topPlane );
+        D3DXPlaneNormalize( &frustrum->bottomPlane, &frustrum->bottomPlane );
+        D3DXPlaneNormalize( &frustrum->nearPlane, &frustrum->nearPlane );
+        D3DXPlaneNormalize( &frustrum->farPlane, &frustrum->farPlane );
     }
 }

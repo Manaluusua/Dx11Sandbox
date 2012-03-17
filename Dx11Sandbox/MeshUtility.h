@@ -17,6 +17,8 @@ namespace Dx11Sandbox
         MeshUtility(void);
         ~MeshUtility(void);
 
+        static D3DXVECTOR4 calculateBoundingSphereForPositions(const UINT32 *indices,UINT numIndices,const D3DXVECTOR3* positions);
+
         static Mesh* createSkyBoxMesh(ID3D11Device *device, const string& name);
         static Mesh* createFinitePlane(ID3D11Device *device, const string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2); 
 

@@ -89,6 +89,7 @@
     <ClCompile Include="CommonUtilities.cpp" />
     <ClCompile Include="Compositor.cpp" />
     <ClCompile Include="DemoApplication.cpp" />
+    <ClCompile Include="Frustrum.cpp" />
     <ClCompile Include="ILDescriptions.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
@@ -102,6 +103,7 @@
     <ClCompile Include="RenderContext.cpp" />
     <ClCompile Include="Root.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SIMDCuller.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="WaterPlane.cpp" />
@@ -112,8 +114,10 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CommonUtilities.h" />
     <ClInclude Include="Compositor.h" />
+    <ClInclude Include="Culler.h" />
     <ClInclude Include="DemoApplication.h" />
     <ClInclude Include="DynamicPoolAllocator.h" />
+    <ClInclude Include="Frustrum.h" />
     <ClInclude Include="ILDescriptions.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialManager.h" />
@@ -122,6 +126,7 @@
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="MeshUtility.h" />
     <ClInclude Include="PixelBox.h" />
+    <ClInclude Include="SIMDCuller.h" />
     <ClInclude Include="StaticPoolAllocator.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderObject.h" />

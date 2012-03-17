@@ -69,8 +69,9 @@ namespace Dx11Sandbox
         
         IndexBuffer m_indices;
         VertexBuffer m_vertices;
-        bool m_sharedVertices;
         D3D11_PRIMITIVE_TOPOLOGY m_primType;
+        bool m_sharedVertices;
+        
     };
 
    

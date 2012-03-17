@@ -2,6 +2,7 @@
 #define DX11SANDBOX_CAMERA_H
 #include <D3D11.h>
 #include "MathUtil.h"
+#include "Frustrum.h"
 
 namespace Dx11Sandbox
 {
@@ -34,6 +35,8 @@ namespace Dx11Sandbox
 
         void setReflectionPlane(D3DXVECTOR3& normal, float d);
         void setReflectionEnabled(bool val);
+
+        void calculateFrustrum(Dx11Sandbox::Frustrum* frustrum);
 
     private:
 

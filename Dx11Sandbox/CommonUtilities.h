@@ -6,6 +6,7 @@
 
 namespace Dx11Sandbox
 {
+
 #define MAX_ERROR_LEN 120
 
 #ifndef SAFE_DELETE
@@ -30,15 +31,11 @@ namespace Dx11Sandbox
 #define CACHE_ALIGN __declspec(align(CACHE_LINE))
 #endif
 
-    enum RenderQueueFlag{
-        RINITIAL, //first objects, background?
-        RDEFAULT, //opaque
-        RTRANSPARENT, //transparent
-        RSCENEINPUT, //here the previous scene is available for input
-        RFINAL //last
-    };
 
+   
     
+    //
+
 
     typedef std::basic_string<TCHAR> wstring;
     typedef std::string string;

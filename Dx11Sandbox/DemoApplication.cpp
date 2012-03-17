@@ -5,7 +5,6 @@
 #include "MaterialManager.h"
 #include "Material.h"
 #include "MeshManager.h"
-#include "RenderObject.h"
 #include "WaterPlane.h"
 
 DemoApplication::DemoApplication()
@@ -19,7 +18,8 @@ DemoApplication::DemoApplication()
     m_lastMousePos(-1,-1),
     m_mouseDelta(0,0),
     m_lastPassID(0),
-    m_time(0)
+    m_time(0),
+    m_waterPlane(0)
 {
 
 }
@@ -113,12 +113,12 @@ void DemoApplication::createWorld(SceneManager* mngr)
     mat = MaterialManager::getSingleton()->getOrCreateMaterial(device, L"terrain.fx", L"terrain1",MeshInputLayouts::POS3NORM3TEX2);
     mat->setTexture("texture1", L"grass.jpg");
     TextureManager::getSingleton()->createTexture(device, L"grass.jpg", L"grass.jpg");
-    MeshUtility::createTerrainFromHeightMap(device,mngr, L"heightmapTerrain.png", mat,500,500,80,30,30,10);
+    MeshUtility::createTerrainFromHeightMap(device,mngr, L"heightmapTerrain.png", mat,500,500,80,15,15,10);
     
-    //waterplane
+    /*//waterplane
     Dx11Sandbox::string name("waterPlane1");
     m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-20,220,250);
-
+    */
    
 
 }
@@ -213,7 +213,7 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 
 void DemoApplication::shutDown(SceneManager* mngr)
 {
-    delete m_waterPlane;
+    SAFE_DELETE( m_waterPlane);
 }
 
 
@@ -238,7 +238,7 @@ void DemoApplication::renderingObject(const RenderObject* object, RenderContext*
     D3DXMATRIX viewProj =  (*view) * (*proj);
 
     //temp
-    D3DXVECTOR3 sunDir(0.3f,1.f,0.3f);
+    D3DXVECTOR3 sunDir(0.5f,0.3f,0.5f);
     D3DXVec3Normalize(&sunDir, &sunDir);
     D3DXVECTOR3 sunCol(1.0f,1.0f,1.5f);
     D3DXVECTOR3 transl = -(*mngr->getMainCamera().getTranslation());

@@ -5,7 +5,7 @@
 #include "TextureManager.h"
 #include "Texture.h"
 #include "RenderObject.h"
-
+#include "Frustrum.h"
 
 WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, const Dx11Sandbox::string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2)
 {
@@ -68,8 +68,14 @@ void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbo
     cam->setReflectionEnabled(true);
 
     context->setCustomClipPlane(clipplane);
-
+    
     context->m_renderPassID = 112;
+
+
+    Dx11Sandbox::Frustrum frust;
+    cam->calculateFrustrum(&frust);
+    mngr->cullObjectsToRenderQueues(frust);
+
     mngr->renderQueue(fTime,fElapsedTime,cam,Dx11Sandbox::RDEFAULT, mngr->getDefaultRenderer());
     mngr->renderQueue(fTime,fElapsedTime,cam,Dx11Sandbox::RFINAL, mngr->getDefaultRenderer());
 

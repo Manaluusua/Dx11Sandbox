@@ -7,9 +7,9 @@
 #include "MeshManager.h"
 #include "Mesh.h"
 #include "BasicRenderer.h"
-
+#include "Frustrum.h"
 #include "RenderObject.h"
-
+#include "SIMDCuller.h"
 namespace Dx11Sandbox
 {
     SceneManager::SceneManager(Root* root)
@@ -17,6 +17,7 @@ namespace Dx11Sandbox
         m_renderer( new BasicRenderer() ),
         m_renderContext(),
         m_renderObjectListener(0),
+        m_culler(new SIMDCuller()),
         m_screenWidth(0),
         m_screenHeight(0)
     {
@@ -42,6 +43,7 @@ namespace Dx11Sandbox
         destroyManagers();
         m_renderqueues.clear();
         SAFE_DELETE(m_renderer);
+        SAFE_DELETE(m_culler);
     }
 
     void SceneManager::destroyManagers()
@@ -139,7 +141,10 @@ namespace Dx11Sandbox
     {
         
         m_renderContext.clearState();
-        cullObjectsToRenderQueues();
+
+        Frustrum frust;
+        cam->calculateFrustrum(&frust);
+        cullObjectsToRenderQueues(frust);
 
         //normal objects
         renderQueue( fTime, fElapsedTime,cam, RINITIAL,renderer);
@@ -151,34 +156,6 @@ namespace Dx11Sandbox
         renderQueue( fTime, fElapsedTime,cam, RSCENEINPUT,renderer);
         //Final
         renderQueue( fTime, fElapsedTime,cam,RFINAL,renderer);
-    }
-
-    //TO DO: the actual culling
-    void SceneManager::cullObjectsToRenderQueues()
-    {
-        clearRenderQueues();
-        //static scene
-        for(int i=0;i<getNumberOfStaticPoolVectors();i++)
-        {
-            const std::vector<RenderObject> *objects = getStaticPoolVector(i);
-            for(int j=0;j<objects->size();++j)
-            {
-                const RenderObject& obj = objects->at(j);
-                m_renderqueues[obj.renderQueueFlag].push_back(&obj);
-            }
-        }
-
-        //dynamic scene
-        for(int i=0;i<getNumberOfDynamicPoolVectors();i++)
-        {
-            const PoolVector<AllocationUnit<RenderObject> > &objects = getDynamicPoolVector(i);
-            for(int j=0;j<objects.count;++j)
-            {
-                const RenderObject& obj = objects.vector.at(j).data;
-                m_renderqueues[obj.renderQueueFlag].push_back(&obj);
-            }
-        }
-
     }
 
 
@@ -195,4 +172,44 @@ namespace Dx11Sandbox
         }
       
    }
+
+
+
+ //TO DO: the actual culling
+    void SceneManager::cullObjectsToRenderQueues(Frustrum& frust)
+    {
+
+        clearRenderQueues();
+        std::vector<const RenderObject*> nonCulled;
+        //static scene
+        for(int i=0;i<getNumberOfStaticPoolVectors();i++)
+        {
+            //cull
+            const std::vector<RenderObject> &objects = *getStaticPoolVector(i);
+            m_culler->cull(frust,objects,nonCulled);
+
+            //send non-culled to rendering
+            for(int j=0;j<nonCulled.size();++j)
+            {
+                const RenderObject* obj = nonCulled[j];
+                m_renderqueues[obj->renderQueueFlag].push_back(obj);
+            }
+        }
+
+        nonCulled.clear();
+        //dynamic scene
+        for(int i=0;i<getNumberOfDynamicPoolVectors();i++)
+        {
+             //cull
+            const PoolVector<AllocationUnit<RenderObject> > &objects = getDynamicPoolVector(i);
+            m_culler->cull(frust,objects,nonCulled);
+
+            //send non-culled to rendering
+            for(int j=0;j<nonCulled.size();++j)
+            {
+                const RenderObject* obj = nonCulled[j];
+                m_renderqueues[obj->renderQueueFlag].push_back(obj);
+            }
+        }
+    }
 }

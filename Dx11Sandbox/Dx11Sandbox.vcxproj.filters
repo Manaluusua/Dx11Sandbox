@@ -81,6 +81,12 @@
     <ClCompile Include="Compositor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Frustrum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SIMDCuller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Root.h">
@@ -150,6 +156,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Compositor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustrum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Culler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SIMDCuller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
