@@ -61,7 +61,7 @@ PS_INPUT VS( VS_INPUT input )
 float4 PS( PS_INPUT input) : SV_Target
 {
     
-
+	
     float4 output = texture1.Sample( samLinear, input.uv );
 	output.rgb *= ambient + sunColor*saturate(dot(input.normal,sunDirection));
 
@@ -82,7 +82,6 @@ technique11 Terrain
 	
     pass P0
     {
-
         SetVertexShader( CompileShader( vs_4_0, VS() ) );
         SetGeometryShader( NULL );
         SetPixelShader( CompileShader( ps_4_0, PS() ) );

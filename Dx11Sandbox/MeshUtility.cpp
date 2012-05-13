@@ -166,15 +166,117 @@ namespace Dx11Sandbox
     }
 
 
-    Mesh* MeshUtility::createFinitePlane(ID3D11Device *device, const string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2)
+    RenderObject** MeshUtility::createFinitePlane(ID3D11Device *device,SceneManager* mngr, const string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, int tesselationFactorX, int tesselationFactorZ)
     {
-        Mesh *mesh = MeshManager::getSingleton()->createMesh(name);
-        if(!mesh)
+
+        float incrementX = (1.f/(tesselationFactorX-1))*2;
+        float incrementZ = (1.f/(tesselationFactorZ-1))*2;
+
+        int pointsX = tesselationFactorX;
+        int pointsZ = tesselationFactorZ;
+
+        extends1 *= 0.5f;
+        extends2 *= 0.5f;
+
+        D3DXVec3Normalize(&normal, &normal);
+        D3DXVECTOR3 vec1;
+        D3DXVECTOR3 vec2;
+        MathUtil::calculateOrthogonalVector(normal, vec1);
+        D3DXVec3Cross(&vec2,&normal, &vec1);
+
+        D3DXVec3Normalize(&vec1,&vec1);
+        D3DXVec3Normalize(&vec2,&vec2);
+
+        RenderObject** ro = mngr->allocateDynamic();
+        Mesh* mesh = MeshManager::getSingleton()->createMesh(name + "Mesh");
+        
+        //
+        float x=0, y=0, z=0;
+        unsigned int i,j;
+        float xx,zz;
+
+        D3DXVECTOR3 *positions = new D3DXVECTOR3[pointsX*pointsZ];
+        D3DXVECTOR3 *normals = new D3DXVECTOR3[pointsX*pointsZ];
+        float* UV = new float[pointsX*pointsZ*2];
+        BYTE* ptr[3];
+
+        ptr[0] = (BYTE*)positions;
+        ptr[1] = (BYTE*)normals;
+        ptr[2] = (BYTE*)UV;
+        //create "point cloud"
+        //positions
+        for(i=0,zz=-1.f;i<pointsZ;++i,zz+=incrementZ)
+        {
+            for(j=0,xx = -1.f;j<pointsX;++j, xx+=incrementX)
+            {
+                
+                positions[i*pointsX + j] =normal*-d + vec1*extends1*xx + vec2*extends2*zz;
+            }
+        }
+
+        //normals & UVS
+        for(i=0;i<pointsZ;++i)
+        {
+            for(j=0;j<pointsX;++j)
+            {
+                
+                normals[i*pointsX + j] = getNormalForPosition(j,i,pointsX, pointsZ,positions);
+                UV[i*pointsX*2 + j*2] = 0.5*((float)(j))/tesselationFactorX;
+                UV[i*pointsX*2 + j*2 + 1] = 0.5*((float)(i))/tesselationFactorZ;
+            }
+        }
+        
+        mesh->createVertexBuffer(device,ptr,pointsX*pointsZ,MeshInputLayouts::POS3NORM3TEX2);
+
+        UINT indicesCount = (tesselationFactorX-1)*(tesselationFactorZ-1)*6;
+        UINT32 *indices = new UINT32[indicesCount];
+
+        int indicesX = pointsX-1;
+        int indicesZ = pointsZ-1;
+
+        for(int i=0; i< indicesZ; ++i)
+        {
+            for(int j=0; j< indicesX; ++j)
+            {
+                indices[(i*(indicesX) + j)*6] = (UINT32)j+i*pointsX;
+                indices[(i*(indicesX) + j)*6 +1] = (UINT32)j+1+i*pointsX;
+                indices[(i*(indicesX) + j)*6 +2] = (UINT32)j+(i+1)*pointsX;
+
+                indices[(i*(indicesX) + j)*6 +3] = (UINT32)j+(i+1)*pointsX;
+                indices[(i*(indicesX) + j)*6 +4] = (UINT32)j+1+i*pointsX;
+                indices[(i*(indicesX) + j)*6 +5] = (UINT32)j+1+(i+1)*pointsX;
+
+            }
+
+        }
+
+        mesh->createIndexBuffer(device,(BYTE*)indices,indicesCount,DXGI_FORMAT_R32_UINT);
+
+        (*ro)->mesh = mesh;
+        (*ro)->mat = 0;
+        (*ro)->boundingSphere = calculateBoundingSphereForPositions(indices,indicesCount , positions);
+
+        delete[] positions;
+        delete[] normals;
+        delete[] UV;
+        delete indices;
+
+
+
+        //
+        
+
+        return ro;
+        /*Mesh *mesh = MeshManager::getSingleton()->createMesh(name);
+        if(!mesh || tesselationFactorX < 1 || tesselationFactorY < 1)
             return 0;
 
-        D3DXVECTOR3 pos[4];
-        D3DXVECTOR3 norm[4];
-        D3DXVECTOR2 UV[4];
+        int numOfVertices = (1 + tesselationFactorX) * (1+tesselationFactorY);
+
+
+        D3DXVECTOR3 *pos = new D3DXVECTOR3[numOfVertices];
+        D3DXVECTOR3 *norm = new D3DXVECTOR3[numOfVertices];
+        D3DXVECTOR2 *UV = new D3DXVECTOR2[numOfVertices];
 
         BYTE* ptr[3];
 
@@ -212,7 +314,11 @@ namespace Dx11Sandbox
 
         mesh->createMeshFromBuffers(device, ptr, 0, 4,0,DXGI_FORMAT_R16_UINT,MeshInputLayouts::POS3NORM3TEX2);
         mesh->setPrimType(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-        return mesh;
+
+        SAFE_DELETE_ARRAY(pos);
+        SAFE_DELETE_ARRAY(norm);
+        SAFE_DELETE(UV);
+        return mesh;*/
     }
 
 
@@ -298,7 +404,7 @@ namespace Dx11Sandbox
         
         vertices->createVertexBuffer(device,ptr,totalPointsX*totalPointsZ,MeshInputLayouts::POS3NORM3TEX2);
 
-        terrainName = terrainName + "Incides";
+        terrainName = terrainName + "Indices";
         Mesh* mesh;
         UINT indicesCount = (tesselationFactor)*(tesselationFactor)*6;
         UINT32 *indices = new UINT32[indicesCount];
@@ -385,7 +491,9 @@ namespace Dx11Sandbox
             }
         }
 
-        D3DXVECTOR4 sphere((minimum[0] + maximum[0])*0.5, (minimum[1] + maximum[1])*0.5,(minimum[2] + maximum[2])*0.5,1);
+        float len = sqrt(pow(maximum[0] - minimum[0],2) + pow(maximum[1] - minimum[1],2)  + pow(maximum[2] - minimum[2],2))*0.5 ;
+
+        D3DXVECTOR4 sphere((minimum[0] + maximum[0])*0.5, (minimum[1] + maximum[1])*0.5,(minimum[2] + maximum[2])*0.5,len);
 
         return sphere;
     }

@@ -209,7 +209,7 @@ namespace Dx11Sandbox
 
     void Camera::calculateFrustrum(Dx11Sandbox::Frustrum* frustrum)
     {
-        D3DXMATRIX viewProj(m_viewMatrix * m_projMatrix);
+        D3DXMATRIX viewProj((*getViewMatrix()) * (*getProjectionMatrix()));
         
         frustrum->rightPlane.a = viewProj._14 - viewProj._11;
         frustrum->rightPlane.b = viewProj._24 - viewProj._21;

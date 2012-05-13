@@ -84,7 +84,6 @@ namespace Dx11Sandbox
     bool Material::bind(RenderContext* context)
     {
         
-
         if( this == context->getBoundMaterial() ) 
         {
             return false;
@@ -114,7 +113,9 @@ namespace Dx11Sandbox
                 ID3DX11EffectShaderResourceVariable* texResource = var->AsShaderResource();
                 Texture* tex = TextureManager::getSingleton()->getTexture(iter->second);
                 if(tex)
+                {
                     texResource->SetResource(tex->GetShaderResourceView());
+                }
             }
         }
 

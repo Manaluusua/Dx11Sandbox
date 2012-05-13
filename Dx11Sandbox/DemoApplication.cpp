@@ -83,10 +83,11 @@ void DemoApplication::createWorld(SceneManager* mngr)
     
     
     Camera& cam = mngr->getMainCamera();
-    ID3D11Device* device = mngr->getDevice();
+
+    ID3D11Device* device = mngr->getRenderContext()->getDevice();
     //camera
-    D3DXVECTOR3 vecEye( 0.0f, 15.0f, -0.0f );
-    D3DXVECTOR3 vecAt ( 0.0f, 0.0f, -15.0f );
+    D3DXVECTOR3 vecEye( 0.0f, 90.0f, 60.0f );
+    D3DXVECTOR3 vecAt ( 0.0f, 88.0f, 70.0f );
     D3DXVECTOR3 up (0.0f,1.0f,0.0f);
     cam.lookAt(vecEye, vecAt, up);
         
@@ -113,12 +114,12 @@ void DemoApplication::createWorld(SceneManager* mngr)
     mat = MaterialManager::getSingleton()->getOrCreateMaterial(device, L"terrain.fx", L"terrain1",MeshInputLayouts::POS3NORM3TEX2);
     mat->setTexture("texture1", L"grass.jpg");
     TextureManager::getSingleton()->createTexture(device, L"grass.jpg", L"grass.jpg");
-    MeshUtility::createTerrainFromHeightMap(device,mngr, L"heightmapTerrain.png", mat,500,500,80,15,15,10);
+    MeshUtility::createTerrainFromHeightMap(device,mngr, L"heightmapTerrain.png", mat,1000,1000,200,40,40,10);
     
-    /*//waterplane
+    //waterplane
     Dx11Sandbox::string name("waterPlane1");
-    m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-20,220,250);
-    */
+    m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-60,340,340,50,50);
+    
    
 
 }
@@ -222,13 +223,9 @@ void DemoApplication::renderingObject(const RenderObject* object, RenderContext*
     Material* mat = object->mat;
 
     //new pass, don't try to skip effect state setting
-    if(m_lastPassID != state->m_renderPassID)
-    {
-        m_lastPassID = state->m_renderPassID;
-        m_lastMaterial = 0;
-    }
+    
 
-    if(mat==m_lastMaterial)
+    if(mat==state->getBoundMaterial())
         return;
     m_lastMaterial = mat;
 

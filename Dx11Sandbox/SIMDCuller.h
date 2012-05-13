@@ -11,10 +11,10 @@ namespace Dx11Sandbox
         SIMDCuller(void);
         virtual ~SIMDCuller(void);
 
-        virtual void cull(const Frustrum frusta,const std::vector<RenderObject>& in ,std::vector<const RenderObject*>& out);
+        virtual void cull(const Frustrum& frusta,const std::vector<RenderObject>& in ,std::vector<const RenderObject*>& out);
     
         //cull pool allocated objects. Ugly, figure out a more uniform way without sacrifing the theoretic gains from better cache hits :p
-        virtual void cull(const Frustrum frusta,const PoolVector<AllocationUnit<RenderObject> > &in ,std::vector<const RenderObject*>& out);
+        virtual void cull(const Frustrum& frusta,const PoolVector<AllocationUnit<RenderObject> > &in ,std::vector<const RenderObject*>& out);
     };
 
 

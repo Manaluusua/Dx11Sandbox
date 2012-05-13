@@ -6,11 +6,18 @@ SamplerState samLinear
     AddressV = WRAP;
 };
 
+RasterizerState rasterState
+{ 
+	FillMode = WireFrame; 
+};
 
 //shader impl and uniforms
 static const float3 waterColor = float3(0.1f,0.2f,0.1f);
 static const float3 ambient   = float3( 0.1f, 0.1f, 0.1f );
 static const float4 specular = float4(1.0f,1.0f,1.0f,64.f);
+
+Texture2D refraction;
+Texture2D reflection;  
 
 cbuffer sceneInfo
 {
@@ -25,11 +32,8 @@ cbuffer sceneInfo
 cbuffer waterPlaneInfo
 {
 	float4x4 reflectionViewProj;
-
+	float4x4 waves;
 };
-
-Texture2D reflection;  
-Texture2D refraction;
 
 
 struct VS_INPUT
@@ -60,12 +64,28 @@ float3 fresnel(float3 normal, float3 viewDir, float3 col1, float3 col2)
 	return a*col1 + col2*(1-a)*pow(1-saturate(dot(normal, viewDir)),exponent);
 }
 
+float calculateHeightForPoint(float2 position, float time)
+{
+	return 0;
+}
+
+float3 calculateNormalForPoint(float2 position, float time)
+{
+	return float3(0,1,0);
+}
+
 PS_INPUT VS( VS_INPUT input )
 {
     PS_INPUT output;
     
-    output.position = mul( float4(input.position,1), viewProj );
-	output.normal = input.normal;
+	float3 wavePosition = input.position;
+	
+	output.normal = calculateNormalForPoint(wavePosition.xz,0);
+	
+	wavePosition.y += calculateHeightForPoint(wavePosition.xz,0);
+	
+    output.position = mul( float4(wavePosition,1), viewProj );
+	
 	
     output.uv = input.uv;
 
@@ -112,7 +132,7 @@ technique11 WaterPlane
 	
     pass P0
     {
-
+		//SetRasterizerState( rasterState );
         SetVertexShader( CompileShader( vs_4_0, VS() ) );
         SetGeometryShader( NULL );
         SetPixelShader( CompileShader( ps_4_0, PS() ) );

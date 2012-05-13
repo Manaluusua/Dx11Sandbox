@@ -33,14 +33,14 @@ namespace Dx11Sandbox
         D3DXPLANE farPlane;
         D3DXPLANE nearPlane;
         
-        void convertToSimdFrustrum(Frustrum::SIMDFrustrum& out);
+        void convertToSimdFrustrum(Frustrum::SIMDFrustrum& out) const;
 
         
     };
 
     //inlines
 
-    inline void Frustrum::convertToSimdFrustrum(Frustrum::SIMDFrustrum& out)
+    inline void Frustrum::convertToSimdFrustrum(Frustrum::SIMDFrustrum& out) const
     {
     
         __declspec(align(16)) float line[4];

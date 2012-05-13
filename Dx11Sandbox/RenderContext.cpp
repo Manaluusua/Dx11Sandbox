@@ -7,11 +7,9 @@ namespace Dx11Sandbox
 {
 
     RenderContext::RenderContext(void)
-        :m_customFlags(0x0),
-        m_boundMesh(0),
+        :m_boundMesh(0),
         m_boundMaterial(0),
-        m_customClipPlane(0,0,0,0),
-        m_renderPassID(0)
+        m_customClipPlane(0,0,0,0)
 
     {
     }
@@ -20,7 +18,6 @@ namespace Dx11Sandbox
     RenderContext::~RenderContext(void)
     {
     }
-
 
 
     void RenderContext::bindMesh(Mesh* mesh)
@@ -42,6 +39,7 @@ namespace Dx11Sandbox
         if(mat->bind(this))
             m_boundMaterial = mat;
     }
+
 
 
     void RenderContext::bindRenderTargets(UINT num, ID3D11RenderTargetView *const *renderTargetViews, ID3D11DepthStencilView *depthStencilView)

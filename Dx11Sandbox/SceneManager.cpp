@@ -26,7 +26,6 @@ namespace Dx11Sandbox
        m_renderqueues[RTRANSPARENT];
        m_renderqueues[RSCENEINPUT];
        m_renderqueues[RFINAL];
-
     }
 
     SceneManager* SceneManager::createSceneManager(Root* root)
@@ -75,7 +74,7 @@ namespace Dx11Sandbox
     {
          // Setup the camera's projection parameters
         float aspectRatio = pBackBufferSurfaceDesc->Width / ( FLOAT )pBackBufferSurfaceDesc->Height;
-        m_mainCamera.setProjection(D3DX_PI / 4, aspectRatio, 0.1f, 1000.0f);
+        m_mainCamera.setProjection(D3DX_PI / 4, aspectRatio, 0.1f, 800.0f);
 
         m_screenWidth = pBackBufferSurfaceDesc->Width;
         m_screenHeight = pBackBufferSurfaceDesc->Height;
@@ -133,7 +132,7 @@ namespace Dx11Sandbox
         float ClearColor[4] = { 0.f, 0.f, 0.f, 0.0f };
         //pd3dImmediateContext->ClearRenderTargetView( DXUTGetD3D11RenderTargetView(), ClearColor );
         pd3dImmediateContext->ClearDepthStencilView( DXUTGetD3D11DepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0 );
-        m_renderContext.m_renderPassID = 0;
+
         renderScene( fTime,fElapsedTime, &m_mainCamera, m_renderer);
     }
 
@@ -141,6 +140,8 @@ namespace Dx11Sandbox
     {
         
         m_renderContext.clearState();
+
+
 
         Frustrum frust;
         cam->calculateFrustrum(&frust);
@@ -175,14 +176,13 @@ namespace Dx11Sandbox
 
 
 
- //TO DO: the actual culling
     void SceneManager::cullObjectsToRenderQueues(Frustrum& frust)
     {
 
         clearRenderQueues();
         std::vector<const RenderObject*> nonCulled;
         //static scene
-        for(int i=0;i<getNumberOfStaticPoolVectors();i++)
+        for(int i=0;i<getNumberOfStaticPoolVectors();++i)
         {
             //cull
             const std::vector<RenderObject> &objects = *getStaticPoolVector(i);
@@ -198,7 +198,7 @@ namespace Dx11Sandbox
 
         nonCulled.clear();
         //dynamic scene
-        for(int i=0;i<getNumberOfDynamicPoolVectors();i++)
+        for(int i=0;i<getNumberOfDynamicPoolVectors();++i)
         {
              //cull
             const PoolVector<AllocationUnit<RenderObject> > &objects = getDynamicPoolVector(i);

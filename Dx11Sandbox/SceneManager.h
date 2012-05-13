@@ -51,7 +51,7 @@ namespace Dx11Sandbox
         inline void renderQueue( double fTime, float fElapsedTime,  Camera* cam,RenderQueueFlag flag, Renderer* renderer);
 
         Camera& getMainCamera(){return m_mainCamera;};
-        ID3D11Device* getDevice(){return m_renderContext.getDevice();}
+        RenderContext* getRenderContext();
 
         Renderer* getDefaultRenderer(){return m_renderer;};
 
@@ -100,7 +100,14 @@ namespace Dx11Sandbox
         SceneManager(Root* root);
         Renderer* m_renderer;
         RenderContext m_renderContext;
-
     };
+
+
+    inline  RenderContext* SceneManager::getRenderContext()
+    {
+        return &m_renderContext;
+    }
 }
+
+
 #endif

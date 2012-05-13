@@ -20,6 +20,7 @@ namespace Dx11Sandbox
         RenderContext(void);
         ~RenderContext(void);
 
+        void resetContext();
 
         ID3D11Device* getDevice(){return m_device;}
         void setDevice(ID3D11Device* device){m_device = device;}
@@ -41,11 +42,13 @@ namespace Dx11Sandbox
         void bindBackBuffer();
 
         void clearState();
-
-        UINT32 m_customFlags;
-        UINT16 m_renderPassID;
-
+        
+        UINT32 generateUniqueRenderPassID();
+        void setCurrentRenderPassID(UINT32 id);
+        UINT32 getCurrentRenderPassID();
     private:
+
+        D3DXVECTOR4 m_customClipPlane;
 
         Mesh* m_boundMesh;
         Material *m_boundMaterial;
@@ -53,8 +56,9 @@ namespace Dx11Sandbox
         ID3D11Device* m_device;
         ID3D11DeviceContext* m_imContext;
        
-        D3DXVECTOR4 m_customClipPlane;
-    };
-}
 
+    };
+
+
+}
 #endif
