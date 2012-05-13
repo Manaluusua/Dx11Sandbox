@@ -11,6 +11,7 @@ SamplerState samLinear
 //shader impl and uniforms
 
 static const float3 ambient   = float3( 0.1f, 0.1f, 0.1f );  
+static const float3 heightLevels = float3(60.f,0,0);
 
 cbuffer sceneInfo
 {
@@ -23,8 +24,9 @@ cbuffer sceneInfo
 };
 
 Texture2D texture1;  
+Texture2D texture2;
 
-
+//Texture2D textureWeights;
 
 struct VS_INPUT
 {
@@ -52,7 +54,7 @@ PS_INPUT VS( VS_INPUT input )
 	output.normal = input.normal;
 	
     output.uv = input.uv;
-	
+
 	output.clipDistance = dot(float4(input.position,1),clipPlane);
 	
     return output;
@@ -61,8 +63,18 @@ PS_INPUT VS( VS_INPUT input )
 float4 PS( PS_INPUT input) : SV_Target
 {
     
+	float4 output = float4(0,0,0,1);
 	
-    float4 output = texture1.Sample( samLinear, input.uv );
+	
+	//float4 weights = textureWeights.Sample( samLinear, input.uv );
+	
+	//weights.rgb /= weights.r + weights.b + weights.g; 
+	
+    //output += texture1.Sample( samLinear, input.uv )*weights.r;
+	output += texture2.Sample( samLinear, input.uv );
+	
+	
+	
 	output.rgb *= ambient + sunColor*saturate(dot(input.normal,sunDirection));
 
 	

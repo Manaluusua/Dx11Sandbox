@@ -12,9 +12,9 @@ RasterizerState rasterState
 };
 
 //shader impl and uniforms
-static const float3 waterColor = float3(0.1f,0.2f,0.1f);
+static const float3 waterColor = float3(0.7f,1.f,0.95f);
 static const float3 ambient   = float3( 0.1f, 0.1f, 0.1f );
-static const float4 specular = float4(1.0f,1.0f,1.0f,64.f);
+static const float4 specular = float4(1.0f,0.7f,0.4f,512.f);
 
 Texture2D refraction;
 Texture2D reflection;  
@@ -32,6 +32,10 @@ cbuffer sceneInfo
 cbuffer waterPlaneInfo
 {
 	float4x4 reflectionViewProj;
+};
+
+cbuffer waveDefinitions
+{
 	float4x4 waves;
 };
 
@@ -66,12 +70,26 @@ float3 fresnel(float3 normal, float3 viewDir, float3 col1, float3 col2)
 
 float calculateHeightForPoint(float2 position, float time)
 {
-	return 0;
+	float height = 0;
+	height += waves._14*sin( dot(waves._11_12, position) * waves._13 + time*waves._41);
+	
+	height += waves._24*sin( dot(waves._21_22, position) * waves._23 + time*waves._42);
+	
+	height += waves._34*sin( dot(waves._31_32, position) * waves._33 + time*waves._43);
+	
+	return height;
 }
 
 float3 calculateNormalForPoint(float2 position, float time)
 {
-	return float3(0,1,0);
+	float3 normal = float3(0,1,0);
+	normal.xz -= waves._13 * waves._11_12 * waves._14*cos( dot(waves._11_12, position) * waves._13 + time*waves._41);
+	
+	normal.xz -= waves._23 * waves._21_22 * waves._24*cos( dot(waves._21_22, position) * waves._23 + time*waves._42);
+	
+	normal.xz -= waves._33 * waves._31_32 * waves._34*cos( dot(waves._31_32, position) * waves._33 + time*waves._43);
+	
+	return normalize(normal);
 }
 
 PS_INPUT VS( VS_INPUT input )
@@ -80,9 +98,9 @@ PS_INPUT VS( VS_INPUT input )
     
 	float3 wavePosition = input.position;
 	
-	output.normal = calculateNormalForPoint(wavePosition.xz,0);
+	output.normal = calculateNormalForPoint(wavePosition.xz,time);
 	
-	wavePosition.y += calculateHeightForPoint(wavePosition.xz,0);
+	wavePosition.y += calculateHeightForPoint(wavePosition.xz,time);
 	
     output.position = mul( float4(wavePosition,1), viewProj );
 	
@@ -90,9 +108,9 @@ PS_INPUT VS( VS_INPUT input )
     output.uv = input.uv;
 
 	output.reflPos = mul(float4(input.position,1), reflectionViewProj );
-	output.refrPos = output.position;
+	output.refrPos = mul( float4(input.position,1), viewProj );;
 	
-	output.camDir = normalize(camPos - input.position);
+	output.camDir = normalize(camPos - wavePosition);
 	
 	
     return output;
@@ -100,6 +118,10 @@ PS_INPUT VS( VS_INPUT input )
 
 float4 PS( PS_INPUT input) : SV_Target
 {
+
+	float3 normal = input.normal;
+
+
 	float2 reflCoords = (input.reflPos.xy / input.reflPos.w)*0.5f+0.5f;
 	reflCoords.y = -reflCoords.y;
 	
@@ -111,11 +133,10 @@ float4 PS( PS_INPUT input) : SV_Target
     float3 reflCol = reflection.Sample( samLinear, reflCoords ).rgb;
 	float3 refrCol = refraction.Sample( samLinear, refrCoords ).rgb;
 	
-	output.rgb += fresnel(input.normal, input.camDir, refrCol + waterColor, reflCol);
+	output.rgb += waterColor * fresnel(normal, input.camDir, refrCol , reflCol);
 	
 	float3 halfVec = normalize(input.camDir + sunDirection);
-	//output.rgb += pow(saturate(dot(halfVec, input.normal)), specular.w) * specular.rgb;
-	
+	output.rgb += pow(saturate(dot(halfVec, normal)), specular.w) * specular.rgb;
 	
     return output;
 }

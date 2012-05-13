@@ -112,20 +112,30 @@ void DemoApplication::createWorld(SceneManager* mngr)
      
     //terrain
     mat = MaterialManager::getSingleton()->getOrCreateMaterial(device, L"terrain.fx", L"terrain1",MeshInputLayouts::POS3NORM3TEX2);
-    mat->setTexture("texture1", L"grass.jpg");
-    TextureManager::getSingleton()->createTexture(device, L"grass.jpg", L"grass.jpg");
     MeshUtility::createTerrainFromHeightMap(device,mngr, L"heightmapTerrain.png", mat,1000,1000,200,40,40,10);
+
+    //textures
+    //mat->setTexture("texture1", L"roughRock.png");
+    //TextureManager::getSingleton()->createTexture(device, L"roughRock.png", L"roughRock.png");
+
+    mat->setTexture("texture2", L"grass.jpg");
+    TextureManager::getSingleton()->createTexture(device, L"grass.jpg", L"grass.jpg");
+
+    //mat->setTexture("textureWeights", L"terrainweights.png");
+    //TextureManager::getSingleton()->createTexture(device, L"terrainweights.png", L"terrainweights.png");
+
+    
     
     //waterplane
     Dx11Sandbox::string name("waterPlane1");
-    m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-60,340,340,50,50);
+    m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-60,340,340,200,200);
     
    
 
 }
 void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime)
 {
-    m_time = fElapsedTime;
+    m_time += fElapsedTime;
     handleInput(mngr,fElapsedTime, fTime);
     m_lastMaterial = 0;
 
@@ -235,9 +245,9 @@ void DemoApplication::renderingObject(const RenderObject* object, RenderContext*
     D3DXMATRIX viewProj =  (*view) * (*proj);
 
     //temp
-    D3DXVECTOR3 sunDir(0.5f,0.3f,0.5f);
+    D3DXVECTOR3 sunDir(0.5f,0.5f,0.5f);
     D3DXVec3Normalize(&sunDir, &sunDir);
-    D3DXVECTOR3 sunCol(1.0f,1.0f,1.5f);
+    D3DXVECTOR3 sunCol(1.0f,0.7f,0.4f);
     D3DXVECTOR3 transl = -(*mngr->getMainCamera().getTranslation());
 
     ID3DX11Effect* effect =  mat->getEffect();
