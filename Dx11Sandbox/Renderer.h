@@ -8,7 +8,7 @@
 namespace Dx11Sandbox
 {
     class Camera;
-    class RenderObject;
+    class CullInfo;
     class RenderContext;
 
     class Renderer
@@ -19,7 +19,7 @@ namespace Dx11Sandbox
 
         UINT32 rendererMask;
 
-        virtual void render(const RenderObject* object, RenderContext* state, Camera* camera) = 0;
+        virtual void render(const CullInfo* object, RenderContext* state, Camera* camera) = 0;
         
 
     };

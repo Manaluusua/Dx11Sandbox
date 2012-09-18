@@ -31,11 +31,11 @@ namespace Dx11Sandbox
         DISABLE_COPY(Texture)
 
         static Texture* CreateEmptyTexture2D(ID3D11Device* device, const wstring& texname, UINT texWidth, UINT texHeight,
-            UINT arraySize, UINT bindFlags, DXGI_FORMAT format = DXGI_FORMAT_R32G32B32A32_FLOAT, UINT cpuAccess = 0,
-            D3D11_USAGE usage = D3D11_USAGE_DEFAULT);
+            UINT arraySize, UINT bindFlags, DXGI_FORMAT format , UINT cpuAccess,
+            D3D11_USAGE usage );
 
         static Texture* CreateTextureFromFile(ID3D11Device* device, const wstring& filename,const wstring& texname,
-            UINT cpuAccess = 0, D3D11_USAGE usage = D3D11_USAGE_DEFAULT);
+            UINT cpuAccess , D3D11_USAGE usageT, UINT filter );
 
         Texture(const wstring texname);
         wstring m_name;

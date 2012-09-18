@@ -3,30 +3,19 @@
 #include "RenderContext.h"
 
 
+
+
 namespace Dx11Sandbox
 {
     Mesh::Mesh()
         :m_primType(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
     {
-        m_indices.format = DXGI_FORMAT_R16_UINT;
-        m_indices.indexCount = 0;
-        m_indices.buffer = 0;
-
-        m_vertices.numVertices = 0;
-        m_vertices.stride = 0;
-        m_vertices.buffer = 0;
-
-        m_sharedVertices = false;
+        
     }
 
 
     Mesh::~Mesh()
     {
-        if(!m_sharedVertices)
-        {
-            SAFE_RELEASE(m_vertices.buffer);
-        }
-        SAFE_RELEASE(m_indices.buffer);
 
     }
 
@@ -123,10 +112,14 @@ namespace Dx11Sandbox
     {
         D3D11_BUFFER_DESC indBuffDesc;
 	    D3D11_SUBRESOURCE_DATA indexData;
+        ID3D11Buffer* buffer;
 	    HRESULT hr;
 
         if(numIndices>0)
         {
+
+            
+
 	        indBuffDesc.Usage = usage;
             indBuffDesc.ByteWidth = (indexFormat == DXGI_FORMAT_R16_UINT?2:4)*numIndices;
 	        indBuffDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -139,13 +132,16 @@ namespace Dx11Sandbox
 	        indexData.SysMemPitch = 0;
 	        indexData.SysMemSlicePitch = 0;
 
-            hr = device->CreateBuffer(&indBuffDesc, &indexData, &m_indices.buffer);
+            hr = device->CreateBuffer(&indBuffDesc, &indexData, &buffer);
 	        if(FAILED(hr))
 	        {
 		        return false;
 	        }
-            m_indices.format = indexFormat;
-            m_indices.indexCount = numIndices;
+
+            m_indices = new IndexBuffer;
+            m_indices->setBuffer( buffer );
+            m_indices->setFormat( indexFormat );
+            m_indices->setIndexCount( numIndices );
             return true;
         }
         
@@ -157,6 +153,7 @@ namespace Dx11Sandbox
 
 	    D3D11_BUFFER_DESC vertBuffDesc;
 	    D3D11_SUBRESOURCE_DATA vertexData;
+        ID3D11Buffer* buffer;
 	    HRESULT hr;
 
         if(numVertices>0)
@@ -181,14 +178,15 @@ namespace Dx11Sandbox
 	        vertexData.SysMemPitch = 0;
 	        vertexData.SysMemSlicePitch = 0;
 
-            hr = device->CreateBuffer(&vertBuffDesc, &vertexData, &m_vertices.buffer);
+            hr = device->CreateBuffer(&vertBuffDesc, &vertexData, &buffer);
 	        if(FAILED(hr))
 	        {
 		        return false;
 	        }
-
-            m_vertices.numVertices = numVertices;
-            m_vertices.stride = stride;
+            m_vertices = new VertexBuffer;
+            m_vertices->setBuffer( buffer );
+            m_vertices->setVertexCount( numVertices );
+            m_vertices->setStride( stride );
             return true;
         }
         return false;
@@ -198,19 +196,20 @@ namespace Dx11Sandbox
     bool Mesh::bind(RenderContext *context)
     {
         Mesh* boundMesh = context->getBoundMesh();
-        if(!boundMesh || &boundMesh->getVertexBuffer() != &m_vertices)
+        if(!boundMesh || boundMesh->getVertexBuffer() != m_vertices.rawPtr())
         {
-            UINT* strides = &m_vertices.stride;
+            UINT stride = m_vertices->getStride();
+            UINT* strides = &stride;
             UINT offsets[1];
             offsets[0] = 0;
             ID3D11Buffer *buffers[1];
-            buffers[0] = m_vertices.buffer;
+            buffers[0] = m_vertices->getBuffer();
             context->getImmediateContext()->IASetVertexBuffers(0,1,buffers,strides, offsets);
         }
-        if(!boundMesh || &boundMesh->getIndexBuffer() != &m_indices)
+        if(!boundMesh || boundMesh->getIndexBuffer() != m_indices.rawPtr())
         {
-            if(m_indices.indexCount>0)
-                context->getImmediateContext()->IASetIndexBuffer(m_indices.buffer,m_indices.format, 0);
+            if(m_indices->getIndexCount()>0)
+                context->getImmediateContext()->IASetIndexBuffer(m_indices->getBuffer(),m_indices->getFormat(), 0);
         }
 
         if(!boundMesh || boundMesh->getPrimType() != m_primType)

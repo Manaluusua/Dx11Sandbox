@@ -8,13 +8,13 @@
 #include "Camera.h"
 #include "CommonUtilities.h"
 #include "RenderContext.h"
-#include "RenderObject.h"
+#include "CullInfo.h"
 #include "DynamicPoolAllocator.h"
 #include "StaticPoolAllocator.h"
 
 namespace Dx11Sandbox
 {
-    class RenderObject;
+    class CullInfo;
     class Material;
     class Renderer;
     class RenderContext;
@@ -35,10 +35,10 @@ namespace Dx11Sandbox
     class RenderObjectListener
     {
     public:
-        virtual void renderingObject(const RenderObject* object, RenderContext* state,SceneManager* mngr)=0;
+        virtual void renderingObject(const CullInfo* object, RenderContext* state,SceneManager* mngr)=0;
     };
 
-    class SceneManager: public DynamicPoolAllocator<RenderObject>, public StaticPoolAllocator<RenderObject>
+    class SceneManager: public DynamicPoolAllocator<CullInfo>
     {
     friend class Root;
     public:
@@ -79,7 +79,7 @@ namespace Dx11Sandbox
         void clearRenderQueues();
         void destroyManagers();
 
-        std::map<RenderQueueFlag, std::vector<const RenderObject*> > m_renderqueues;
+        std::map<RenderQueueFlag, std::vector<const CullInfo*> > m_renderqueues;
 
         std::set<RenderStartListener*> m_renderStartListeners;
 
@@ -100,6 +100,10 @@ namespace Dx11Sandbox
         SceneManager(Root* root);
         Renderer* m_renderer;
         RenderContext m_renderContext;
+
+        std::vector<const CullInfo*> m_cachedVisibleList;
+
+
     };
 
 

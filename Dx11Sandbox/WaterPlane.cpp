@@ -4,7 +4,7 @@
 #include "Material.h"
 #include "TextureManager.h"
 #include "Texture.h"
-#include "RenderObject.h"
+#include "CullInfo.h"
 #include "Frustrum.h"
 
 #include "MathUtil.h"
@@ -29,6 +29,7 @@ WaterPlane::WaveDefinition::WaveDefinition(D3DXVECTOR2 dir,float amplitude, floa
 
 
 WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, const Dx11Sandbox::string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, float tesselationX, float tesselationY)
+
 {
 
     mngr->addRenderStartListener(this);
@@ -46,14 +47,18 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
     m_refraction = Dx11Sandbox::TextureManager::getSingleton()->getOrCreateTexture(device,refrTexName,mngr->getScreenWidth(),mngr->getScreenHeight(),1,D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,DXGI_FORMAT_R32G32B32A32_FLOAT,0,D3D11_USAGE_DEFAULT);
     (*m_renderObject)->mat->setTexture("refraction",refrTexName);
 
+    Dx11Sandbox::wstring normalTexName = L"waterplanenormalmap";
+    m_normalMap = Dx11Sandbox::TextureManager::getSingleton()->getOrCreateTexture(device, L"brickbumpmap.jpg", normalTexName, 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_POINT );
+    (*m_renderObject)->mat->setTexture("normalmap",normalTexName);
+    
     m_normal = normal;
     m_d = d;
 
 
     //some wave values
-    m_waves[0] = WaveDefinition(D3DXVECTOR2(1,0),3,120,15);
-    m_waves[1] = WaveDefinition(D3DXVECTOR2(0,1),2.f,20,8);
-    m_waves[2] = WaveDefinition(D3DXVECTOR2(0.7f,0.7f),2,30,18);
+    m_waves[0] = WaveDefinition(D3DXVECTOR2(1,0),0.6,50,15);
+    m_waves[1] = WaveDefinition(D3DXVECTOR2(0,1),0.5f,20,8);
+    m_waves[2] = WaveDefinition(D3DXVECTOR2(0.7f,0.07f),0.6f,30,18);
     
     setupWaves();
 }

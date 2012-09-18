@@ -1,5 +1,5 @@
 #include "BasicRenderer.h"
-#include "RenderObject.h"
+#include "CullInfo.h"
 
 #include "RenderContext.h"
 #include "Mesh.h"
@@ -19,7 +19,7 @@ namespace Dx11Sandbox
     {
     }
 
-    void BasicRenderer::render(const RenderObject* object, RenderContext* state, Camera* camera)
+    void BasicRenderer::render(const CullInfo* object, RenderContext* state, Camera* camera)
     {
 
 
@@ -33,7 +33,7 @@ namespace Dx11Sandbox
         Mesh* mesh = object->mesh;
         Material* mat = object->mat;
         
-        if(!mesh || !mat || !(rendererMask & object->renderObjectMask) )
+        if(!mesh || !mat )
             return;
         
         ID3DX11Effect* effect = mat->getEffect();
@@ -65,12 +65,12 @@ namespace Dx11Sandbox
         for ( UINT passInd = 0; passInd < techDesc.Passes; ++passInd )
         {
             tech->GetPassByIndex(passInd)->Apply(0, context );
-            if(mesh->getIndexBuffer().indexCount > 0)
+            if(mesh->getIndexBuffer()->getIndexCount() > 0)
             {
-                context->DrawIndexed(mesh->getIndexBuffer().indexCount, 0, 0);
+                context->DrawIndexed(mesh->getIndexBuffer()->getIndexCount(), 0, 0);
             }else
             {
-                context->Draw(mesh->getVertexBuffer().numVertices,0);
+                context->Draw(mesh->getVertexBuffer()->getVertexCount(),0);
             }
         }
         

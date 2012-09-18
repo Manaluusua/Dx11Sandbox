@@ -13,75 +13,34 @@ namespace Dx11Sandbox
     {
     }
 
-    void SIMDCuller::cull(const Frustrum& frusta,const std::vector<RenderObject>& in ,std::vector<const RenderObject*>& out)
-    {
 
-        //TEST TO DISABLE CULLING
-      /*  for(int i=0;i<in.size();++i)
-        {
-            out.push_back(&in[i]);
-        }*/
-
-
-        Frustrum::SIMDFrustrum simdFrust;
-        frusta.convertToSimdFrustrum(simdFrust);
-
-        int maxSphereInd = in.size()-1;
-
-        for(int i=0;i<=maxSphereInd;i += 2)
-        {
-            const D3DXVECTOR4 &sphere1 = in[i].boundingSphere;
-            const D3DXVECTOR4 &sphere2 = in[min(i + 1, maxSphereInd)].boundingSphere; 
-
-            UINT32 result = cullSpheresSSE(simdFrust,sphere1, sphere2);
-
-
-            if(result & 0x1)
-            {
-                const RenderObject* ro = &in[i];
-                out.push_back(ro);
-            }
-            
-            if(  ((i+1 <= maxSphereInd) && (result & 0x2)) )
-            {
-                const RenderObject* ro = &in[i+1];
-                out.push_back(ro);
-            }
-
-        }
-    }
-    
-    //cull pool allocated objects. Ugly, figure out a more uniform way without sacrifing the theoretic gains from better cache hits :p
-    void SIMDCuller::cull(const Frustrum& frusta,const PoolVector<AllocationUnit<RenderObject> > &in ,std::vector<const RenderObject*>& out)
+    void SIMDCuller::cull(const Frustrum& frusta,const PoolVector<AllocationUnit<CullInfo> > &in ,std::vector<const CullInfo*>& out)
     {
         Frustrum::SIMDFrustrum simdFrust;
         frusta.convertToSimdFrustrum(simdFrust);
 
-        for(int i=0;i<in.count;++i)
-        {
-            out.push_back(&in.vector[i].data);
-        }
-
-        return;
         int maxSphereInd = in.count-1;
 
         for(int i=0;i<=maxSphereInd;i += 2)
         {
+
+           
             const D3DXVECTOR4 &sphere1 = in.vector[i].data.boundingSphere;
             const D3DXVECTOR4 &sphere2 = in.vector[min(i + 1, maxSphereInd)].data.boundingSphere; 
 
             UINT32 result = cullSpheresSSE(simdFrust,sphere1, sphere2);
 
+            
 
             if(result & 0x1)
             {
-                const RenderObject* ro = &in.vector[i].data;
+                const CullInfo* ro = &in.vector[i].data;
                 out.push_back(ro);
             }
             
             if(  ((i+1 <= maxSphereInd) && (result & 0x2)) )
             {
-                const RenderObject* ro = &in.vector[i+1].data;
+                const CullInfo* ro = &in.vector[i+1].data;
                 out.push_back(ro);
             }
 
@@ -131,10 +90,9 @@ inline UINT32 cullSpheresSSE(Frustrum::SIMDFrustrum& frust,  const D3DXVECTOR4& 
     dot2 = _mm_cmpgt_ps(vec2_rrrr,dot2);
     dot12 = _mm_cmpgt_ps(vec12_rrrr,dot12 );
 
-    __m128 final1 = _mm_unpacklo_ps(zero, dot12);
-    __m128 final2 = _mm_unpackhi_ps(zero, dot12);
-
-
+    __m128 final1 = _mm_unpackhi_ps(zero, dot12);
+    __m128 final2 = _mm_unpacklo_ps(zero, dot12);
+   
 
     final1 = _mm_or_ps(dot1, final1);
     final2 = _mm_or_ps(dot2, final2);

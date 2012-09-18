@@ -5,7 +5,7 @@
 #include "MaterialManager.h"
 #include "Material.h"
 #include "MeshManager.h"
-#include "WaterPlane.h"
+
 
 DemoApplication::DemoApplication()
     :m_leftDown(false),
@@ -97,12 +97,13 @@ void DemoApplication::createWorld(SceneManager* mngr)
     //objects
     Material* mat = 0; 
     Mesh* mesh = 0; 
-    RenderObject **ro;
+    CullInfo **ro;
 
     //skybox
     mat = MaterialManager::getSingleton()->getOrCreateMaterial(device, L"skybox.fx", L"skybox",MeshInputLayouts::POS3TEX3);
     mesh = MeshUtility::createSkyBoxMesh(device, "skybox" + generateID());
     ro = mngr->allocateDynamic();
+    (*ro)->boundingSphere = D3DXVECTOR4( 0,0,0, FLT_MAX );
     (*ro)->mat = mat;
     (*ro)->mesh = mesh;
     (*ro)->renderQueueFlag = RenderQueueFlag::RFINAL;
@@ -117,6 +118,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
     //textures
     //mat->setTexture("texture1", L"roughRock.png");
     //TextureManager::getSingleton()->createTexture(device, L"roughRock.png", L"roughRock.png");
+
 
     mat->setTexture("texture2", L"grass.jpg");
     TextureManager::getSingleton()->createTexture(device, L"grass.jpg", L"grass.jpg");
@@ -137,6 +139,7 @@ void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime
 {
     m_time += fElapsedTime;
     handleInput(mngr,fElapsedTime, fTime);
+
     m_lastMaterial = 0;
 
 }
@@ -224,11 +227,10 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 
 void DemoApplication::shutDown(SceneManager* mngr)
 {
-    SAFE_DELETE( m_waterPlane);
 }
 
 
-void DemoApplication::renderingObject(const RenderObject* object, RenderContext* state,SceneManager* mngr)
+void DemoApplication::renderingObject(const CullInfo* object, RenderContext* state,SceneManager* mngr)
 {
     Material* mat = object->mat;
 
@@ -245,10 +247,11 @@ void DemoApplication::renderingObject(const RenderObject* object, RenderContext*
     D3DXMATRIX viewProj =  (*view) * (*proj);
 
     //temp
-    D3DXVECTOR3 sunDir(0.5f,0.5f,0.5f);
-    D3DXVec3Normalize(&sunDir, &sunDir);
-    D3DXVECTOR3 sunCol(1.0f,0.7f,0.4f);
+    D3DXVECTOR4 sunDir( std::cos( m_time ), 0.f, std::sin( m_time ),0 );
+    D3DXVec4Normalize(&sunDir, &sunDir);
+    D3DXVECTOR4 sunCol(1.0f,1.f,1.f,0);
     D3DXVECTOR3 transl = -(*mngr->getMainCamera().getTranslation());
+    D3DXVECTOR4 camPos(transl.x, transl.y, transl.z, 1);
 
     ID3DX11Effect* effect =  mat->getEffect();
     ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("sceneInfo");
@@ -258,7 +261,7 @@ void DemoApplication::renderingObject(const RenderObject* object, RenderContext*
         mat->SetMatrix((float*)&viewProj);
         buffer->GetMemberByName("sunDirection")->AsVector()->SetFloatVector((float*)&sunDir);
         buffer->GetMemberByName("sunColor")->AsVector()->SetFloatVector((float*)&sunCol);
-        buffer->GetMemberByName("camPos")->AsVector()->SetFloatVector((float*)&transl);
+        buffer->GetMemberByName("camPos")->AsVector()->SetFloatVector((float*)&camPos);
         buffer->GetMemberByName("clipPlane")->AsVector()->SetFloatVector((float*)&state->getCustomClipPlane());
         buffer->GetMemberByName("time")->AsScalar()->SetFloat(m_time);
     }

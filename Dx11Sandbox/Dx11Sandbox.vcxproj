@@ -91,6 +91,7 @@
     <ClCompile Include="DemoApplication.cpp" />
     <ClCompile Include="Frustrum.cpp" />
     <ClCompile Include="ILDescriptions.cpp" />
+    <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
     <ClCompile Include="MathUtil.cpp" />
@@ -98,14 +99,16 @@
     <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="MeshUtility.cpp" />
     <ClCompile Include="PixelBox.cpp" />
+    <ClCompile Include="RCObject.cpp" />
     <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="RenderObject.cpp" />
+    <ClCompile Include="CullInfo.cpp" />
     <ClCompile Include="RenderContext.cpp" />
     <ClCompile Include="Root.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SIMDCuller.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="WaterPlane.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
@@ -119,6 +122,7 @@
     <ClInclude Include="DynamicPoolAllocator.h" />
     <ClInclude Include="Frustrum.h" />
     <ClInclude Include="ILDescriptions.h" />
+    <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialManager.h" />
     <ClInclude Include="MathUtil.h" />
@@ -126,15 +130,18 @@
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="MeshUtility.h" />
     <ClInclude Include="PixelBox.h" />
+    <ClInclude Include="RCObject.h" />
+    <ClInclude Include="RCObjectPtr.h" />
     <ClInclude Include="SIMDCuller.h" />
     <ClInclude Include="StaticPoolAllocator.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="RenderObject.h" />
+    <ClInclude Include="CullInfo.h" />
     <ClInclude Include="RenderContext.h" />
     <ClInclude Include="Root.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="WaterPlane.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

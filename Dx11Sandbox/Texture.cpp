@@ -90,13 +90,13 @@ namespace Dx11Sandbox
         
     }
     Texture* Texture::CreateTextureFromFile(ID3D11Device* device,const wstring& filename, const wstring& texname,
-        UINT cpuAccess, D3D11_USAGE usage)
+        UINT cpuAccess, D3D11_USAGE usage, UINT filter)
     {
         Texture* tex = new Texture(texname);
         D3DX11_IMAGE_LOAD_INFO info;
         info.CpuAccessFlags = cpuAccess;
         info.Usage = usage;
-        info.Filter = D3DX11_FILTER_POINT | D3DX11_FILTER_SRGB_IN ;
+        info.Filter = filter ;
         tex->m_cpuAccess = cpuAccess;
         tex->m_usage = usage;
         WCHAR wstr[MAX_PATH];

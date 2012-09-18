@@ -10,7 +10,7 @@ namespace Dx11Sandbox
         BasicRenderer(void);
         ~BasicRenderer(void);
 
-    void render(const RenderObject* object, RenderContext* state,  Camera* camera);
+    void render(const CullInfo* object, RenderContext* state,  Camera* camera);
     };
 }
 

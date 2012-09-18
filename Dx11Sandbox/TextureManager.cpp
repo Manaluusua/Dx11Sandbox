@@ -42,7 +42,7 @@ namespace Dx11Sandbox
     }
 
     Texture* TextureManager::createTexture(ID3D11Device* device, const wstring& filename,const wstring& texname,
-        UINT cpuAccess, D3D11_USAGE usage)
+        UINT cpuAccess, D3D11_USAGE usage, UINT filter)
     {
         //names must be UNIQUE
         assert(m_loadedTextures.find(texname)==m_loadedTextures.end());
@@ -51,7 +51,7 @@ namespace Dx11Sandbox
             return 0;
         }
 
-        Texture* tex = Texture::CreateTextureFromFile(device, filename,texname,cpuAccess, usage);
+        Texture* tex = Texture::CreateTextureFromFile(device, filename,texname,cpuAccess, usage, filter);
         if(tex)
         {
             m_loadedTextures[texname] = tex;
@@ -75,13 +75,13 @@ namespace Dx11Sandbox
         return tex;
     }
     Texture* TextureManager::getOrCreateTexture(ID3D11Device* device, const wstring& filename,const wstring& texname,
-        UINT cpuAccess, D3D11_USAGE usage)
+        UINT cpuAccess, D3D11_USAGE usage, UINT filter)
     {
         
         Texture* tex = getTexture(texname);
         if(!tex)
         {
-            if(createTexture(device,filename, texname, cpuAccess,usage))
+            if(createTexture(device,filename, texname, cpuAccess,usage, filter))
             {
                 tex = getTexture(texname);
             }

@@ -7,7 +7,7 @@
 #include "PixelBox.h"
 #include "Material.h"
 #include <cmath>
-#include "RenderObject.h"
+#include "CullInfo.h"
 #include "MeshManager.h"
 #include "SceneManager.h"
 namespace Dx11Sandbox
@@ -166,14 +166,16 @@ namespace Dx11Sandbox
     }
 
 
-    RenderObject** MeshUtility::createFinitePlane(ID3D11Device *device,SceneManager* mngr, const string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, int tesselationFactorX, int tesselationFactorZ)
+    CullInfo** MeshUtility::createFinitePlane(ID3D11Device *device,SceneManager* mngr, const string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, int tesselationFactorX, int tesselationFactorZ)
     {
 
-        float incrementX = (1.f/(tesselationFactorX-1))*2;
-        float incrementZ = (1.f/(tesselationFactorZ-1))*2;
+        assert( tesselationFactorX > 0 && tesselationFactorZ > 0 );
 
-        int pointsX = tesselationFactorX;
-        int pointsZ = tesselationFactorZ;
+        float incrementX = (1.f/(tesselationFactorX))*2;
+        float incrementZ = (1.f/(tesselationFactorZ))*2;
+
+        int pointsX = tesselationFactorX+1;
+        int pointsZ = tesselationFactorZ+1;
 
         extends1 *= 0.5f;
         extends2 *= 0.5f;
@@ -187,7 +189,7 @@ namespace Dx11Sandbox
         D3DXVec3Normalize(&vec1,&vec1);
         D3DXVec3Normalize(&vec2,&vec2);
 
-        RenderObject** ro = mngr->allocateDynamic();
+        CullInfo** ro = mngr->allocateDynamic();
         Mesh* mesh = MeshManager::getSingleton()->createMesh(name + "Mesh");
         
         //
@@ -221,14 +223,14 @@ namespace Dx11Sandbox
             {
                 
                 normals[i*pointsX + j] = getNormalForPosition(j,i,pointsX, pointsZ,positions);
-                UV[i*pointsX*2 + j*2] = 0.5*((float)(j))/tesselationFactorX;
-                UV[i*pointsX*2 + j*2 + 1] = 0.5*((float)(i))/tesselationFactorZ;
+                UV[i*pointsX*2 + j*2] = ((float)(j))/tesselationFactorX;
+                UV[i*pointsX*2 + j*2 + 1] = ((float)(i))/tesselationFactorZ;
             }
         }
         
         mesh->createVertexBuffer(device,ptr,pointsX*pointsZ,MeshInputLayouts::POS3NORM3TEX2);
 
-        UINT indicesCount = (tesselationFactorX-1)*(tesselationFactorZ-1)*6;
+        UINT indicesCount = (tesselationFactorX)*(tesselationFactorZ)*6;
         UINT32 *indices = new UINT32[indicesCount];
 
         int indicesX = pointsX-1;
@@ -259,7 +261,7 @@ namespace Dx11Sandbox
         delete[] positions;
         delete[] normals;
         delete[] UV;
-        delete indices;
+        delete[] indices;
 
 
 
@@ -322,7 +324,7 @@ namespace Dx11Sandbox
     }
 
 
-    RenderObject* MeshUtility::createTerrainFromHeightMap(ID3D11Device *device, SceneManager* mngr, const  wstring& heightmapName,Material* mat, float scaleX, float scaleZ,float scaleY, unsigned int pagesX, unsigned int pagesZ, unsigned int tesselationFactor)
+    void MeshUtility::createTerrainFromHeightMap(ID3D11Device *device, SceneManager* mngr, const  wstring& heightmapName,Material* mat, float scaleX, float scaleZ,float scaleY, unsigned int pagesX, unsigned int pagesZ, unsigned int tesselationFactor)
     {
         TextureManager::getSingleton()->createTexture(device, heightmapName, heightmapName, D3D11_CPU_ACCESS_READ, D3D11_USAGE_STAGING);
         Texture *tex = TextureManager::getSingleton()->getTexture(heightmapName);
@@ -344,7 +346,7 @@ namespace Dx11Sandbox
         if(!tex)
         {
             showErrorDialog("Couldn't load heightmap texture");
-            return 0;
+            return;
         }
 
         PixelBox* pixb = tex->readPixelBoxFromTexture();
@@ -352,16 +354,17 @@ namespace Dx11Sandbox
         if(!pixb)
         {
             showErrorDialog("Unable to blit the texture. Format/usage incorrect?");
-            return 0;
+            return;
         }
 
         //allocate renderObjects
         string terrainName("terrain");
         terrainName = terrainName + numberToString(generateID());
-        RenderObject* objects;
-        objects = mngr->allocateStatic(pagesZ*pagesX);
 
-        Mesh* vertices = MeshManager::getSingleton()->createMesh(terrainName + "Vertices");
+
+        
+        string tempMeshName = terrainName + "Vertices";
+        Mesh* vertices = MeshManager::getSingleton()->createMesh(tempMeshName);
         
         //
         float x, y, z;
@@ -442,13 +445,15 @@ namespace Dx11Sandbox
                     }
                 }
                 
+                //create object
+                CullInfo** ci = mngr->allocateDynamic();
+
                 Mesh* mesh = MeshManager::getSingleton()->createMesh(terrainName + numberToString(pz*pagesX + px));
-                mesh->setSharedVertices(true);
                 mesh->createIndexBuffer(device,(BYTE*)indices,indicesCount,DXGI_FORMAT_R32_UINT);
                 mesh->setVertexBuffer(vertices->getVertexBuffer());
-                objects[pz*pagesX + px].mesh = mesh;
-                objects[pz*pagesX + px].mat = mat;
-                objects[pz*pagesX + px].boundingSphere = calculateBoundingSphereForPositions(indices,indicesCount , positions);
+                (*ci)->mesh = mesh;
+                (*ci)->mat = mat;
+                (*ci)->boundingSphere = calculateBoundingSphereForPositions(indices,pwidth * pheight * 6 , positions);
 
             }
         }
@@ -456,15 +461,16 @@ namespace Dx11Sandbox
         delete[] positions;
         delete[] normals;
         delete[] UV;
-        delete indices;
+        delete[] indices;
         delete pixb;
-
+        
 
         //
         
+
+        MeshManager::getSingleton()->destroyMesh( tempMeshName );
         TextureManager::getSingleton()->releaseTexture(heightmapName);
 
-        return objects;
     }
 
 
@@ -472,12 +478,13 @@ namespace Dx11Sandbox
     {
         
         float minimum[3] = {FLT_MAX,FLT_MAX,FLT_MAX};
-        float maximum[3] = {FLT_MIN,FLT_MIN,FLT_MIN};
+        float maximum[3] = {-FLT_MAX,-FLT_MAX,-FLT_MAX};
         
         //find point cloud extends
         for(int i=0;i<numIndices;++i)
         {
-            const float *position = (float*)&positions[ indices[i] ];
+            UINT32 index = indices[i];
+            const float *position = (float*)&positions[index];
             for(int j=0;j<3;++j)
             {
                 if(position[j]<minimum[j])

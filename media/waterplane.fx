@@ -12,19 +12,20 @@ RasterizerState rasterState
 };
 
 //shader impl and uniforms
-static const float3 waterColor = float3(0.7f,1.f,0.95f);
+static const float3 waterColor = float3(0.3f,0.75f,0.75f);
 static const float3 ambient   = float3( 0.1f, 0.1f, 0.1f );
-static const float4 specular = float4(1.0f,0.7f,0.4f,512.f);
+static const float4 specular = float4(1.0f,0.7f,0.4f,64.f);
 
 Texture2D refraction;
 Texture2D reflection;  
+Texture2D normalmap;
 
 cbuffer sceneInfo
 {
 	float4x4 viewProj;
-    float3	sunDirection;
-	float3	sunColor;
-	float3 camPos;
+    float4	sunDirection;
+	float4	sunColor;
+	float4 camPos;
 	float4 clipPlane;
 	float time;
 };
@@ -55,15 +56,15 @@ struct PS_INPUT
     float2 uv   : TEXCOORD0;
 	float4 reflPos :TEXCOORD1;
 	float4 refrPos : TEXCOORD2;
-	float3 halfVec : TEXCOORD3;
+	float3 lightDir : TEXCOORD3;
 	float3 camDir : TEXCOORD4;
 };
 
-float3 fresnel(float3 normal, float3 viewDir, float3 col1, float3 col2)
+float3 fresnel(float3 normal, float3 viewDir, float exponent, float3 col1, float3 col2)
 {
 	static const float mat1 = 1.0003f;
 	static const float mat2 = 1.3333f;
-	static const float exponent = 5;
+
 	float a = abs((mat1 - mat2))/(mat1+mat2);
 	return a*col1 + col2*(1-a)*pow(1-saturate(dot(normal, viewDir)),exponent);
 }
@@ -80,17 +81,37 @@ float calculateHeightForPoint(float2 position, float time)
 	return height;
 }
 
-float3 calculateNormalForPoint(float2 position, float time)
+void calculateNormalTangentAndBitangentForPoint(in float2 position,in float time, out float3 normal, out float3 tangent, out float3 bitangent)
 {
-	float3 normal = float3(0,1,0);
-	normal.xz -= waves._13 * waves._11_12 * waves._14*cos( dot(waves._11_12, position) * waves._13 + time*waves._41);
+	//calculate derivatives for xz and construct tangent, bitangent and normal from these
+	float2 derivatives = waves._13 * waves._11_12 * waves._14*cos( dot(waves._11_12, position) * waves._13 + time*waves._41);
 	
-	normal.xz -= waves._23 * waves._21_22 * waves._24*cos( dot(waves._21_22, position) * waves._23 + time*waves._42);
+	derivatives += waves._23 * waves._21_22 * waves._24*cos( dot(waves._21_22, position) * waves._23 + time*waves._42);
 	
-	normal.xz -= waves._33 * waves._31_32 * waves._34*cos( dot(waves._31_32, position) * waves._33 + time*waves._43);
+	derivatives += waves._33 * waves._31_32 * waves._34*cos( dot(waves._31_32, position) * waves._33 + time*waves._43);
+	
+	normal = float3( -derivatives.x, 1, -derivatives.y );
+	tangent = float3( 0, derivatives.y, 1 );
+	bitangent = float3( 1, derivatives.x, 0 );
+	
+	normal = normalize( normal );
+	tangent = normalize( tangent );
+	bitangent = normalize( bitangent );
+}
+
+
+
+float3 getNormalFromNormalMap( Texture2D normalmap, float2 uvs )
+{
+	float3 normal = normalmap.Sample( samLinear, uvs ).rbg;
+	normal = (normal - 0.5) * 2;
+	normal.b = -normal.b;
+	normal.r = -normal.r;
 	
 	return normalize(normal);
 }
+
+
 
 PS_INPUT VS( VS_INPUT input )
 {
@@ -98,7 +119,11 @@ PS_INPUT VS( VS_INPUT input )
     
 	float3 wavePosition = input.position;
 	
-	output.normal = calculateNormalForPoint(wavePosition.xz,time);
+	float3 tangent = float3(0,0,0);
+	float3 bitangent = float3( 0,0,0);
+	
+	calculateNormalTangentAndBitangentForPoint( wavePosition.xz,time, output.normal, tangent, bitangent );
+
 	
 	wavePosition.y += calculateHeightForPoint(wavePosition.xz,time);
 	
@@ -108,9 +133,14 @@ PS_INPUT VS( VS_INPUT input )
     output.uv = input.uv;
 
 	output.reflPos = mul(float4(input.position,1), reflectionViewProj );
-	output.refrPos = mul( float4(input.position,1), viewProj );;
+	output.refrPos = mul( float4(input.position,1), viewProj );
 	
-	output.camDir = normalize(camPos - wavePosition);
+	float3x3 toTangentSpace = float3x3( tangent.x, output.normal.x, bitangent.x,
+										tangent.y, output.normal.y, bitangent.y,
+										tangent.z, output.normal.z, bitangent.z	);
+	output.camDir = normalize( mul(camPos.xyz - wavePosition, toTangentSpace) ) ;
+	output.lightDir = normalize( mul(sunDirection.xyz, toTangentSpace) );
+	
 	
 	
     return output;
@@ -119,8 +149,25 @@ PS_INPUT VS( VS_INPUT input )
 float4 PS( PS_INPUT input) : SV_Target
 {
 
+	float offset = 0.05;
+	
+	float2 movedUvs = input.uv * 4;
+	
+	movedUvs.x += time * 0.01; 
+	movedUvs.y += time * 0.02; 
+	
 	float3 normal = input.normal;
-
+	float3 newnormal = getNormalFromNormalMap(normalmap, movedUvs);
+	
+	movedUvs.x -= time*0.01;
+	movedUvs.y += time*0.01;
+	float3 newnormal2 = getNormalFromNormalMap(normalmap, movedUvs*10);
+	
+	
+	normal = normal*0.3333 + newnormal*0.3333 + newnormal2*0.3333;
+	
+	
+	
 
 	float2 reflCoords = (input.reflPos.xy / input.reflPos.w)*0.5f+0.5f;
 	reflCoords.y = -reflCoords.y;
@@ -130,12 +177,12 @@ float4 PS( PS_INPUT input) : SV_Target
 	
 	float4 output = float4(0,0,0,1);
 	
-    float3 reflCol = reflection.Sample( samLinear, reflCoords ).rgb;
-	float3 refrCol = refraction.Sample( samLinear, refrCoords ).rgb;
+    float3 reflCol = reflection.Sample( samLinear, reflCoords + normal.xy*offset ).rgb;
+	float3 refrCol = refraction.Sample( samLinear, refrCoords + normal.xy*offset).rgb;
 	
-	output.rgb += waterColor * fresnel(normal, input.camDir, refrCol , reflCol);
-	
-	float3 halfVec = normalize(input.camDir + sunDirection);
+	output.rgb += waterColor * fresnel(normal, input.camDir, 1.0f, refrCol , reflCol);
+
+	float3 halfVec = normalize(input.camDir + input.lightDir);
 	output.rgb += pow(saturate(dot(halfVec, normal)), specular.w) * specular.rgb;
 	
     return output;

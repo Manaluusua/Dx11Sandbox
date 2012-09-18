@@ -4,44 +4,36 @@
 #include "ILDescriptions.h"
 #include <vector>
 #include "CommonUtilities.h"
+#include "RCObjectPtr.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+
 struct ID3D11Buffer;
 struct ID3D11Device;
 
+
+
 namespace Dx11Sandbox
 {
+    class VertexBuffer;
+    class IndexBuffer;
     class RenderContext;
     class Mesh
     {
 
-        struct IndexBuffer
-        {
-            DXGI_FORMAT format;
-            UINT indexCount;
-            ID3D11Buffer *buffer;
-        };
-
-        struct VertexBuffer
-        {
-            UINT stride;
-            UINT numVertices;
-            ID3D11Buffer *buffer;
-        };
 
 
     public:
         Mesh();
         virtual ~Mesh();
 
-        VertexBuffer& getVertexBuffer(){return m_vertices;}
-        IndexBuffer& getIndexBuffer(){return m_indices;}
-        void setVertexBuffer(VertexBuffer vertices){m_vertices = vertices;}
-        void setIndexBuffer(IndexBuffer indices){m_indices = indices;}
+        VertexBuffer* getVertexBuffer(){return m_vertices;}
+        IndexBuffer* getIndexBuffer(){return m_indices;}
+        void setVertexBuffer(VertexBuffer *vertices){m_vertices = vertices;}
+        void setIndexBuffer(IndexBuffer *indices){m_indices = indices;}
         
         void setPrimType(D3D11_PRIMITIVE_TOPOLOGY type){m_primType = type;}
         D3D11_PRIMITIVE_TOPOLOGY getPrimType(){return m_primType;}
-
-        void setSharedVertices(bool val){m_sharedVertices = val;}
-        bool isSharedVertices(){return m_sharedVertices ;}
 
         void createMeshFromBuffers(ID3D11Device* device,BYTE** vbuffers, BYTE* ibuffer, UINT numVertices, UINT numIndices,
             DXGI_FORMAT indexFormat,MeshInputLayouts::MESH_LAYOUT_TYPE type);
@@ -67,10 +59,9 @@ namespace Dx11Sandbox
 
         DISABLE_COPY(Mesh)
         
-        IndexBuffer m_indices;
-        VertexBuffer m_vertices;
+        RCObjectPtr<IndexBuffer> m_indices;
+        RCObjectPtr<VertexBuffer> m_vertices;
         D3D11_PRIMITIVE_TOPOLOGY m_primType;
-        bool m_sharedVertices;
         
     };
 

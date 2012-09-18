@@ -41,6 +41,16 @@ namespace Dx11Sandbox
          return mesh;
     }
 
+    void MeshManager::destroyMesh(const string& meshname)
+    {
+        auto iter = m_loadedMeshes.find(meshname);
+        if(iter != m_loadedMeshes.end())
+        {
+            SAFE_DELETE(iter->second);
+            m_loadedMeshes.erase( iter );
+        }
+    }
+
     Mesh* MeshManager::getOrCreateMesh(const string& meshname)
     {
         Mesh* mesh = getMesh(meshname);

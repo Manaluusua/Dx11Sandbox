@@ -8,12 +8,13 @@
 #include "Mesh.h"
 #include "BasicRenderer.h"
 #include "Frustrum.h"
-#include "RenderObject.h"
+#include "CullInfo.h"
 #include "SIMDCuller.h"
 namespace Dx11Sandbox
 {
     SceneManager::SceneManager(Root* root)
-        :m_root(root),
+        :DynamicPoolAllocator( 200 ),
+        m_root(root),
         m_renderer( new BasicRenderer() ),
         m_renderContext(),
         m_renderObjectListener(0),
@@ -94,7 +95,6 @@ namespace Dx11Sandbox
     void SceneManager::destroyWorld()
     {
         clearRenderQueues();
-        deallocateStatic();
         deallocateDynamicAll();
     }
 
@@ -162,7 +162,7 @@ namespace Dx11Sandbox
 
    void SceneManager::renderQueue( double fTime, float fElapsedTime,  Camera* cam,RenderQueueFlag flag, Renderer* renderer)
    {
-        std::vector<const RenderObject*> & vec = m_renderqueues[flag];
+        std::vector<const CullInfo*> & vec = m_renderqueues[flag];
         for(size_t i = 0;i<vec.size();++i)
         {
             if(m_renderObjectListener)
@@ -180,36 +180,22 @@ namespace Dx11Sandbox
     {
 
         clearRenderQueues();
-        std::vector<const RenderObject*> nonCulled;
-        //static scene
-        for(int i=0;i<getNumberOfStaticPoolVectors();++i)
-        {
-            //cull
-            const std::vector<RenderObject> &objects = *getStaticPoolVector(i);
-            m_culler->cull(frust,objects,nonCulled);
 
-            //send non-culled to rendering
-            for(int j=0;j<nonCulled.size();++j)
-            {
-                const RenderObject* obj = nonCulled[j];
-                m_renderqueues[obj->renderQueueFlag].push_back(obj);
-            }
-        }
-
-        nonCulled.clear();
+        m_cachedVisibleList.clear();
         //dynamic scene
         for(int i=0;i<getNumberOfDynamicPoolVectors();++i)
         {
              //cull
-            const PoolVector<AllocationUnit<RenderObject> > &objects = getDynamicPoolVector(i);
-            m_culler->cull(frust,objects,nonCulled);
+            const PoolVector<AllocationUnit<CullInfo> > &objects = getDynamicPoolVector(i);
+            m_culler->cull(frust,objects,m_cachedVisibleList);
 
             //send non-culled to rendering
-            for(int j=0;j<nonCulled.size();++j)
+            for(int j=0;j<m_cachedVisibleList.size();++j)
             {
-                const RenderObject* obj = nonCulled[j];
+                const CullInfo* obj = m_cachedVisibleList[j];
                 m_renderqueues[obj->renderQueueFlag].push_back(obj);
             }
+            m_cachedVisibleList.clear();
         }
     }
 }
