@@ -52,7 +52,7 @@ namespace Dx11Sandbox
         DynamicPoolAllocator(size_t defaultSize=40);
         ~DynamicPoolAllocator(void);
 
-        const PoolVector<AllocationUnit<T> >& getDynamicPoolVector(size_t index) const;
+        PoolVector<AllocationUnit<T> >& getDynamicPoolVector(size_t index);
         size_t getNumberOfDynamicPoolVectors() const;
 
         T** allocateDynamic();
@@ -158,7 +158,7 @@ namespace Dx11Sandbox
     }
 
     template <typename T>
-    const PoolVector<AllocationUnit<T> >& DynamicPoolAllocator<T>::getDynamicPoolVector(size_t index) const
+    PoolVector<AllocationUnit<T> >& DynamicPoolAllocator<T>::getDynamicPoolVector(size_t index)
     {
         //assert(index <= m_indexPool);
         return m_pool.at(index);

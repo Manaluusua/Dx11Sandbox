@@ -14,7 +14,7 @@ namespace Dx11Sandbox
     }
 
 
-    void SIMDCuller::cull(const Frustrum& frusta,const PoolVector<AllocationUnit<CullInfo> > &in ,std::vector<const CullInfo*>& out)
+    void SIMDCuller::cull(const Frustrum& frusta,PoolVector<AllocationUnit<CullInfo> > &in ,std::vector<CullInfo*>& out)
     {
         Frustrum::SIMDFrustrum simdFrust;
         frusta.convertToSimdFrustrum(simdFrust);
@@ -34,13 +34,13 @@ namespace Dx11Sandbox
 
             if(result & 0x1)
             {
-                const CullInfo* ro = &in.vector[i].data;
+                CullInfo* ro = &in.vector[i].data;
                 out.push_back(ro);
             }
             
             if(  ((i+1 <= maxSphereInd) && (result & 0x2)) )
             {
-                const CullInfo* ro = &in.vector[i+1].data;
+                CullInfo* ro = &in.vector[i+1].data;
                 out.push_back(ro);
             }
 

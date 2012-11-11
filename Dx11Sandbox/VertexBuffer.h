@@ -2,27 +2,23 @@
 #define DX11SANDBOX_VERTEXBUFFER_H
 
 
-#include "RCObject.h"
+#include "GPUBuffer.h"
+#include <D3D11.h>
 
-struct ID3D11Buffer;
 namespace Dx11Sandbox
 {
     class VertexBuffer :
-        public RCObject
+        public GPUBuffer
     {
     public:
         VertexBuffer(void);
         VertexBuffer( UINT stride, UINT vertexCount, ID3D11Buffer* buffer );
+        VertexBuffer( ID3D11Device* device, void* vertices, UINT stride, UINT numVertices,D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccess = 0,
+            bool createSOBuffer = false );
         virtual ~VertexBuffer(void);
 
-
-        void setStride( UINT stride );
-
-        void setVertexCount( UINT VertexCount );
-
-        void setBuffer( ID3D11Buffer* buffer );
-
-        ID3D11Buffer* getBuffer();
+        bool allocate(ID3D11Device* device, void* vertices, UINT stride, UINT numVertices,D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccess = 0,
+            bool createSOBuffer = false);
 
         UINT getStride() const;
 
@@ -35,29 +31,8 @@ namespace Dx11Sandbox
 
         UINT m_stride;
         UINT m_vertexCount;
-        ID3D11Buffer* m_buffer;
     };
 
-
-        inline void VertexBuffer::setStride( UINT stride )
-        {
-            m_stride = stride;
-        }
-
-        inline void VertexBuffer::setVertexCount( UINT VertexCount )
-        {
-            m_vertexCount = VertexCount;
-        }
-
-        inline void VertexBuffer::setBuffer( ID3D11Buffer* buffer )
-        {
-            m_buffer = buffer;
-        }
-
-        inline ID3D11Buffer* VertexBuffer::getBuffer()
-        {
-            return m_buffer;
-        }
 
         inline UINT VertexBuffer::getStride() const
         {

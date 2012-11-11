@@ -5,7 +5,7 @@ namespace Dx11Sandbox
         :boundingSphere(-1,-1,-1,-1),
         mesh(0),
         mat(0),
-        renderQueueFlag(RDEFAULT)
+        binIDFlag( 0 )
     {
 
     }

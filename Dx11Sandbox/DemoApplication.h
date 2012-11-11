@@ -4,6 +4,7 @@
 #include "MathUtil.h"
 #include "Root.h"
 #include "SceneManager.h"
+#include "RenderBinHandler.h"
 #include "RCObjectPtr.h"
 #include "WaterPlane.h"
 
@@ -12,7 +13,7 @@ using namespace Dx11Sandbox;
 class WaterPlane;
 
 
-class DemoApplication: public Application, public RenderObjectListener
+class DemoApplication: public Application, public RenderBinHandler::RenderBinListener
 {
 public:
 
@@ -29,7 +30,7 @@ public:
     virtual void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
 
 
-    virtual void renderingObject(const CullInfo* object, RenderContext* state,SceneManager* mngr);
+    virtual void renderingBin(std::vector< RenderBinHandler::PRIMITIVETYPE*> &primitives, RenderContext* state);
 
 private:
 
@@ -53,6 +54,7 @@ private:
     Material* m_lastMaterial;
     UINT16 m_lastPassID;
     RCObjectPtr<WaterPlane> m_waterPlane;
+    SceneManager* m_mngr;
 
 };
 

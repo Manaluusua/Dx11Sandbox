@@ -6,15 +6,6 @@
 namespace Dx11Sandbox
 {
 
-
-    enum RenderQueueFlag{
-        RINITIAL, //first objects, background?
-        RDEFAULT, //opaque
-        RTRANSPARENT, //transparent
-        RSCENEINPUT, //here the previous scene is available for input
-        RFINAL //last
-    };
-
     class Mesh;
     class Material;
     class CullInfo
@@ -29,7 +20,7 @@ namespace Dx11Sandbox
         D3DXVECTOR4 boundingSphere;
         Mesh* mesh;
         Material* mat;
-        RenderQueueFlag renderQueueFlag;
+        int binIDFlag;
         
     };
 }

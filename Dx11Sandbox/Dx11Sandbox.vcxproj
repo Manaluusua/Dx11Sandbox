@@ -90,6 +90,7 @@
     <ClCompile Include="Compositor.cpp" />
     <ClCompile Include="DemoApplication.cpp" />
     <ClCompile Include="Frustrum.cpp" />
+    <ClCompile Include="GPUBuffer.cpp" />
     <ClCompile Include="ILDescriptions.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -100,6 +101,7 @@
     <ClCompile Include="MeshUtility.cpp" />
     <ClCompile Include="PixelBox.cpp" />
     <ClCompile Include="RCObject.cpp" />
+    <ClCompile Include="RenderBinHandler.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="CullInfo.cpp" />
     <ClCompile Include="RenderContext.cpp" />
@@ -121,6 +123,7 @@
     <ClInclude Include="DemoApplication.h" />
     <ClInclude Include="DynamicPoolAllocator.h" />
     <ClInclude Include="Frustrum.h" />
+    <ClInclude Include="GPUBuffer.h" />
     <ClInclude Include="ILDescriptions.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Material.h" />
@@ -132,6 +135,8 @@
     <ClInclude Include="PixelBox.h" />
     <ClInclude Include="RCObject.h" />
     <ClInclude Include="RCObjectPtr.h" />
+    <ClInclude Include="RCReleasePtr.h" />
+    <ClInclude Include="RenderBinHandler.h" />
     <ClInclude Include="SIMDCuller.h" />
     <ClInclude Include="StaticPoolAllocator.h" />
     <ClInclude Include="Renderer.h" />

@@ -2,27 +2,23 @@
 #define DX11SANDBOX_INDEXBUFFER_H
 
 
-#include "RCObject.h"
+#include "GPUBuffer.h"
 #include <D3D11.h>
 struct ID3D11Buffer;
 namespace Dx11Sandbox
 {
     class IndexBuffer :
-        public RCObject
+        public GPUBuffer
     {
     public:
         IndexBuffer(void);
+        IndexBuffer( ID3D11Device* device,void* indices,
+            DXGI_FORMAT indexFormat,UINT numIndices,D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccess = 0);
         IndexBuffer( DXGI_FORMAT format, UINT indexCount, ID3D11Buffer* buffer );
         virtual ~IndexBuffer(void);
 
-
-        void setFormat( DXGI_FORMAT format );
-
-        void setIndexCount( UINT indexCount );
-
-        void setBuffer( ID3D11Buffer* buffer );
-
-        ID3D11Buffer* getBuffer();
+        bool allocate(ID3D11Device* device,void* indices,
+            DXGI_FORMAT indexFormat,UINT numIndices,D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccess = 0);
 
         DXGI_FORMAT getFormat() const;
 
@@ -35,29 +31,10 @@ namespace Dx11Sandbox
 
         DXGI_FORMAT m_format;
         UINT m_indexCount;
-        ID3D11Buffer* m_buffer;
     };
 
 
-        inline void IndexBuffer::setFormat( DXGI_FORMAT format )
-        {
-            m_format = format;
-        }
-
-        inline void IndexBuffer::setIndexCount( UINT indexCount )
-        {
-            m_indexCount = indexCount;
-        }
-
-        inline void IndexBuffer::setBuffer( ID3D11Buffer* buffer )
-        {
-            m_buffer = buffer;
-        }
-
-        inline ID3D11Buffer* IndexBuffer::getBuffer()
-        {
-            return m_buffer;
-        }
+    
 
         inline DXGI_FORMAT IndexBuffer::getFormat() const
         {

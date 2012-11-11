@@ -12,7 +12,7 @@ RasterizerState rasterState
 };
 
 //shader impl and uniforms
-static const float3 waterColor = float3(0.3f,0.75f,0.75f);
+static const float3 waterColor = float3(0.8f,0.95f,0.95f);
 static const float3 ambient   = float3( 0.1f, 0.1f, 0.1f );
 static const float4 specular = float4(1.0f,0.7f,0.4f,64.f);
 
@@ -33,6 +33,7 @@ cbuffer sceneInfo
 cbuffer waterPlaneInfo
 {
 	float4x4 reflectionViewProj;
+	float4x4 refractionViewProj;
 };
 
 cbuffer waveDefinitions
@@ -133,7 +134,7 @@ PS_INPUT VS( VS_INPUT input )
     output.uv = input.uv;
 
 	output.reflPos = mul(float4(input.position,1), reflectionViewProj );
-	output.refrPos = mul( float4(input.position,1), viewProj );
+	output.refrPos = mul( float4(input.position,1), refractionViewProj );
 	
 	float3x3 toTangentSpace = float3x3( tangent.x, output.normal.x, bitangent.x,
 										tangent.y, output.normal.y, bitangent.y,
@@ -153,18 +154,19 @@ float4 PS( PS_INPUT input) : SV_Target
 	
 	float2 movedUvs = input.uv * 4;
 	
-	movedUvs.x += time * 0.01; 
-	movedUvs.y += time * 0.02; 
+	movedUvs.x += time * 0.08; 
+	movedUvs.y += time * 0.08; 
 	
 	float3 normal = input.normal;
-	float3 newnormal = getNormalFromNormalMap(normalmap, movedUvs);
+	float3 newnormal = getNormalFromNormalMap(normalmap, movedUvs.xy*6);
+
 	
-	movedUvs.x -= time*0.01;
-	movedUvs.y += time*0.01;
-	float3 newnormal2 = getNormalFromNormalMap(normalmap, movedUvs*10);
+	movedUvs.x -= time*0.08;
+	movedUvs.y += time*0.08;
+	float3 newnormal2 = getNormalFromNormalMap(normalmap, movedUvs.yx*2);
 	
 	
-	normal = normal*0.3333 + newnormal*0.3333 + newnormal2*0.3333;
+	normal = normal*0.2 + (newnormal + newnormal2)*0.4;
 	
 	
 	

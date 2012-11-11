@@ -36,6 +36,16 @@ namespace Dx11Sandbox
         void setReflectionPlane(D3DXVECTOR3& normal, float d);
         void setReflectionEnabled(bool val);
 
+        void setFOVY( FLOAT y );
+        void setAspectRatio( FLOAT ar );
+        void setNearPlane( FLOAT nearPlane );
+        void setFarPlane( FLOAT farPlane );
+
+        FLOAT getFOVY() const;
+        FLOAT getAspectRatio() const;
+        FLOAT getNearPlane() const;
+        FLOAT getFarPlance() const;
+
         void calculateFrustrum(Dx11Sandbox::Frustrum* frustrum);
 
     private:

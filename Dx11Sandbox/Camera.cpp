@@ -69,6 +69,45 @@ namespace Dx11Sandbox
         D3DXMatrixPerspectiveFovLH(&m_projMatrix, m_fovy, m_aspectRatio, m_near, m_far);
     }
 
+    void Camera::setFOVY( FLOAT y )
+    {
+        m_fovy = y;
+        setProjection(m_fovy, m_aspectRatio, m_near, m_far);
+    }
+    void Camera::setAspectRatio( FLOAT ar )
+    {
+        m_aspectRatio = ar;
+        setProjection(m_fovy, m_aspectRatio, m_near, m_far);
+
+    }
+    void Camera::setNearPlane( FLOAT nearPlane )
+    {
+        m_near = nearPlane;
+        setProjection(m_fovy, m_aspectRatio, m_near, m_far);
+    }
+    void Camera::setFarPlane( FLOAT farPlane )
+    {
+        m_far = farPlane;
+        setProjection(m_fovy, m_aspectRatio, m_near, m_far);
+    }
+
+    FLOAT Camera::getFOVY() const
+    {
+        return m_fovy;
+    }
+
+    FLOAT Camera::getAspectRatio() const
+    {
+        return m_aspectRatio;
+    }
+    FLOAT Camera::getNearPlane() const
+    {
+        return m_near;
+    }
+    FLOAT Camera::getFarPlance() const
+    {
+        return m_far;
+    }
 
     void  Camera::setTranslation(FLOAT x, FLOAT y, FLOAT z)
     {

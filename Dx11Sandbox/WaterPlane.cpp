@@ -6,7 +6,7 @@
 #include "Texture.h"
 #include "CullInfo.h"
 #include "Frustrum.h"
-
+#include "RCReleasePtr.h"
 #include "MathUtil.h"
 
 WaterPlane::WaveDefinition::WaveDefinition()
@@ -36,7 +36,7 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 
     m_renderObject = Dx11Sandbox::MeshUtility::createFinitePlane(device,mngr,name,normal,d,extends1, extends2,tesselationX,tesselationY);
     (*m_renderObject)->mat = Dx11Sandbox::MaterialManager::getSingleton()->getOrCreateMaterial(device, L"waterplane.fx",  L"waterplane",Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
-    (*m_renderObject)->renderQueueFlag = Dx11Sandbox::RSCENEINPUT;
+    (*m_renderObject)->binIDFlag = mngr->getRenderBinHandler().getIDForBinName( Dx11Sandbox::RENDERBIN_SCENEINPUT );
 
     //hack, always use same name. Later on take the name from name passed in to avoid name collision when multiple waterplanes in the scene
     Dx11Sandbox::wstring reflTexName = L"waterplanereflection";
@@ -48,7 +48,7 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
     (*m_renderObject)->mat->setTexture("refraction",refrTexName);
 
     Dx11Sandbox::wstring normalTexName = L"waterplanenormalmap";
-    m_normalMap = Dx11Sandbox::TextureManager::getSingleton()->getOrCreateTexture(device, L"brickbumpmap.jpg", normalTexName, 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_POINT );
+    m_normalMap = Dx11Sandbox::TextureManager::getSingleton()->getOrCreateTexture(device, L"waternormal.jpg", normalTexName, 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_POINT );
     (*m_renderObject)->mat->setTexture("normalmap",normalTexName);
     
     m_normal = normal;
@@ -104,7 +104,14 @@ void WaterPlane::setupWaves()
 void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbox::SceneManager* mngr, double fTime, float fElapsedTime)
 {
 
-    mngr->getMainCamera().setReflectionPlane(m_normal,m_d);
+    Dx11Sandbox::RenderBinHandler& rbhandler =  mngr->getRenderBinHandler();
+
+    Dx11Sandbox::Camera& cam = mngr->getMainCamera();
+
+    float originalFOV = cam.getFOVY();
+    cam.setFOVY( originalFOV * 1.2 );
+
+    cam.setReflectionPlane(m_normal,m_d);
     context->clearState();
     //unbind reflection and refraction textures
     ID3DX11Effect* effect =  (*m_renderObject)->mat->getEffect();
@@ -116,7 +123,6 @@ void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbo
 
     D3DXVECTOR4 clipplane(m_normal, m_d);
 
-    Dx11Sandbox::Camera* cam = &mngr->getMainCamera();
 
     //reflection
     ID3D11RenderTargetView * views[1];
@@ -124,43 +130,40 @@ void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbo
     context->getImmediateContext()->ClearDepthStencilView( DXUTGetD3D11DepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0 );
     context->bindRenderTargets(1, views, DXUTGetD3D11DepthStencilView());
     
-    ID3D11RasterizerState *original, *cw;
+    
+    ID3D11RasterizerState *originalRaw, *cwRaw;
+    
+
     D3D11_RASTERIZER_DESC rdesc;
     ID3D11DeviceContext* ic = context->getImmediateContext();
-    ic->RSGetState(&original);
-    original->GetDesc(&rdesc);
+    ic->RSGetState(&originalRaw);
+    originalRaw->GetDesc(&rdesc);
     rdesc.CullMode = D3D11_CULL_FRONT;
-    context->getDevice()->CreateRasterizerState(&rdesc,&cw);
+    context->getDevice()->CreateRasterizerState(&rdesc,&cwRaw);
+
+    Dx11Sandbox::RCReleasePtr<ID3D11RasterizerState> original( originalRaw), cw( cwRaw );
+
+
     ic->RSSetState(cw);
     
-    cam->setReflectionEnabled(true);
+    cam.setReflectionEnabled(true);
 
     context->setCustomClipPlane(clipplane);
 
 
 
     Dx11Sandbox::Frustrum frust;
-    cam->calculateFrustrum(&frust);
+    cam.calculateFrustrum(&frust);
     mngr->cullObjectsToRenderQueues(frust);
 
-    mngr->renderQueue(fTime,fElapsedTime,cam,Dx11Sandbox::RDEFAULT, mngr->getDefaultRenderer());
-    mngr->renderQueue(fTime,fElapsedTime,cam,Dx11Sandbox::RFINAL, mngr->getDefaultRenderer());
+    rbhandler.renderBinsUpToPriority( rbhandler.getPriorityOfRenderBin( rbhandler.getIDForBinName( Dx11Sandbox::RENDERBIN_SKYBOX ) ), context, &cam );
+
 
     context->clearState();
-    // set changed waterplane uniforms
 
-    const D3DXMATRIX *view = cam->getViewMatrix();
-    const D3DXMATRIX *proj = cam->getProjectionMatrix();
-    D3DXMATRIX viewProj =  (*view) * (*proj);
+    const D3DXMATRIX *viewRefl = cam.getViewMatrix();
 
-    ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("waterPlaneInfo");
-    if(buffer->IsValid())
-    {
-        buffer->GetMemberByName("reflectionViewProj")->AsMatrix()->SetMatrix((float*)viewProj);
-    }
-
-
-    cam->setReflectionEnabled(false);
+    cam.setReflectionEnabled(false);
 
     ic->RSSetState(original);
     
@@ -172,20 +175,35 @@ void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbo
     context->getImmediateContext()->ClearDepthStencilView( DXUTGetD3D11DepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0 );
     context->bindRenderTargets(1, views, DXUTGetD3D11DepthStencilView());
 
-    cam->calculateFrustrum(&frust);
+    cam.calculateFrustrum(&frust);
     mngr->cullObjectsToRenderQueues(frust);
 
-    mngr->renderQueue(fTime,fElapsedTime,&mngr->getMainCamera(),Dx11Sandbox::RDEFAULT, mngr->getDefaultRenderer());
-    
+    rbhandler.renderBinsUpToPriority( rbhandler.getPriorityOfRenderBin( rbhandler.getIDForBinName( Dx11Sandbox::RENDERBIN_SKYBOX ) ), context, &cam );
     
     context->clearState();
+
+    const D3DXMATRIX *viewRefr = cam.getViewMatrix();
+    const D3DXMATRIX *proj = cam.getProjectionMatrix();
+    D3DXMATRIX viewProjRefr =  (*viewRefr) * (*proj);
+    D3DXMATRIX viewProjRefl =  (*viewRefl) * (*proj);
+
+    //set proj matrices to waterplane
+    ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("waterPlaneInfo");
+    if(buffer->IsValid())
+    {
+        buffer->GetMemberByName("reflectionViewProj")->AsMatrix()->SetMatrix((float*)viewProjRefl);
+        buffer->GetMemberByName("refractionViewProj")->AsMatrix()->SetMatrix((float*)viewProjRefr);
+    }
+
+
     //cleanup
     context->bindBackBuffer();
 
-    cw->Release();
-    original->Release();
+
 
    
     clipplane = D3DXVECTOR4(0,0,0,0);
     context->setCustomClipPlane(clipplane);
+
+    cam.setFOVY( originalFOV );
 }

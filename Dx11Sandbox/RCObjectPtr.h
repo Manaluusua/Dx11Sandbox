@@ -3,7 +3,6 @@
 
 namespace Dx11Sandbox
 {
-    class RCObject;
 
     template< class T >
     class RCObjectPtr

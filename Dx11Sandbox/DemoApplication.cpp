@@ -81,17 +81,17 @@ void DemoApplication::windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pS
 void DemoApplication::createWorld(SceneManager* mngr)
 {
     
-    
+    m_mngr = mngr;
     Camera& cam = mngr->getMainCamera();
 
-    ID3D11Device* device = mngr->getRenderContext()->getDevice();
+    ID3D11Device* device = mngr->getRenderContext().getDevice();
     //camera
     D3DXVECTOR3 vecEye( 0.0f, 90.0f, 60.0f );
     D3DXVECTOR3 vecAt ( 0.0f, 88.0f, 70.0f );
     D3DXVECTOR3 up (0.0f,1.0f,0.0f);
     cam.lookAt(vecEye, vecAt, up);
         
-    mngr->setRenderObjectListener(this);
+    mngr->getRenderBinHandler().addRenderBinListener( this );
 
         
     //objects
@@ -106,7 +106,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
     (*ro)->boundingSphere = D3DXVECTOR4( 0,0,0, FLT_MAX );
     (*ro)->mat = mat;
     (*ro)->mesh = mesh;
-    (*ro)->renderQueueFlag = RenderQueueFlag::RFINAL;
+    (*ro)->binIDFlag = mngr->getRenderBinHandler().getIDForBinName( Dx11Sandbox::RENDERBIN_SKYBOX );
 
     mat->setTexture("cubemap", L"skyboxCube.dds");
     TextureManager::getSingleton()->createTexture(device, L"skyboxCube.dds", L"skyboxCube.dds");
@@ -230,39 +230,43 @@ void DemoApplication::shutDown(SceneManager* mngr)
 }
 
 
-void DemoApplication::renderingObject(const CullInfo* object, RenderContext* state,SceneManager* mngr)
+void DemoApplication::renderingBin(std::vector< RenderBinHandler::PRIMITIVETYPE*> &primitives, RenderContext* state)
 {
-    Material* mat = object->mat;
+    for( int i = 0; i < primitives.size(); ++i )
+    {
+        RenderBinHandler::PRIMITIVETYPE* object = primitives[i];
+        Material* mat = object->mat;
 
-    //new pass, don't try to skip effect state setting
+        //new pass, don't try to skip effect state setting
     
 
-    if(mat==state->getBoundMaterial())
-        return;
-    m_lastMaterial = mat;
+        if(mat==state->getBoundMaterial())
+            return;
+        m_lastMaterial = mat;
 
-    //D3DXMATRIX *world;
-    const D3DXMATRIX *view = mngr->getMainCamera().getViewMatrix();
-    const D3DXMATRIX *proj = mngr->getMainCamera().getProjectionMatrix();
-    D3DXMATRIX viewProj =  (*view) * (*proj);
+        //D3DXMATRIX *world;
+        const D3DXMATRIX *view = m_mngr->getMainCamera().getViewMatrix();
+        const D3DXMATRIX *proj = m_mngr->getMainCamera().getProjectionMatrix();
+        D3DXMATRIX viewProj =  (*view) * (*proj);
 
-    //temp
-    D3DXVECTOR4 sunDir( std::cos( m_time ), 0.f, std::sin( m_time ),0 );
-    D3DXVec4Normalize(&sunDir, &sunDir);
-    D3DXVECTOR4 sunCol(1.0f,1.f,1.f,0);
-    D3DXVECTOR3 transl = -(*mngr->getMainCamera().getTranslation());
-    D3DXVECTOR4 camPos(transl.x, transl.y, transl.z, 1);
+        //temp
+        D3DXVECTOR4 sunDir( std::cos( m_time ), 0.f, std::sin( m_time ),0 );
+        D3DXVec4Normalize(&sunDir, &sunDir);
+        D3DXVECTOR4 sunCol(1.0f,1.f,1.f,0);
+        D3DXVECTOR3 transl = -(*m_mngr->getMainCamera().getTranslation());
+        D3DXVECTOR4 camPos(transl.x, transl.y, transl.z, 1);
 
-    ID3DX11Effect* effect =  mat->getEffect();
-    ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("sceneInfo");
-    if(buffer->IsValid())
-    {
-        ID3DX11EffectMatrixVariable* mat =  buffer->GetMemberByName("viewProj")->AsMatrix();
-        mat->SetMatrix((float*)&viewProj);
-        buffer->GetMemberByName("sunDirection")->AsVector()->SetFloatVector((float*)&sunDir);
-        buffer->GetMemberByName("sunColor")->AsVector()->SetFloatVector((float*)&sunCol);
-        buffer->GetMemberByName("camPos")->AsVector()->SetFloatVector((float*)&camPos);
-        buffer->GetMemberByName("clipPlane")->AsVector()->SetFloatVector((float*)&state->getCustomClipPlane());
-        buffer->GetMemberByName("time")->AsScalar()->SetFloat(m_time);
+        ID3DX11Effect* effect =  mat->getEffect();
+        ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("sceneInfo");
+        if(buffer->IsValid())
+        {
+            ID3DX11EffectMatrixVariable* mat =  buffer->GetMemberByName("viewProj")->AsMatrix();
+            mat->SetMatrix((float*)&viewProj);
+            buffer->GetMemberByName("sunDirection")->AsVector()->SetFloatVector((float*)&sunDir);
+            buffer->GetMemberByName("sunColor")->AsVector()->SetFloatVector((float*)&sunCol);
+            buffer->GetMemberByName("camPos")->AsVector()->SetFloatVector((float*)&camPos);
+            buffer->GetMemberByName("clipPlane")->AsVector()->SetFloatVector((float*)&state->getCustomClipPlane());
+            buffer->GetMemberByName("time")->AsScalar()->SetFloat(m_time);
+        }
     }
 }

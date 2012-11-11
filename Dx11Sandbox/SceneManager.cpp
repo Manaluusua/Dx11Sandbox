@@ -15,18 +15,14 @@ namespace Dx11Sandbox
     SceneManager::SceneManager(Root* root)
         :DynamicPoolAllocator( 200 ),
         m_root(root),
-        m_renderer( new BasicRenderer() ),
+        m_renderBinHandler( new BasicRenderer() ),
         m_renderContext(),
-        m_renderObjectListener(0),
         m_culler(new SIMDCuller()),
         m_screenWidth(0),
         m_screenHeight(0)
     {
-       m_renderqueues[RINITIAL];
-       m_renderqueues[RDEFAULT];
-       m_renderqueues[RTRANSPARENT];
-       m_renderqueues[RSCENEINPUT];
-       m_renderqueues[RFINAL];
+        
+
     }
 
     SceneManager* SceneManager::createSceneManager(Root* root)
@@ -41,9 +37,6 @@ namespace Dx11Sandbox
     {
         destroyWorld();
         destroyManagers();
-        m_renderqueues.clear();
-        SAFE_DELETE(m_renderer);
-        SAFE_DELETE(m_culler);
     }
 
     void SceneManager::destroyManagers()
@@ -64,11 +57,31 @@ namespace Dx11Sandbox
     }
 
 
-    void SceneManager::setRenderObjectListener(RenderObjectListener* l)
+
+    Camera& SceneManager::getMainCamera()
     {
-        m_renderObjectListener = l;
+        return m_mainCamera;
     }
 
+    RenderBinHandler& SceneManager::getRenderBinHandler()
+    {
+        return m_renderBinHandler;
+    }
+
+    RenderContext& SceneManager::getRenderContext()
+    {
+        return m_renderContext;
+    }
+
+
+    UINT SceneManager::getScreenWidth() const
+    {
+        return m_screenWidth;
+    }
+    UINT SceneManager::getScreenHeight() const
+    {
+        return m_screenHeight;
+    }
 
 
     void SceneManager::windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc)
@@ -100,11 +113,7 @@ namespace Dx11Sandbox
 
     void SceneManager::clearRenderQueues()
     {
-        m_renderqueues[RINITIAL].clear();
-        m_renderqueues[RDEFAULT].clear();
-        m_renderqueues[RTRANSPARENT].clear();
-        m_renderqueues[RSCENEINPUT].clear();
-        m_renderqueues[RFINAL].clear();
+        m_renderBinHandler.clearBins();
     }
 
     void SceneManager::update(double fTime, float fElapsedTime)
@@ -133,46 +142,21 @@ namespace Dx11Sandbox
         //pd3dImmediateContext->ClearRenderTargetView( DXUTGetD3D11RenderTargetView(), ClearColor );
         pd3dImmediateContext->ClearDepthStencilView( DXUTGetD3D11DepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0 );
 
-        renderScene( fTime,fElapsedTime, &m_mainCamera, m_renderer);
+        renderScene( fTime,fElapsedTime, &m_mainCamera);
     }
 
-    void SceneManager::renderScene( double fTime, float fElapsedTime, Camera* cam, Renderer* renderer)
+    void SceneManager::renderScene( double fTime, float fElapsedTime, Camera* cam)
     {
         
         m_renderContext.clearState();
-
-
-
         Frustrum frust;
         cam->calculateFrustrum(&frust);
         cullObjectsToRenderQueues(frust);
-
-        //normal objects
-        renderQueue( fTime, fElapsedTime,cam, RINITIAL,renderer);
-        renderQueue(fTime, fElapsedTime,cam, RDEFAULT,renderer);
-        renderQueue( fTime, fElapsedTime,cam, RTRANSPARENT,renderer);
-
-        //objects using information from the previous objects rendered
-        //TO DO
-        renderQueue( fTime, fElapsedTime,cam, RSCENEINPUT,renderer);
-        //Final
-        renderQueue( fTime, fElapsedTime,cam,RFINAL,renderer);
+        m_renderBinHandler.renderAllBins( &m_renderContext, cam );
+       
     }
 
 
-   void SceneManager::renderQueue( double fTime, float fElapsedTime,  Camera* cam,RenderQueueFlag flag, Renderer* renderer)
-   {
-        std::vector<const CullInfo*> & vec = m_renderqueues[flag];
-        for(size_t i = 0;i<vec.size();++i)
-        {
-            if(m_renderObjectListener)
-            {
-                m_renderObjectListener->renderingObject(vec.at(i),&m_renderContext,this);
-            }
-            renderer->render(vec.at(i),&m_renderContext,cam);
-        }
-      
-   }
 
 
 
@@ -182,20 +166,16 @@ namespace Dx11Sandbox
         clearRenderQueues();
 
         m_cachedVisibleList.clear();
-        //dynamic scene
+
         for(int i=0;i<getNumberOfDynamicPoolVectors();++i)
         {
-             //cull
-            const PoolVector<AllocationUnit<CullInfo> > &objects = getDynamicPoolVector(i);
-            m_culler->cull(frust,objects,m_cachedVisibleList);
 
-            //send non-culled to rendering
-            for(int j=0;j<m_cachedVisibleList.size();++j)
-            {
-                const CullInfo* obj = m_cachedVisibleList[j];
-                m_renderqueues[obj->renderQueueFlag].push_back(obj);
-            }
-            m_cachedVisibleList.clear();
+            PoolVector<AllocationUnit<CullInfo> > &objects = getDynamicPoolVector(i);
+            m_culler->cull(frust,objects,m_cachedVisibleList);
         }
+
+        m_renderBinHandler.appendPrimitivesToBins( m_cachedVisibleList );
+
+
     }
 }
