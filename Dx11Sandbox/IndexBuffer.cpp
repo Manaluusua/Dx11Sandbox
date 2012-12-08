@@ -20,7 +20,7 @@ namespace Dx11Sandbox
     }
 
     IndexBuffer::IndexBuffer( DXGI_FORMAT format, UINT indexCount, ID3D11Buffer* buffer )
-        :GPUBuffer( buffer ),
+        :ShadowCPUBuffer( buffer ),
         m_format( format ),
         m_indexCount( indexCount )
     {
@@ -40,6 +40,7 @@ namespace Dx11Sandbox
 
         D3D11_BUFFER_DESC indBuffDesc;
 	    D3D11_SUBRESOURCE_DATA indexData;
+        D3D11_SUBRESOURCE_DATA* indexDataPtr = 0;
         ID3D11Buffer* buffer;
 	    HRESULT hr;
 
@@ -55,12 +56,15 @@ namespace Dx11Sandbox
 	        indBuffDesc.MiscFlags = 0;
 	        indBuffDesc.StructureByteStride = 0;
 
+            if( indices )
+            {
+	            indexData.pSysMem = indices;
+	            indexData.SysMemPitch = 0;
+	            indexData.SysMemSlicePitch = 0;
+                indexDataPtr = &indexData;
+            }
 
-	        indexData.pSysMem = indices;
-	        indexData.SysMemPitch = 0;
-	        indexData.SysMemSlicePitch = 0;
-
-            hr = device->CreateBuffer(&indBuffDesc, &indexData, &buffer);
+            hr = device->CreateBuffer(&indBuffDesc, indexDataPtr, &buffer);
 	        if(FAILED(hr))
 	        {
 		        return false;

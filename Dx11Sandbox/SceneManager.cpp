@@ -167,7 +167,7 @@ namespace Dx11Sandbox
 
         m_cachedVisibleList.clear();
 
-        for(int i=0;i<getNumberOfDynamicPoolVectors();++i)
+        for( unsigned int i=0;i<getNumberOfDynamicPoolVectors();++i)
         {
 
             PoolVector<AllocationUnit<CullInfo> > &objects = getDynamicPoolVector(i);

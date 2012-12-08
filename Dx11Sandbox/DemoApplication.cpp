@@ -5,6 +5,7 @@
 #include "MaterialManager.h"
 #include "Material.h"
 #include "MeshManager.h"
+#include "TerrainRenderer.h"
 
 
 DemoApplication::DemoApplication()
@@ -106,14 +107,14 @@ void DemoApplication::createWorld(SceneManager* mngr)
     (*ro)->boundingSphere = D3DXVECTOR4( 0,0,0, FLT_MAX );
     (*ro)->mat = mat;
     (*ro)->mesh = mesh;
-    (*ro)->binIDFlag = mngr->getRenderBinHandler().getIDForBinName( Dx11Sandbox::RENDERBIN_SKYBOX );
+    (*ro)->binIDFlag = mngr->getRenderBinHandler().getIDForBinName( Dx11Sandbox::RenderBinHandler::RENDERBIN_SKYBOX );
 
     mat->setTexture("cubemap", L"skyboxCube.dds");
     TextureManager::getSingleton()->createTexture(device, L"skyboxCube.dds", L"skyboxCube.dds");
      
     //terrain
     mat = MaterialManager::getSingleton()->getOrCreateMaterial(device, L"terrain.fx", L"terrain1",MeshInputLayouts::POS3NORM3TEX2);
-    MeshUtility::createTerrainFromHeightMap(device,mngr, L"heightmapTerrain.png", mat,1000,1000,200,40,40,10);
+    MeshUtility::createTerrainFromHeightMap(device,mngr, L"heightmapTerrain.png", mat,1000,1000,200,20,20,10);
 
     //textures
     //mat->setTexture("texture1", L"roughRock.png");
@@ -132,13 +133,19 @@ void DemoApplication::createWorld(SceneManager* mngr)
     Dx11Sandbox::string name("waterPlane1");
     m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-60,340,340,200,200);
     
+    RenderBinHandler& bin = mngr->getRenderBinHandler();
+
+    bin.setRendererForBinWithName( "TERRAIN", new TerrainRenderer );
+    int priority = bin.getPriorityOfRenderBin( bin.getIDForBinName( RenderBinHandler::RENDERBIN_DEFAULT ) );
+    bin.setRenderPriorityForBin( priority + 1, bin.getIDForBinName( "TERRAIN" ) );
+   
    
 
 }
 void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime)
 {
     m_time += fElapsedTime;
-    handleInput(mngr,fElapsedTime, fTime);
+    handleInput(mngr,fElapsedTime, static_cast<float>( fTime ) );
 
     m_lastMaterial = 0;
 
@@ -199,7 +206,7 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
     {
             // Get current position of mouse
         GetCursorPos( &mousePos );
-        mousePosVec = D3DXVECTOR2(mousePos.x, mousePos.y);
+        mousePosVec = D3DXVECTOR2( static_cast<float>( mousePos.x ), static_cast<float>( mousePos.y ) );
         if(m_lastMousePos == D3DXVECTOR2(-1,-1))
         {
             m_lastMousePos = mousePosVec;
@@ -232,7 +239,7 @@ void DemoApplication::shutDown(SceneManager* mngr)
 
 void DemoApplication::renderingBin(std::vector< RenderBinHandler::PRIMITIVETYPE*> &primitives, RenderContext* state)
 {
-    for( int i = 0; i < primitives.size(); ++i )
+    for( unsigned int i = 0; i < primitives.size(); ++i )
     {
         RenderBinHandler::PRIMITIVETYPE* object = primitives[i];
         Material* mat = object->mat;

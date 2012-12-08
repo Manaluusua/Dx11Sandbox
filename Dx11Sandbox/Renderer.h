@@ -20,7 +20,7 @@ namespace Dx11Sandbox
 
         UINT32 rendererMask;
 
-        virtual void render(std::vector<CullInfo*> objects, RenderContext* state, Camera* camera) = 0;
+        virtual void render(std::vector<CullInfo*>& objects, RenderContext* state, Camera* camera) = 0;
         
 
     };

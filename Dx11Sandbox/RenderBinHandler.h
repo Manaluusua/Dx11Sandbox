@@ -14,11 +14,7 @@
 namespace Dx11Sandbox
 {
 
-    //some basic rendering bins
-    const std::string RENDERBIN_DEFAULT = "DEFAULT";
-    const std::string RENDERBIN_SKYBOX = "SKYBOX";
-    const std::string RENDERBIN_TRANSPARENT = "TRANSPARENT";
-    const std::string RENDERBIN_SCENEINPUT = "SCENEINPUT";
+
 
     class RenderContext;
     class Camera;
@@ -27,9 +23,17 @@ namespace Dx11Sandbox
     {
     public:
 
+
+
         typedef int IDTYPE;
         typedef std::string NAMETYPE;
         typedef CullInfo PRIMITIVETYPE;
+
+        //some basic rendering bins
+        static const std::string RENDERBIN_DEFAULT;
+        static const std::string RENDERBIN_SKYBOX;
+        static const std::string RENDERBIN_TRANSPARENT;
+        static const std::string RENDERBIN_SCENEINPUT;
 
         class RenderBinListener
         {

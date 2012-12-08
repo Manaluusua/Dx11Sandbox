@@ -1,15 +1,17 @@
 #include "MeshUtility.h"
 #include "MathUtil.h"
-#include "DXUT.h"
+
 #include "Mesh.h"
 #include "TextureManager.h"
 #include "Texture.h"
 #include "PixelBox.h"
 #include "Material.h"
-#include <cmath>
 #include "CullInfo.h"
 #include "MeshManager.h"
 #include "SceneManager.h"
+#include "IndexBuffer.h"
+#include "DXUT.h"
+#include <cmath>
 namespace Dx11Sandbox
 {
 
@@ -36,10 +38,10 @@ namespace Dx11Sandbox
         float heights[4];
         float temp,frac1 = map->getWidth()*x, frac2 = map->getHeight()*y;
 
-        UINT x1 = std::floor(frac1);
-        UINT y1 = std::floor(frac2);
-        UINT x2 = std::ceil(frac1);
-        UINT y2 = std::ceil(frac2);
+        UINT x1 = static_cast<UINT>( std::floor(frac1) );
+        UINT y1 = static_cast<UINT>( std::floor(frac2) );
+        UINT x2 = static_cast<UINT>( std::ceil(frac1) );
+        UINT y2 = static_cast<UINT>( std::ceil(frac2) );
 
         x2 = min(x2, map->getWidth()-1);
         y2 = min(y2, map->getHeight()-1);
@@ -449,12 +451,18 @@ namespace Dx11Sandbox
                 CullInfo** ci = mngr->allocateDynamic();
 
                 Mesh* mesh = MeshManager::getSingleton()->createMesh(terrainName + numberToString(pz*pagesX + px));
-                mesh->createIndexBuffer(device,(BYTE*)indices,indicesCount,DXGI_FORMAT_R32_UINT);
+
+                //mesh->createIndexBuffer(device,(BYTE*)indices,indicesCount,DXGI_FORMAT_R32_UINT);
+                //just create empty, non-allocated index buffer
+                mesh->setIndexBuffer( new IndexBuffer( DXGI_FORMAT_R32_UINT, indicesCount, 0 ) );
+                //create shadow buffer
+                mesh->getIndexBuffer()->setShadowBuffer( indices, 4 * indicesCount );
+
                 mesh->setVertexBuffer(vertices->getVertexBuffer());
                 (*ci)->mesh = mesh;
                 (*ci)->mat = mat;
                 (*ci)->boundingSphere = calculateBoundingSphereForPositions(indices,pwidth * pheight * 6 , positions);
-
+                (*ci)->binIDFlag = mngr->getRenderBinHandler().getIDForBinName("TERRAIN");
             }
         }
 

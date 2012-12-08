@@ -11,12 +11,7 @@ namespace Dx11Sandbox
 
     MeshManager::~MeshManager()
     {
-        MeshMapIterator it = m_loadedMeshes.begin();
-        while(it != m_loadedMeshes.end())
-        {
-            SAFE_DELETE(it->second);
-            ++it;
-        }
+       
         m_loadedMeshes.clear();
             
     }
@@ -46,7 +41,6 @@ namespace Dx11Sandbox
         auto iter = m_loadedMeshes.find(meshname);
         if(iter != m_loadedMeshes.end())
         {
-            SAFE_DELETE(iter->second);
             m_loadedMeshes.erase( iter );
         }
     }

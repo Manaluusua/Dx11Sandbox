@@ -8,12 +8,13 @@ namespace Dx11Sandbox
 
     class Mesh;
     class Material;
+
     class CullInfo
     {
-
-
-
     public:
+        typedef int CULLINFO_FLAGS;
+        static const CULLINFO_FLAGS CULLINFO_VISIBLE;
+
         CullInfo();
         ~CullInfo();
 
@@ -21,6 +22,7 @@ namespace Dx11Sandbox
         Mesh* mesh;
         Material* mat;
         int binIDFlag;
+        CULLINFO_FLAGS flags;
         
     };
 }

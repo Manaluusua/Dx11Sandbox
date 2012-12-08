@@ -2,7 +2,10 @@
 
 namespace Dx11Sandbox
 {
-
+    const std::string RenderBinHandler::RENDERBIN_DEFAULT = "DEFAULT";
+    const std::string RenderBinHandler::RENDERBIN_SKYBOX = "SKYBOX";
+    const std::string RenderBinHandler::RENDERBIN_TRANSPARENT = "TRANSPARENT";
+    const std::string RenderBinHandler::RENDERBIN_SCENEINPUT = "SCENEINPUT";
 
     RenderBinHandler::IDTYPE RenderBinHandler::m_nextBinID = 0;
 
@@ -15,9 +18,9 @@ namespace Dx11Sandbox
         IDTYPE sceneInputRB = getIDForBinName( RENDERBIN_SCENEINPUT );
 
         setRenderPriorityForBin( 0,defaultRB);
-        setRenderPriorityForBin( 1,skyboxRB);
-        setRenderPriorityForBin( 2,transparentRB);
-        setRenderPriorityForBin( 3,sceneInputRB);
+        setRenderPriorityForBin( 1,transparentRB);
+        setRenderPriorityForBin( 2,sceneInputRB);
+        setRenderPriorityForBin( 3,skyboxRB);
     }
 
     RenderBinHandler::~RenderBinHandler()

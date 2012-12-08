@@ -21,7 +21,7 @@ namespace Dx11Sandbox
     {
     }
 
-    void BasicRenderer::render(std::vector<CullInfo*> objects, RenderContext* state, Camera* camera)
+    void BasicRenderer::render(std::vector<CullInfo*>& objects, RenderContext* state, Camera* camera)
     {
 
 
@@ -30,13 +30,14 @@ namespace Dx11Sandbox
         D3DX11_TECHNIQUE_DESC techDesc;
         D3DX11_PASS_DESC passDesc;
 
-        for( int i = 0; i < objects.size(); ++i )
+        for( unsigned int i = 0; i < objects.size(); ++i )
         {
             const CullInfo* object = objects[i];
+
             Mesh* mesh = object->mesh;
             Material* mat = object->mat;
         
-            if(!mesh || !mat )
+            if(!mesh || !mat || !(object->flags & CullInfo::CULLINFO_VISIBLE) )
                 return;
         
             ID3DX11Effect* effect = mat->getEffect();

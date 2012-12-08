@@ -5,7 +5,7 @@
 #include <vector>
 #include "CommonUtilities.h"
 #include "RCObjectPtr.h"
-
+#include "RCObject.h"
 
 struct ID3D11Buffer;
 struct ID3D11Device;
@@ -17,7 +17,7 @@ namespace Dx11Sandbox
     class VertexBuffer;
     class IndexBuffer;
     class RenderContext;
-    class Mesh
+    class Mesh: public RCObject
     {
 
 

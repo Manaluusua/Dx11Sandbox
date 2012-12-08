@@ -4,8 +4,8 @@
 
 #include "RCObject.h"
 
-class ID3D11Buffer;
-class ID3D11DeviceContext;
+struct ID3D11Buffer;
+struct ID3D11DeviceContext;
 
 namespace Dx11Sandbox
 {
@@ -13,19 +13,19 @@ namespace Dx11Sandbox
         public RCObject
     {
     public:
-        GPUBuffer();
-        GPUBuffer( ID3D11Buffer* buffer );
+        
 
-        //void setDataToBuffer( ID3D11DeviceContext* context, void* data, int dataSize,  int offset = 0 );
-
-        void setDataFromBuffer( ID3D11DeviceContext* context, ID3D11Buffer* fromBuffer, int offset );
+        virtual void copyDataFromBuffer( ID3D11DeviceContext* context, GPUBuffer* buffer, UINT offsetInBytes = 0 );
+        virtual void setDataFromCPUBuffer( ID3D11DeviceContext* context, void* buffer, UINT size );
+        virtual void destroyGPUBuffer();
 
         virtual ~GPUBuffer();
 
         ID3D11Buffer* getBuffer();
 
     protected:
-
+        GPUBuffer();
+        GPUBuffer( ID3D11Buffer* buffer );
         //TO DO: copy
         DISABLE_COPY( GPUBuffer )
         ID3D11Buffer* m_buffer;

@@ -22,7 +22,7 @@ namespace Dx11Sandbox
     }
 
     VertexBuffer::VertexBuffer( UINT stride, UINT vertexCount, ID3D11Buffer* buffer )
-        :GPUBuffer( buffer ),
+        :ShadowCPUBuffer( buffer ),
         m_stride( stride ),
         m_vertexCount( vertexCount )
     {

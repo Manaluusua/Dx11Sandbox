@@ -2,13 +2,13 @@
 #define DX11SANDBOX_VERTEXBUFFER_H
 
 
-#include "GPUBuffer.h"
+#include "ShadowCPUBuffer.h"
 #include <D3D11.h>
 
 namespace Dx11Sandbox
 {
     class VertexBuffer :
-        public GPUBuffer
+        public ShadowCPUBuffer
     {
     public:
         VertexBuffer(void);

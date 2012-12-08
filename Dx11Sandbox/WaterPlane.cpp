@@ -34,9 +34,9 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 
     mngr->addRenderStartListener(this);
 
-    m_renderObject = Dx11Sandbox::MeshUtility::createFinitePlane(device,mngr,name,normal,d,extends1, extends2,tesselationX,tesselationY);
+    m_renderObject = Dx11Sandbox::MeshUtility::createFinitePlane(device,mngr,name,normal,d,extends1, extends2, static_cast<int>( tesselationX ), static_cast<int>( tesselationY ) );
     (*m_renderObject)->mat = Dx11Sandbox::MaterialManager::getSingleton()->getOrCreateMaterial(device, L"waterplane.fx",  L"waterplane",Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
-    (*m_renderObject)->binIDFlag = mngr->getRenderBinHandler().getIDForBinName( Dx11Sandbox::RENDERBIN_SCENEINPUT );
+    (*m_renderObject)->binIDFlag = mngr->getRenderBinHandler().getIDForBinName( Dx11Sandbox::RenderBinHandler::RENDERBIN_SCENEINPUT );
 
     //hack, always use same name. Later on take the name from name passed in to avoid name collision when multiple waterplanes in the scene
     Dx11Sandbox::wstring reflTexName = L"waterplanereflection";
@@ -56,9 +56,9 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 
 
     //some wave values
-    m_waves[0] = WaveDefinition(D3DXVECTOR2(1,0),0.6,50,15);
-    m_waves[1] = WaveDefinition(D3DXVECTOR2(0,1),0.5f,20,8);
-    m_waves[2] = WaveDefinition(D3DXVECTOR2(0.7f,0.07f),0.6f,30,18);
+    m_waves[0] = WaveDefinition(D3DXVECTOR2(1.f,0.f),0.6f,50.f,15.f);
+    m_waves[1] = WaveDefinition(D3DXVECTOR2(0.f,1.f),0.5f,20.f,8.f);
+    m_waves[2] = WaveDefinition(D3DXVECTOR2(0.7f,0.07f),0.6f,30.f,18.f);
     
     setupWaves();
 }
@@ -104,12 +104,15 @@ void WaterPlane::setupWaves()
 void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbox::SceneManager* mngr, double fTime, float fElapsedTime)
 {
 
+    //hide the plane when rendering stuff
+    (*m_renderObject)->flags &= 0xFFFFFFFE; 
+
     Dx11Sandbox::RenderBinHandler& rbhandler =  mngr->getRenderBinHandler();
 
     Dx11Sandbox::Camera& cam = mngr->getMainCamera();
 
     float originalFOV = cam.getFOVY();
-    cam.setFOVY( originalFOV * 1.2 );
+    cam.setFOVY( originalFOV * 1.2f );
 
     cam.setReflectionPlane(m_normal,m_d);
     context->clearState();
@@ -156,7 +159,7 @@ void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbo
     cam.calculateFrustrum(&frust);
     mngr->cullObjectsToRenderQueues(frust);
 
-    rbhandler.renderBinsUpToPriority( rbhandler.getPriorityOfRenderBin( rbhandler.getIDForBinName( Dx11Sandbox::RENDERBIN_SKYBOX ) ), context, &cam );
+    rbhandler.renderBinsUpToPriority( rbhandler.getPriorityOfRenderBin( rbhandler.getIDForBinName( Dx11Sandbox::RenderBinHandler::RENDERBIN_SKYBOX ) ), context, &cam );
 
 
     context->clearState();
@@ -178,7 +181,7 @@ void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbo
     cam.calculateFrustrum(&frust);
     mngr->cullObjectsToRenderQueues(frust);
 
-    rbhandler.renderBinsUpToPriority( rbhandler.getPriorityOfRenderBin( rbhandler.getIDForBinName( Dx11Sandbox::RENDERBIN_SKYBOX ) ), context, &cam );
+    rbhandler.renderBinsUpToPriority( rbhandler.getPriorityOfRenderBin( rbhandler.getIDForBinName( Dx11Sandbox::RenderBinHandler::RENDERBIN_SKYBOX ) ), context, &cam );
     
     context->clearState();
 
@@ -199,7 +202,7 @@ void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbo
     //cleanup
     context->bindBackBuffer();
 
-
+    (*m_renderObject)->flags |= 0x1; 
 
    
     clipplane = D3DXVECTOR4(0,0,0,0);
