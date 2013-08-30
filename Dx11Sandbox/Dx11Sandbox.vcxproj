@@ -44,7 +44,7 @@
     <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>E:\Ohjelmointi\Dx11Sandbox\Debug;$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\Debug;$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -54,13 +54,13 @@
     <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LibraryPath>E:\Ohjelmointi\Dx11Sandbox\Release;$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>..\Release;$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>E:\Ohjelmointi\Dx11Sandbox\External\Effects11\Inc;E:\Ohjelmointi\Dx11Sandbox\External\Effects11;E:\Ohjelmointi\Dx11Sandbox\External\DXUT11\Optional;E:\Ohjelmointi\Dx11Sandbox\External\DXUT11\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\External\Effects11\Inc;..\External\Effects11;..\External\DXUT11\Optional;..\External\DXUT11\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -74,7 +74,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>E:\Ohjelmointi\Dx11Sandbox\External\Effects11\Inc;E:\Ohjelmointi\Dx11Sandbox\External\Effects11;E:\Ohjelmointi\Dx11Sandbox\External\DXUT11\Optional;E:\Ohjelmointi\Dx11Sandbox\External\DXUT11\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\External\Effects11\Inc;..\External\Effects11;..\External\DXUT11\Optional;..\External\DXUT11\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -84,10 +84,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BasicRenderer.cpp" />
+    <ClCompile Include="BasicBinHandler.cpp" />
+    <ClCompile Include="Batcher.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommonUtilities.cpp" />
     <ClCompile Include="Compositor.cpp" />
+    <ClCompile Include="CullInfoManager.cpp" />
     <ClCompile Include="DemoApplication.cpp" />
     <ClCompile Include="Frustrum.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
@@ -101,15 +103,17 @@
     <ClCompile Include="MeshUtility.cpp" />
     <ClCompile Include="PixelBox.cpp" />
     <ClCompile Include="RCObject.cpp" />
+    <ClCompile Include="RenderBin.cpp" />
     <ClCompile Include="RenderBinHandler.cpp" />
-    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="CullInfo.cpp" />
     <ClCompile Include="RenderContext.cpp" />
+    <ClCompile Include="RenderObject.cpp" />
+    <ClCompile Include="RenderObjectManager.cpp" />
     <ClCompile Include="Root.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="ShadowCPUBuffer.cpp" />
     <ClCompile Include="SIMDCuller.cpp" />
-    <ClCompile Include="TerrainRenderer.cpp" />
+    <ClCompile Include="TerrainBinHandler.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -117,11 +121,13 @@
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BasicRenderer.h" />
+    <ClInclude Include="BasicBinHandler.h" />
+    <ClInclude Include="Batcher.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CommonUtilities.h" />
     <ClInclude Include="Compositor.h" />
     <ClInclude Include="Culler.h" />
+    <ClInclude Include="CullInfoManager.h" />
     <ClInclude Include="DemoApplication.h" />
     <ClInclude Include="DynamicPoolAllocator.h" />
     <ClInclude Include="Frustrum.h" />
@@ -138,16 +144,19 @@
     <ClInclude Include="RCObject.h" />
     <ClInclude Include="RCObjectPtr.h" />
     <ClInclude Include="RCReleasePtr.h" />
-    <ClInclude Include="RenderBinHandler.h" />
+    <ClInclude Include="RenderBin.h" />
+    <ClInclude Include="RenderObject.h" />
+    <ClInclude Include="RenderObjectManager.h" />
     <ClInclude Include="ShadowCPUBuffer.h" />
     <ClInclude Include="SIMDCuller.h" />
+    <ClInclude Include="Singleton.h" />
     <ClInclude Include="StaticPoolAllocator.h" />
-    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="RenderBinHandler.h" />
     <ClInclude Include="CullInfo.h" />
     <ClInclude Include="RenderContext.h" />
     <ClInclude Include="Root.h" />
     <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="TerrainRenderer.h" />
+    <ClInclude Include="TerrainBinHandler.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="VertexBuffer.h" />

@@ -6,7 +6,7 @@
 #include "Texture.h"
 #include "PixelBox.h"
 #include "Material.h"
-#include "CullInfo.h"
+#include "RenderObject.h"
 #include "MeshManager.h"
 #include "SceneManager.h"
 #include "IndexBuffer.h"
@@ -74,7 +74,7 @@ namespace Dx11Sandbox
 
     Mesh* MeshUtility::createSkyBoxMesh(ID3D11Device *device, const string& name)
     {
-        Mesh *mesh = MeshManager::getSingleton()->createMesh(name);
+        Mesh *mesh = MeshManager::singleton()->createMesh(name);
         if(!mesh)
             return 0;
 
@@ -168,7 +168,7 @@ namespace Dx11Sandbox
     }
 
 
-    CullInfo** MeshUtility::createFinitePlane(ID3D11Device *device,SceneManager* mngr, const string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, int tesselationFactorX, int tesselationFactorZ)
+    RenderObject* MeshUtility::createFinitePlane(ID3D11Device *device,SceneManager* mngr, const string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, int tesselationFactorX, int tesselationFactorZ)
     {
 
         assert( tesselationFactorX > 0 && tesselationFactorZ > 0 );
@@ -191,8 +191,8 @@ namespace Dx11Sandbox
         D3DXVec3Normalize(&vec1,&vec1);
         D3DXVec3Normalize(&vec2,&vec2);
 
-        CullInfo** ro = mngr->allocateDynamic();
-        Mesh* mesh = MeshManager::getSingleton()->createMesh(name + "Mesh");
+		RenderObject* ro = mngr->CreateRenderObject();
+        Mesh* mesh = MeshManager::singleton()->createMesh(name + "Mesh");
         
         //
         float x=0, y=0, z=0;
@@ -256,9 +256,8 @@ namespace Dx11Sandbox
 
         mesh->createIndexBuffer(device,(BYTE*)indices,indicesCount,DXGI_FORMAT_R32_UINT);
 
-        (*ro)->mesh = mesh;
-        (*ro)->mat = 0;
-        (*ro)->boundingSphere = calculateBoundingSphereForPositions(indices,indicesCount , positions);
+		ro->setMesh( mesh );
+		ro->setBoundingSphere( calculateBoundingSphereForPositions(indices,indicesCount , positions) );
 
         delete[] positions;
         delete[] normals;
@@ -328,8 +327,8 @@ namespace Dx11Sandbox
 
     void MeshUtility::createTerrainFromHeightMap(ID3D11Device *device, SceneManager* mngr, const  wstring& heightmapName,Material* mat, float scaleX, float scaleZ,float scaleY, unsigned int pagesX, unsigned int pagesZ, unsigned int tesselationFactor)
     {
-        TextureManager::getSingleton()->createTexture(device, heightmapName, heightmapName, D3D11_CPU_ACCESS_READ, D3D11_USAGE_STAGING);
-        Texture *tex = TextureManager::getSingleton()->getTexture(heightmapName);
+        TextureManager::singleton()->createTexture(device, heightmapName, heightmapName, D3D11_CPU_ACCESS_READ, D3D11_USAGE_STAGING);
+        Texture *tex = TextureManager::singleton()->getTexture(heightmapName);
 
         
         float pageSizeX = scaleX/pagesX;
@@ -366,7 +365,7 @@ namespace Dx11Sandbox
 
         
         string tempMeshName = terrainName + "Vertices";
-        Mesh* vertices = MeshManager::getSingleton()->createMesh(tempMeshName);
+        Mesh* vertices = MeshManager::singleton()->createMesh(tempMeshName);
         
         //
         float x, y, z;
@@ -448,9 +447,9 @@ namespace Dx11Sandbox
                 }
                 
                 //create object
-                CullInfo** ci = mngr->allocateDynamic();
+				RenderObject* obj = mngr->CreateRenderObject();
 
-                Mesh* mesh = MeshManager::getSingleton()->createMesh(terrainName + numberToString(pz*pagesX + px));
+                Mesh* mesh = MeshManager::singleton()->createMesh(terrainName + numberToString(pz*pagesX + px));
 
                 //mesh->createIndexBuffer(device,(BYTE*)indices,indicesCount,DXGI_FORMAT_R32_UINT);
                 //just create empty, non-allocated index buffer
@@ -459,10 +458,10 @@ namespace Dx11Sandbox
                 mesh->getIndexBuffer()->setShadowBuffer( indices, 4 * indicesCount );
 
                 mesh->setVertexBuffer(vertices->getVertexBuffer());
-                (*ci)->mesh = mesh;
-                (*ci)->mat = mat;
-                (*ci)->boundingSphere = calculateBoundingSphereForPositions(indices,pwidth * pheight * 6 , positions);
-                (*ci)->binIDFlag = mngr->getRenderBinHandler().getIDForBinName("TERRAIN");
+				obj->setMesh( mesh );
+				obj->setMaterial( mat );
+				obj->setBoundingSphere( calculateBoundingSphereForPositions(indices,pwidth * pheight * 6 , positions) );
+				obj->setBinFlags( mngr->getRenderBin().getIDForBinName("TERRAIN") );
             }
         }
 
@@ -476,8 +475,8 @@ namespace Dx11Sandbox
         //
         
 
-        MeshManager::getSingleton()->destroyMesh( tempMeshName );
-        TextureManager::getSingleton()->releaseTexture(heightmapName);
+        MeshManager::singleton()->destroyMesh( tempMeshName );
+        TextureManager::singleton()->releaseTexture(heightmapName);
 
     }
 

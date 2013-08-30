@@ -40,7 +40,7 @@ private:
 
     WaveDefinition m_waves[WATERPLANE_WAVECOUNT];
     D3DXVECTOR3 m_normal;
-    Dx11Sandbox::CullInfo** m_renderObject;
+    Dx11Sandbox::RenderObject* m_renderObject;
     Dx11Sandbox::Texture* m_reflection;
     Dx11Sandbox::Texture* m_refraction;
     Dx11Sandbox::Texture* m_normalMap;

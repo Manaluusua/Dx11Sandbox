@@ -3,8 +3,6 @@
 namespace Dx11Sandbox
 {
 
-    MaterialManager* MaterialManager::m_instance = 0;
-
     MaterialManager::MaterialManager()
     {
     }
@@ -12,12 +10,6 @@ namespace Dx11Sandbox
 
     MaterialManager::~MaterialManager()
     {
-        MaterialMapIterator it = m_loadedMaterials.begin();
-        while(it != m_loadedMaterials.end())
-        {
-            SAFE_DELETE(it->second);
-            ++it;
-        }
         m_loadedMaterials.clear();
             
     }
@@ -66,7 +58,6 @@ namespace Dx11Sandbox
         Material* mat = getMaterial(matname);
         if(mat)
         {
-            SAFE_DELETE(mat);
             m_loadedMaterials.erase(matname);
             return true;
         }else
@@ -83,19 +74,6 @@ namespace Dx11Sandbox
             return 0;
     }
 
-    MaterialManager* const MaterialManager::getSingleton()
-    {
-        if(!m_instance)
-        {
-            m_instance = new MaterialManager();
-        }
-        return m_instance;
-    }
-
-    void MaterialManager::destroyMaterialManager()
-    {
-        SAFE_DELETE(m_instance);
-    }
 
 
 }

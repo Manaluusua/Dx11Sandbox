@@ -111,7 +111,7 @@ namespace Dx11Sandbox
             if(var->IsValid())
             {
                 ID3DX11EffectShaderResourceVariable* texResource = var->AsShaderResource();
-                Texture* tex = TextureManager::getSingleton()->getTexture(iter->second);
+                Texture* tex = TextureManager::singleton()->getTexture(iter->second);
                 if(tex)
                 {
                     texResource->SetResource(tex->GetShaderResourceView());

@@ -3,7 +3,6 @@
 
 namespace Dx11Sandbox
 {
-    TextureManager* TextureManager::m_instance = 0;
 
     TextureManager::TextureManager()
     {
@@ -112,19 +111,6 @@ namespace Dx11Sandbox
             return 0;
     }
 
-    TextureManager* const TextureManager::getSingleton()
-    {
-        if(!m_instance)
-        {
-            m_instance = new TextureManager();
-        }
-        return m_instance;
-    }
-
-    void TextureManager::destroyTextureManager()
-    {
-        SAFE_DELETE(m_instance);
-    }
 
 
     

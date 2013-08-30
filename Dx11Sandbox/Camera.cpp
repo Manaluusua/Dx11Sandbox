@@ -3,12 +3,13 @@
 namespace Dx11Sandbox
 {
     Camera::Camera(void)
-        :m_fovy(0),
+        :m_up(0,1,0),
+        m_translation(0,0,0),
+		m_fovy(0),
         m_aspectRatio(0),
         m_near(0),
         m_far(0),
-        m_up(0,1,0),
-        m_translation(0,0,0),
+		m_cameraPriority(0),
         m_cacheValid(false),
         m_reflected(false)
         
@@ -109,6 +110,20 @@ namespace Dx11Sandbox
         return m_far;
     }
 
+	void Camera::setCameraPriority(INT32 priority)
+	{
+		m_cameraPriority = priority;
+	}
+		
+
+        
+
+	INT32 Camera::getCameraPriority() const
+	{
+		return m_cameraPriority;
+	}
+
+
     void  Camera::setTranslation(FLOAT x, FLOAT y, FLOAT z)
     {
         m_cacheValid = false;
@@ -192,7 +207,7 @@ namespace Dx11Sandbox
         m_cacheValid = true;
     }
 
-
+	
     void Camera::moveCameraViewRelative(FLOAT x, FLOAT y, FLOAT z)
     {
         D3DXVECTOR3 dir(0,0,1);

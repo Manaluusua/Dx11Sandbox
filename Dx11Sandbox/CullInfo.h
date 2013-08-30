@@ -1,13 +1,12 @@
-#ifndef DX11SANDBOX_RENDEROBJECT_H
-#define DX11SANDBOX_RENDEROBJECT_H
+#ifndef DX11SANDBOX_CULLINFO_H
+#define DX11SANDBOX_CULLINFO_H
 #include <BaseTsd.h>
 #include <d3dx9math.h>
 
 namespace Dx11Sandbox
 {
 
-    class Mesh;
-    class Material;
+	class RenderObject;
 
     class CullInfo
     {
@@ -19,8 +18,7 @@ namespace Dx11Sandbox
         ~CullInfo();
 
         D3DXVECTOR4 boundingSphere;
-        Mesh* mesh;
-        Material* mat;
+        RenderObject* object;
         int binIDFlag;
         CULLINFO_FLAGS flags;
         

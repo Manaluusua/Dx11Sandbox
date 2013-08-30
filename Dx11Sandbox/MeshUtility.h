@@ -10,7 +10,7 @@ namespace Dx11Sandbox
     class Material;
     class PixelBox;
     class SceneManager;
-    class CullInfo;
+    class RenderObject;
     class MeshUtility
     {
     public:
@@ -20,7 +20,7 @@ namespace Dx11Sandbox
         static D3DXVECTOR4 calculateBoundingSphereForPositions(const UINT32 *indices,UINT numIndices,const D3DXVECTOR3* positions);
 
         static Mesh* createSkyBoxMesh(ID3D11Device *device, const string& name);
-        static CullInfo** createFinitePlane(ID3D11Device *device,SceneManager* mngr, const string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, int tesselationFactorX=1, int tesselationFactorZ=1); 
+        static RenderObject* createFinitePlane(ID3D11Device *device,SceneManager* mngr, const string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, int tesselationFactorX=1, int tesselationFactorZ=1); 
 
         static void createTerrainFromHeightMap(ID3D11Device *device, SceneManager* mngr, const  wstring& heightmapName,Material* mat, float scaleX, float scaleZ,float scaleY, unsigned int pagesX=10, unsigned int pagesZ=10, unsigned int tesselationFactor=100.f);
     private:

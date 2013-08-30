@@ -5,13 +5,14 @@
 #include "CommonUtilities.h"
 #include "DXUT.h"
 #include "SDKmisc.h"
+#include "RCObject.h"
 #include <d3dx11effect.h>
 #include "ILDescriptions.h"
 
 namespace Dx11Sandbox
 {
     class RenderContext;
-    class Material
+    class Material : public RCObject
     {
     public:
 

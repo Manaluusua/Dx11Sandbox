@@ -3,18 +3,21 @@
 
 #include "CommonUtilities.h"
 #include "RCObjectPtr.h"
+#include "Singleton.h"
 #include <map>
 
 namespace Dx11Sandbox
 {
     class Mesh;
-    typedef std::map<string, RCObjectPtr< Mesh > >::iterator MeshMapIterator;
-    class MeshManager
-    {
-    public:
 
-        static MeshManager* const getSingleton();
-        static void destroyMeshManager();
+    typedef std::map<string, RCObjectPtr< Mesh > >::iterator MeshMapIterator;
+
+    class MeshManager : public Singleton<MeshManager>
+    {
+
+		 SINGLETON(MeshManager)
+    public:
+		
         
         Mesh* getMesh(const string& meshname);
         Mesh* createMesh(const string& meshname);
@@ -24,7 +27,6 @@ namespace Dx11Sandbox
     private:
         MeshManager();
         DISABLE_COPY(MeshManager)
-        static MeshManager* m_instance;
         std::map<string, RCObjectPtr< Mesh > > m_loadedMeshes;
     };
 }

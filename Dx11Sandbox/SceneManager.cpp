@@ -1,27 +1,28 @@
 #include "SceneManager.h"
 #include "Root.h"
 #include "TextureManager.h"
+#include "CullInfoManager.h"
 #include "Material.h"
 #include "MaterialManager.h"
 #include "MeshUtility.h"
 #include "MeshManager.h"
 #include "Mesh.h"
-#include "BasicRenderer.h"
+#include "BasicBinHandler.h"
 #include "Frustrum.h"
 #include "CullInfo.h"
 #include "SIMDCuller.h"
 namespace Dx11Sandbox
 {
     SceneManager::SceneManager(Root* root)
-        :DynamicPoolAllocator( 200 ),
-        m_root(root),
-        m_renderBinHandler( new BasicRenderer() ),
+        :m_root(root),
+        m_RenderBin( new BasicBinHandler() ),
         m_renderContext(),
         m_culler(new SIMDCuller()),
         m_screenWidth(0),
         m_screenHeight(0)
     {
-        
+        m_mainCamera = new Camera;
+		addCamera(m_mainCamera);
 
     }
 
@@ -41,9 +42,12 @@ namespace Dx11Sandbox
 
     void SceneManager::destroyManagers()
     {
-        TextureManager::destroyTextureManager();
-        MaterialManager::destroyMaterialManager();
-        MeshManager::destroyMeshManager();
+		TextureManager::destroyInstance();
+        MaterialManager::destroyInstance();
+        MeshManager::destroyInstance();
+		
+		CullInfoManager::destroyInstance();
+		
     }
 
     void SceneManager::addRenderStartListener(RenderStartListener* l)
@@ -56,16 +60,44 @@ namespace Dx11Sandbox
         m_renderStartListeners.erase(l);
     }
 
+	void addCamera(RCObjectPtr<Camera> camera);
+		void removeCamera(RCObjectPtr<Camera> camera);
 
-
-    Camera& SceneManager::getMainCamera()
+    RCObjectPtr<Camera> SceneManager::getMainCamera()
     {
         return m_mainCamera;
     }
 
-    RenderBinHandler& SceneManager::getRenderBinHandler()
+	void SceneManager::addCamera(RCObjectPtr<Camera> camera){
+		if(camera == 0) return;
+
+		INT32 priority = camera->getCameraPriority();
+		m_cameras[priority].push_back(camera);
+
+	}
+
+
+	void SceneManager::removeCamera(RCObjectPtr<Camera> camera){
+		if(camera == 0) return;
+
+		INT32 priority = camera->getCameraPriority();
+		if(m_cameras.find(priority) == m_cameras.end()) return;
+
+		std::vector<RCObjectPtr<Camera> >& vec = m_cameras[priority];
+
+		for(int i = 0; i < vec.size(); ++i)
+		{
+			if(vec[i].rawPtr() == camera.rawPtr()){
+				vec.erase(vec.begin() + i );
+				--i;
+			}
+		}
+
+	}
+
+    RenderBin& SceneManager::getRenderBin()
     {
-        return m_renderBinHandler;
+        return m_RenderBin;
     }
 
     RenderContext& SceneManager::getRenderContext()
@@ -88,7 +120,7 @@ namespace Dx11Sandbox
     {
          // Setup the camera's projection parameters
         float aspectRatio = pBackBufferSurfaceDesc->Width / ( FLOAT )pBackBufferSurfaceDesc->Height;
-        m_mainCamera.setProjection(D3DX_PI / 4, aspectRatio, 0.1f, 800.0f);
+        m_mainCamera->setProjection(D3DX_PI / 4, aspectRatio, 0.1f, 800.0f);
 
         m_screenWidth = pBackBufferSurfaceDesc->Width;
         m_screenHeight = pBackBufferSurfaceDesc->Height;
@@ -107,13 +139,14 @@ namespace Dx11Sandbox
 
     void SceneManager::destroyWorld()
     {
+		DestroyAllRenderObjects();
         clearRenderQueues();
-        deallocateDynamicAll();
+		CullInfoManager::singleton()->deallocateAll();
     }
 
     void SceneManager::clearRenderQueues()
     {
-        m_renderBinHandler.clearBins();
+        m_RenderBin.clearBins();
     }
 
     void SceneManager::update(double fTime, float fElapsedTime)
@@ -142,17 +175,34 @@ namespace Dx11Sandbox
         //pd3dImmediateContext->ClearRenderTargetView( DXUTGetD3D11RenderTargetView(), ClearColor );
         pd3dImmediateContext->ClearDepthStencilView( DXUTGetD3D11DepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0 );
 
-        renderScene( fTime,fElapsedTime, &m_mainCamera);
+        renderScene();
     }
 
-    void SceneManager::renderScene( double fTime, float fElapsedTime, Camera* cam)
+    void SceneManager::renderScene()
     {
         
         m_renderContext.clearState();
-        Frustrum frust;
-        cam->calculateFrustrum(&frust);
-        cullObjectsToRenderQueues(frust);
-        m_renderBinHandler.renderAllBins( &m_renderContext, cam );
+
+		auto iterator = m_cameras.begin();
+
+		//iterate through camera
+		while(iterator != m_cameras.end()){
+			auto vec = iterator->second;
+
+			for( int i = 0; i < vec.size(); ++i)
+			{
+				RCObjectPtr<Camera> cam = vec[i];
+				Frustrum frust;
+				cam->calculateFrustrum(&frust);
+				cullObjectsToRenderQueues(frust);
+				m_RenderBin.renderAllBins( &m_renderContext, cam );
+				
+			}
+
+			++iterator;
+		}
+
+       
        
     }
 
@@ -167,14 +217,14 @@ namespace Dx11Sandbox
 
         m_cachedVisibleList.clear();
 
-        for( unsigned int i=0;i<getNumberOfDynamicPoolVectors();++i)
+		for( unsigned int i=0;i<CullInfoManager::singleton()->getNumberOfPools();++i)
         {
 
-            PoolVector<AllocationUnit<CullInfo> > &objects = getDynamicPoolVector(i);
+			CullInfoPool &objects = CullInfoManager::singleton()->getCullInfoPool(i);
             m_culler->cull(frust,objects,m_cachedVisibleList);
         }
 
-        m_renderBinHandler.appendPrimitivesToBins( m_cachedVisibleList );
+        m_RenderBin.appendPrimitivesToBins( m_cachedVisibleList );
 
 
     }

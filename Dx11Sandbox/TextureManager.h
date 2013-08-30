@@ -2,18 +2,19 @@
 #define DX11SANDBOX_TEXTUREMANAGER_H
 
 #include <map>
-#include "CommonUtilities.h"
 #include <DXUT.h>
+#include "CommonUtilities.h"
+
+#include "Singleton.h"
 
 namespace Dx11Sandbox
 {
     class Texture;
     typedef std::map<wstring, Texture*>::iterator TextureMapIterator;
-    class TextureManager
+    class TextureManager : public Singleton<TextureManager>
     {
+		SINGLETON(TextureManager)
     public:
-        static TextureManager* const getSingleton();
-        static void destroyTextureManager();
 
         
         virtual ~TextureManager();
@@ -39,7 +40,6 @@ namespace Dx11Sandbox
         DISABLE_COPY(TextureManager)
         TextureManager();
 
-        static TextureManager* m_instance;
         std::map<wstring, Texture*> m_loadedTextures;
     };
 }

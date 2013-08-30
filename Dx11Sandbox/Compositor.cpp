@@ -14,7 +14,7 @@ namespace Dx11Sandbox
     {
         if(m_initialized)
             return;
-        TextureManager *mngr = TextureManager::getSingleton();
+		TextureManager *mngr = TextureManager::singleton();
 
 
         m_textures[0] = mngr->createTexture2D(device, L"CompositorTex1",texWidth, texHeight,1, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE, DXGI_FORMAT_R32G32B32A32_FLOAT,0,D3D11_USAGE_DYNAMIC);
@@ -26,7 +26,7 @@ namespace Dx11Sandbox
 
     Compositor::~Compositor()
     {
-        TextureManager *mngr = TextureManager::getSingleton();
+        TextureManager *mngr = TextureManager::singleton();
         mngr->releaseTexture(L"CompositorTex1");
         mngr->releaseTexture(L"CompositorTex2");
     }

@@ -4,8 +4,9 @@
 #include "ILDescriptions.h"
 #include <vector>
 #include "CommonUtilities.h"
-#include "RCObjectPtr.h"
 #include "RCObject.h"
+#include "RCObjectPtr.h"
+
 
 struct ID3D11Buffer;
 struct ID3D11Device;

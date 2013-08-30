@@ -2,7 +2,6 @@
 #include "Mesh.h"
 namespace Dx11Sandbox
 {
-    MeshManager* MeshManager::m_instance = 0;
 
     MeshManager::MeshManager()
     {
@@ -55,18 +54,4 @@ namespace Dx11Sandbox
         return mesh;
     }
 
-    MeshManager* const MeshManager::getSingleton()
-    {
-        if(!m_instance)
-        {
-            m_instance = new MeshManager();
-        }
-        return m_instance;
-    }
-
-
-    void MeshManager::destroyMeshManager()
-    {
-        SAFE_DELETE(m_instance);
-    }
 }

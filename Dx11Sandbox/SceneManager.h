@@ -7,7 +7,8 @@
 #include "DynamicPoolAllocator.h"
 #include "RCObjectPtr.h"
 #include "CullInfo.h"
-#include "RenderBinHandler.h"
+#include "RenderBin.h"
+#include "RenderObjectManager.h"
 
 #include "DXUT.h"
 #include <map>
@@ -18,7 +19,7 @@
 namespace Dx11Sandbox
 {
     class Material;
-    class Renderer;
+    class RenderBinHandler;
     class RenderContext;
     class SceneManager;
     class Frustrum;
@@ -26,7 +27,7 @@ namespace Dx11Sandbox
 
     
     
-    // renderer listener to listen and act for rendering events
+    // RenderBinHandler listener to listen and act for rendering events
     class RenderStartListener
     {
     public:
@@ -36,7 +37,7 @@ namespace Dx11Sandbox
 
     
 
-    class SceneManager: public DynamicPoolAllocator<CullInfo>
+    class SceneManager : public RenderObjectManager
     {
     friend class Root;
     public:
@@ -45,24 +46,24 @@ namespace Dx11Sandbox
 
         virtual ~SceneManager(void);
 
-        void renderScene( double fTime, float fElapsedTime,  Camera* cam);
+        void renderScene( );
 
-        Camera& getMainCamera();
+        RCObjectPtr<Camera> getMainCamera();
         RenderContext& getRenderContext();
 
-        Renderer* getDefaultRenderer();
         UINT getScreenWidth() const;
         UINT getScreenHeight() const;
 
 
-        RenderBinHandler& getRenderBinHandler();
+        RenderBin& getRenderBin();
 
         //listeners
         void addRenderStartListener(RenderStartListener* l);
         void removeRenderStartListener(RenderStartListener* l);
 
         
-
+		void addCamera(RCObjectPtr<Camera> camera);
+		void removeCamera(RCObjectPtr<Camera> camera);
         
 
 
@@ -80,9 +81,9 @@ namespace Dx11Sandbox
         void clearRenderQueues();
         void destroyManagers();
 
-        Camera  m_mainCamera;
+		std::map<INT32, std::vector<RCObjectPtr<Camera> > > m_cameras;
 
-        RenderBinHandler    m_renderBinHandler;
+        RenderBin    m_RenderBin;
 
         std::set<RenderStartListener*> m_renderStartListeners;
 
@@ -90,7 +91,7 @@ namespace Dx11Sandbox
         
         RCObjectPtr<Culler> m_culler;
 
-        
+        RCObjectPtr<Camera> m_mainCamera;
 
         Root* m_root;
 

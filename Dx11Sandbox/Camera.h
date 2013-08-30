@@ -3,10 +3,11 @@
 #include <D3D11.h>
 #include "MathUtil.h"
 #include "Frustrum.h"
+#include "RCObject.h"
 
 namespace Dx11Sandbox
 {
-    class Camera
+    class Camera : public RCObject 
     {
     public:
         Camera(void);
@@ -41,32 +42,39 @@ namespace Dx11Sandbox
         void setNearPlane( FLOAT nearPlane );
         void setFarPlane( FLOAT farPlane );
 
+		void setCameraPriority(INT32 priority);
+
+
         FLOAT getFOVY() const;
         FLOAT getAspectRatio() const;
         FLOAT getNearPlane() const;
         FLOAT getFarPlance() const;
 
+		INT32 getCameraPriority() const;
+
         void calculateFrustrum(Dx11Sandbox::Frustrum* frustrum);
 
     private:
-
-        FLOAT m_fovy;
-        FLOAT m_aspectRatio;
-        FLOAT m_near;
-        FLOAT m_far;
-
-        D3DXVECTOR3 m_up;
-
-        D3DXVECTOR3 m_translation;
-        D3DXQUATERNION m_orientation;
-
-        bool m_cacheValid;
-
 
         D3DXMATRIX m_viewMatrix;
         D3DXMATRIX m_projMatrix;
 
         D3DXMATRIX m_reflMatrix;
+
+		D3DXQUATERNION m_orientation;
+
+        D3DXVECTOR3 m_up;
+
+        D3DXVECTOR3 m_translation;
+
+		FLOAT m_fovy;
+        FLOAT m_aspectRatio;
+        FLOAT m_near;
+        FLOAT m_far;
+
+		INT32 m_cameraPriority;
+
+		bool m_cacheValid;
 
         bool m_reflected;
     };

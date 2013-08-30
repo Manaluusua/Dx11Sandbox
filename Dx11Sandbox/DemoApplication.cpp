@@ -5,8 +5,8 @@
 #include "MaterialManager.h"
 #include "Material.h"
 #include "MeshManager.h"
-#include "TerrainRenderer.h"
-
+#include "TerrainBinHandler.h"
+#include "RenderObject.h"
 
 DemoApplication::DemoApplication()
     :m_leftDown(false),
@@ -83,37 +83,37 @@ void DemoApplication::createWorld(SceneManager* mngr)
 {
     
     m_mngr = mngr;
-    Camera& cam = mngr->getMainCamera();
+    RCObjectPtr<Camera> cam = mngr->getMainCamera();
 
     ID3D11Device* device = mngr->getRenderContext().getDevice();
     //camera
     D3DXVECTOR3 vecEye( 0.0f, 90.0f, 60.0f );
     D3DXVECTOR3 vecAt ( 0.0f, 88.0f, 70.0f );
     D3DXVECTOR3 up (0.0f,1.0f,0.0f);
-    cam.lookAt(vecEye, vecAt, up);
+    cam->lookAt(vecEye, vecAt, up);
         
-    mngr->getRenderBinHandler().addRenderBinListener( this );
+    mngr->getRenderBin().addRenderBinListener( this );
 
         
     //objects
     Material* mat = 0; 
     Mesh* mesh = 0; 
-    CullInfo **ro;
+    RenderObject *ro;
 
     //skybox
-    mat = MaterialManager::getSingleton()->getOrCreateMaterial(device, L"skybox.fx", L"skybox",MeshInputLayouts::POS3TEX3);
+    mat = MaterialManager::singleton()->getOrCreateMaterial(device, L"skybox.fx", L"skybox",MeshInputLayouts::POS3TEX3);
     mesh = MeshUtility::createSkyBoxMesh(device, "skybox" + generateID());
-    ro = mngr->allocateDynamic();
-    (*ro)->boundingSphere = D3DXVECTOR4( 0,0,0, FLT_MAX );
-    (*ro)->mat = mat;
-    (*ro)->mesh = mesh;
-    (*ro)->binIDFlag = mngr->getRenderBinHandler().getIDForBinName( Dx11Sandbox::RenderBinHandler::RENDERBIN_SKYBOX );
+	ro = mngr->CreateRenderObject();
+	ro->setBoundingSphere( D3DXVECTOR4( 0,0,0, FLT_MAX ) );
+	ro->setMaterial( mat );
+	ro->setMesh( mesh );
+	ro->setBinFlags( mngr->getRenderBin().getIDForBinName( Dx11Sandbox::RenderBin::RENDERBIN_SKYBOX ) );
 
     mat->setTexture("cubemap", L"skyboxCube.dds");
-    TextureManager::getSingleton()->createTexture(device, L"skyboxCube.dds", L"skyboxCube.dds");
+    TextureManager::singleton()->createTexture(device, L"skyboxCube.dds", L"skyboxCube.dds");
      
     //terrain
-    mat = MaterialManager::getSingleton()->getOrCreateMaterial(device, L"terrain.fx", L"terrain1",MeshInputLayouts::POS3NORM3TEX2);
+    mat = MaterialManager::singleton()->getOrCreateMaterial(device, L"terrain.fx", L"terrain1",MeshInputLayouts::POS3NORM3TEX2);
     MeshUtility::createTerrainFromHeightMap(device,mngr, L"heightmapTerrain.png", mat,1000,1000,200,20,20,10);
 
     //textures
@@ -122,8 +122,13 @@ void DemoApplication::createWorld(SceneManager* mngr)
 
 
     mat->setTexture("texture2", L"grass.jpg");
-    TextureManager::getSingleton()->createTexture(device, L"grass.jpg", L"grass.jpg");
+    TextureManager::singleton()->createTexture(device, L"grass.jpg", L"grass.jpg");
 
+	RenderBin& bin = mngr->getRenderBin();
+
+    bin.setRenderBinHandlerForBinWithName( "TERRAIN", new TerrainBinHandler );
+    int priority = bin.getPriorityOfRenderBin( bin.getIDForBinName( RenderBin::RENDERBIN_DEFAULT ) );
+    bin.setRenderPriorityForBin( priority + 1, bin.getIDForBinName( "TERRAIN" ) );
     //mat->setTexture("textureWeights", L"terrainweights.png");
     //TextureManager::getSingleton()->createTexture(device, L"terrainweights.png", L"terrainweights.png");
 
@@ -133,11 +138,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
     Dx11Sandbox::string name("waterPlane1");
     m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-60,340,340,200,200);
     
-    RenderBinHandler& bin = mngr->getRenderBinHandler();
-
-    bin.setRendererForBinWithName( "TERRAIN", new TerrainRenderer );
-    int priority = bin.getPriorityOfRenderBin( bin.getIDForBinName( RenderBinHandler::RENDERBIN_DEFAULT ) );
-    bin.setRenderPriorityForBin( priority + 1, bin.getIDForBinName( "TERRAIN" ) );
+    
    
    
 
@@ -154,7 +155,7 @@ void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime
 
 void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTime)
 {
-    Camera& cam = mngr->getMainCamera();
+    RCObjectPtr<Camera> cam = mngr->getMainCamera();
 
     //cam movement
     //keyboard
@@ -189,7 +190,7 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 
     if(mov!=D3DXVECTOR3(0,0,0))
     {
-        cam.moveCameraViewRelative(mov.x, mov.y, mov.z);
+        cam->moveCameraViewRelative(mov.x, mov.y, mov.z);
     }
 
 
@@ -227,7 +228,7 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 
     if(m_mouseDelta != D3DXVECTOR2(0,0))
     {
-        cam.rotateCameraViewRelative(-m_mouseDelta.y*mouseSens*dt ,-m_mouseDelta.x*mouseSens*dt, 0);
+        cam->rotateCameraViewRelative(-m_mouseDelta.y*mouseSens*dt ,-m_mouseDelta.x*mouseSens*dt, 0);
     }
 
 }
@@ -237,12 +238,12 @@ void DemoApplication::shutDown(SceneManager* mngr)
 }
 
 
-void DemoApplication::renderingBin(std::vector< RenderBinHandler::PRIMITIVETYPE*> &primitives, RenderContext* state)
+void DemoApplication::renderingBin(std::vector< RenderBin::PRIMITIVETYPE*> &primitives, RenderContext* state)
 {
     for( unsigned int i = 0; i < primitives.size(); ++i )
     {
-        RenderBinHandler::PRIMITIVETYPE* object = primitives[i];
-        Material* mat = object->mat;
+        RenderBin::PRIMITIVETYPE* object = primitives[i];
+		Material* mat = object->object->getMaterial();
 
         //new pass, don't try to skip effect state setting
     
@@ -252,15 +253,15 @@ void DemoApplication::renderingBin(std::vector< RenderBinHandler::PRIMITIVETYPE*
         m_lastMaterial = mat;
 
         //D3DXMATRIX *world;
-        const D3DXMATRIX *view = m_mngr->getMainCamera().getViewMatrix();
-        const D3DXMATRIX *proj = m_mngr->getMainCamera().getProjectionMatrix();
+        const D3DXMATRIX *view = m_mngr->getMainCamera()->getViewMatrix();
+        const D3DXMATRIX *proj = m_mngr->getMainCamera()->getProjectionMatrix();
         D3DXMATRIX viewProj =  (*view) * (*proj);
 
         //temp
         D3DXVECTOR4 sunDir( std::cos( m_time ), 0.f, std::sin( m_time ),0 );
         D3DXVec4Normalize(&sunDir, &sunDir);
         D3DXVECTOR4 sunCol(1.0f,1.f,1.f,0);
-        D3DXVECTOR3 transl = -(*m_mngr->getMainCamera().getTranslation());
+        D3DXVECTOR3 transl = -(*m_mngr->getMainCamera()->getTranslation());
         D3DXVECTOR4 camPos(transl.x, transl.y, transl.z, 1);
 
         ID3DX11Effect* effect =  mat->getEffect();

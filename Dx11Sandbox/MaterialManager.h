@@ -2,6 +2,8 @@
 #define DX11SANDBOX_MATERIALMANAGER_H
 #include <map>
 #include "CommonUtilities.h"
+#include "Singleton.h"
+#include "RCObjectPtr.h"
 #include <DXUT.h>
 #include "ILDescriptions.h"
 
@@ -9,11 +11,11 @@ namespace Dx11Sandbox
 {
     class Material;
     typedef std::map<wstring, Material*>::iterator MaterialMapIterator;
-    class MaterialManager
+    class MaterialManager : public Singleton<MaterialManager>
     {
+		SINGLETON(MaterialManager)
     public:
-        static MaterialManager* const getSingleton();
-        static void destroyMaterialManager();
+
 
         virtual ~MaterialManager();
 
@@ -30,8 +32,7 @@ namespace Dx11Sandbox
         MaterialManager();
         DISABLE_COPY(MaterialManager)
 
-        static MaterialManager* m_instance;
-        std::map<wstring, Material*> m_loadedMaterials;
+        std::map<wstring, RCObjectPtr<Material> > m_loadedMaterials;
     };
 }
 #endif
