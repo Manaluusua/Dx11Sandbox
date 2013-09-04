@@ -14,9 +14,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DXUTOpt", "External\DXUT11\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Effects11", "External\Effects11\Effects11_2010.vcxproj", "{DF460EAB-570D-4B50-9089-2E2FC801BF38}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D823C325-1633-499D-B4C5-E536F82B1976}"
-	ProjectSection(SolutionItems) = preProject
-		Performance1.psess = Performance1.psess
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "App", "App\App.vcxproj", "{1A026E78-6B5B-44BD-9CD4-4EE679F24482}"
+	ProjectSection(ProjectDependencies) = postProject
+		{296FBC17-8132-449D-AA53-FDD9CC6F1F34} = {296FBC17-8132-449D-AA53-FDD9CC6F1F34}
 	EndProjectSection
 EndProject
 Global
@@ -74,6 +74,15 @@ Global
 		{DF460EAB-570D-4B50-9089-2E2FC801BF38}.Release|Win32.Build.0 = Release|Win32
 		{DF460EAB-570D-4B50-9089-2E2FC801BF38}.Release|x64.ActiveCfg = Release|x64
 		{DF460EAB-570D-4B50-9089-2E2FC801BF38}.Release|x64.Build.0 = Release|x64
+		{1A026E78-6B5B-44BD-9CD4-4EE679F24482}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1A026E78-6B5B-44BD-9CD4-4EE679F24482}.Debug|Win32.Build.0 = Debug|Win32
+		{1A026E78-6B5B-44BD-9CD4-4EE679F24482}.Debug|x64.ActiveCfg = Debug|Win32
+		{1A026E78-6B5B-44BD-9CD4-4EE679F24482}.Profile|Win32.ActiveCfg = Release|Win32
+		{1A026E78-6B5B-44BD-9CD4-4EE679F24482}.Profile|Win32.Build.0 = Release|Win32
+		{1A026E78-6B5B-44BD-9CD4-4EE679F24482}.Profile|x64.ActiveCfg = Release|Win32
+		{1A026E78-6B5B-44BD-9CD4-4EE679F24482}.Release|Win32.ActiveCfg = Release|Win32
+		{1A026E78-6B5B-44BD-9CD4-4EE679F24482}.Release|Win32.Build.0 = Release|Win32
+		{1A026E78-6B5B-44BD-9CD4-4EE679F24482}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
