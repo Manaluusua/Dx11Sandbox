@@ -1,7 +1,7 @@
 #ifndef DX11SANDBOX_SCENEMANAGER_H
 #define DX11SANDBOX_SCENEMANAGER_H
 
-#include "Camera.h"
+#include "RenderCamera.h"
 #include "CommonUtilities.h"
 #include "RenderContext.h"
 #include "DynamicPoolAllocator.h"
@@ -48,7 +48,7 @@ namespace Dx11Sandbox
 
         void renderScene( );
 
-        RCObjectPtr<Camera> getMainCamera();
+        RCObjectPtr<RenderCamera> getMainCamera();
         RenderContext& getRenderContext();
 
         UINT getScreenWidth() const;
@@ -62,12 +62,12 @@ namespace Dx11Sandbox
         void removeRenderStartListener(RenderStartListener* l);
 
         
-		void addCamera(RCObjectPtr<Camera> camera);
-		void removeCamera(RCObjectPtr<Camera> camera);
+		void addCamera(RCObjectPtr<RenderCamera> camera);
+		void removeCamera(RCObjectPtr<RenderCamera> camera);
         
 
 
-        void cullObjectsToRenderQueues(Frustrum& frust);
+        void cullObjectsToRenderQueues(RCObjectPtr<RenderCamera> cam);
 
     protected:
         void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
@@ -75,13 +75,12 @@ namespace Dx11Sandbox
         void update(double fTime, float fElapsedTime);
         void beginDraw(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime, float fElapsedTime);
         
-       
 
         void destroyWorld();
         void clearRenderQueues();
         void destroyManagers();
 
-		std::map<INT32, std::vector<RCObjectPtr<Camera> > > m_cameras;
+		std::vector<RCObjectPtr<RenderCamera>> m_cameras;
 
         RenderBin    m_RenderBin;
 
@@ -91,7 +90,7 @@ namespace Dx11Sandbox
         
         RCObjectPtr<Culler> m_culler;
 
-        RCObjectPtr<Camera> m_mainCamera;
+        RCObjectPtr<RenderCamera> m_mainCamera;
 
         Root* m_root;
 

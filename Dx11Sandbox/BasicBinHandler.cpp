@@ -40,7 +40,7 @@ namespace Dx11Sandbox
 			Mesh* mesh = object->getMesh();
 			Material* mat = object->getMaterial();
         
-            if(!mesh || !mat || !(cullingInfo->flags & CullInfo::CULLINFO_VISIBLE) )
+            if(!mesh || !mat )
                 return;
         
             ID3DX11Effect* effect = mat->getEffect();

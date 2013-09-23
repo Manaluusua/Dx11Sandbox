@@ -1,5 +1,6 @@
 #ifndef DX11SANDBOX_CULLINFO_H
 #define DX11SANDBOX_CULLINFO_H
+#include "CommonTypes.h"
 #include <BaseTsd.h>
 #include <d3dx9math.h>
 
@@ -12,7 +13,6 @@ namespace Dx11Sandbox
     {
     public:
         typedef int CULLINFO_FLAGS;
-        static const CULLINFO_FLAGS CULLINFO_VISIBLE;
 
         CullInfo();
         ~CullInfo();

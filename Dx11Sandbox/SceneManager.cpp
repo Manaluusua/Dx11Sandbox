@@ -11,6 +11,7 @@
 #include "Frustrum.h"
 #include "CullInfo.h"
 #include "SIMDCuller.h"
+#include <algorithm>
 namespace Dx11Sandbox
 {
     SceneManager::SceneManager(Root* root)
@@ -21,7 +22,7 @@ namespace Dx11Sandbox
         m_screenWidth(0),
         m_screenHeight(0)
     {
-        m_mainCamera = new Camera;
+        m_mainCamera = new RenderCamera;
 		addCamera(m_mainCamera);
 
     }
@@ -63,33 +64,27 @@ namespace Dx11Sandbox
 	void addCamera(RCObjectPtr<Camera> camera);
 		void removeCamera(RCObjectPtr<Camera> camera);
 
-    RCObjectPtr<Camera> SceneManager::getMainCamera()
+    RCObjectPtr<RenderCamera> SceneManager::getMainCamera()
     {
         return m_mainCamera;
     }
 
-	void SceneManager::addCamera(RCObjectPtr<Camera> camera){
+	void SceneManager::addCamera(RCObjectPtr<RenderCamera> camera){
 		if(camera == 0) return;
 
-		INT32 priority = camera->getCameraPriority();
-		m_cameras[priority].push_back(camera);
+		m_cameras.push_back(camera);
 
 	}
 
 
-	void SceneManager::removeCamera(RCObjectPtr<Camera> camera){
+	void SceneManager::removeCamera(RCObjectPtr<RenderCamera> camera){
 		if(camera == 0) return;
 
-		INT32 priority = camera->getCameraPriority();
-		if(m_cameras.find(priority) == m_cameras.end()) return;
-
-		std::vector<RCObjectPtr<Camera> >& vec = m_cameras[priority];
-
-		for(int i = 0; i < vec.size(); ++i)
+		for(int i = 0; i < m_cameras.size(); ++i)
 		{
-			if(vec[i].rawPtr() == camera.rawPtr()){
-				vec.erase(vec.begin() + i );
-				--i;
+			if(m_cameras[i].rawPtr() == camera.rawPtr()){
+				m_cameras.erase(m_cameras.begin() + i );
+				break;
 			}
 		}
 
@@ -176,6 +171,7 @@ namespace Dx11Sandbox
         pd3dImmediateContext->ClearDepthStencilView( DXUTGetD3D11DepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0 );
 
         renderScene();
+
     }
 
     void SceneManager::renderScene()
@@ -183,35 +179,33 @@ namespace Dx11Sandbox
         
         m_renderContext.clearState();
 
-		auto iterator = m_cameras.begin();
-
 		//iterate through camera
-		while(iterator != m_cameras.end()){
-			auto vec = iterator->second;
+		
+		std::sort(m_cameras.begin(), m_cameras.end(), [] ( RCObjectPtr<RenderCamera>& cam1, RCObjectPtr<RenderCamera>& cam2 )
+		{
+			return cam1->getCameraPriority() <= cam2->getCameraPriority();
+		});
 
-			for( int i = 0; i < vec.size(); ++i)
-			{
-				RCObjectPtr<Camera> cam = vec[i];
-				Frustrum frust;
-				cam->calculateFrustrum(&frust);
-				cullObjectsToRenderQueues(frust);
-				m_RenderBin.renderAllBins( &m_renderContext, cam );
+
+		for( int i = 0; i < m_cameras.size(); ++i)
+		{
+			RCObjectPtr<RenderCamera> cam = m_cameras[i];
+			cullObjectsToRenderQueues(cam);
+			m_RenderBin.renderAllBins( &m_renderContext, cam );
 				
-			}
-
-			++iterator;
 		}
 
-       
-       
+
     }
 
 
+	
 
 
-
-    void SceneManager::cullObjectsToRenderQueues(Frustrum& frust)
+    void SceneManager::cullObjectsToRenderQueues(RCObjectPtr<RenderCamera> cam)
     {
+		Frustrum frust;
+		cam->calculateFrustrum(&frust);
 
         clearRenderQueues();
 
@@ -224,7 +218,7 @@ namespace Dx11Sandbox
             m_culler->cull(frust,objects,m_cachedVisibleList);
         }
 
-        m_RenderBin.appendPrimitivesToBins( m_cachedVisibleList );
+		m_RenderBin.appendPrimitivesToBins( m_cachedVisibleList, cam->getRenderMask() );
 
 
     }

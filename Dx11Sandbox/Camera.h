@@ -42,7 +42,7 @@ namespace Dx11Sandbox
         void setNearPlane( FLOAT nearPlane );
         void setFarPlane( FLOAT farPlane );
 
-		void setCameraPriority(INT32 priority);
+		
 
 
         FLOAT getFOVY() const;
@@ -50,11 +50,11 @@ namespace Dx11Sandbox
         FLOAT getNearPlane() const;
         FLOAT getFarPlance() const;
 
-		INT32 getCameraPriority() const;
+		
 
         void calculateFrustrum(Dx11Sandbox::Frustrum* frustrum);
 
-    private:
+    protected:
 
         D3DXMATRIX m_viewMatrix;
         D3DXMATRIX m_projMatrix;
@@ -72,7 +72,7 @@ namespace Dx11Sandbox
         FLOAT m_near;
         FLOAT m_far;
 
-		INT32 m_cameraPriority;
+		
 
 		bool m_cacheValid;
 

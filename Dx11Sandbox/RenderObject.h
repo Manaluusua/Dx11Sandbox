@@ -1,9 +1,10 @@
 #ifndef DX11SANDBOX_RENDEROBJECT_H
 #define DX11SANDBOX_RENDEROBJECT_H
 
-#include "RCObjectPtr.h"
+#include "RenderData.h"
 #include "CullInfo.h"
 #include "CommonUtilities.h"
+
 
 namespace Dx11Sandbox
 {
@@ -12,7 +13,7 @@ namespace Dx11Sandbox
 	class Material;
 	class RenderObjectManager;
 
-	class RenderObject
+	class RenderObject : public RenderData
 	{
 
 		friend class RenderObjectManager;
@@ -20,23 +21,19 @@ namespace Dx11Sandbox
 		void setBoundingSphere(const D3DXVECTOR4& bounds); 
         void setBinFlags(int flags);
         void setCullInfoFlags(CullInfo::CULLINFO_FLAGS flags);
-		void setMesh(Mesh* mesh);
-		void setMaterial(Material* mat);
+
+		void setVisible(bool value);
 
 		void destroy();
 
-		RCObjectPtr<Material> getMaterial();
-		RCObjectPtr<Mesh> getMesh();
-
-	private:
-
-		DISABLE_COPY(RenderObject)
+	protected:
 		RenderObject();
-		~RenderObject();
+		virtual ~RenderObject();
+
+		DISABLE_COPY(RenderObject);
+		
 
 		CullInfo** m_cullingInformation;
-		RCObjectPtr<Mesh> m_mesh;
-        RCObjectPtr<Material> m_material;
 		RenderObjectManager* m_mngr;
 	};
 

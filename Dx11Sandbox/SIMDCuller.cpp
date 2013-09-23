@@ -25,8 +25,8 @@ namespace Dx11Sandbox
         {
 
            
-            const D3DXVECTOR4 &sphere1 = in.vector[i].data.boundingSphere;
-            const D3DXVECTOR4 &sphere2 = in.vector[min(i + 1, maxSphereInd)].data.boundingSphere; 
+            const D3DXVECTOR4 &sphere1 = (*in.vector)[i].data.boundingSphere;
+            const D3DXVECTOR4 &sphere2 = (*in.vector)[min(i + 1, maxSphereInd)].data.boundingSphere; 
 
             UINT32 result = cullSpheresSSE(simdFrust,sphere1, sphere2);
 
@@ -34,13 +34,13 @@ namespace Dx11Sandbox
 
             if(result & 0x1)
             {
-                CullInfo* ro = &in.vector[i].data;
+                CullInfo* ro = &(*in.vector)[i].data;
                 out.push_back(ro);
             }
             
             if(  ((i+1 <= maxSphereInd) && (result & 0x2)) )
             {
-                CullInfo* ro = &in.vector[i+1].data;
+                CullInfo* ro = &(*in.vector)[i+1].data;
                 out.push_back(ro);
             }
 

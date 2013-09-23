@@ -24,7 +24,7 @@ namespace Dx11Sandbox
     public:
         PoolVector():count(0){}
    
-        std::vector<T> vector;
+        std::vector<T> *vector;
         size_t count;
     };
 
@@ -35,7 +35,7 @@ namespace Dx11Sandbox
 
         std::vector<PoolVector<AllocationUnit<T> > > m_pool;
 
-        std::vector<std::vector<T*> > m_proxy;
+        std::vector<std::vector<T*>* > m_proxy;
         std::vector<T**> m_proxyRecycle;
 
         size_t m_indexPool;
@@ -70,12 +70,14 @@ namespace Dx11Sandbox
         m_headProxy(0)
     {
         m_proxy.resize(1);
-        m_proxy[m_indexProxy].resize(m_defaultAllocSize);
-        m_headProxy = &m_proxy[m_indexProxy][0];
+		m_proxy[m_indexProxy] = new std::vector<T*>;
+        m_proxy[m_indexProxy]->resize(m_defaultAllocSize);
+        m_headProxy = &m_proxy[m_indexProxy]->front();
 
         m_pool.resize(1);
-        m_pool[m_indexPool].vector.resize(m_defaultAllocSize);
-        m_headPool = &m_pool[m_indexPool].vector[0];
+		m_pool[m_indexPool].vector = new std::vector<AllocationUnit<T> >;
+        m_pool[m_indexPool].vector->resize(m_defaultAllocSize);
+        m_headPool = &m_pool[m_indexPool].vector->front();
     }
 
     template <typename T>
@@ -95,13 +97,14 @@ namespace Dx11Sandbox
 
         }else
         {
-            T** end = &m_proxy[m_indexProxy][0] + m_proxy[m_indexProxy].size();
+            T** end = &m_proxy[m_indexProxy]->front() + m_proxy[m_indexProxy]->size();
             if(m_headProxy == end)
             {
                 m_proxy.resize(m_proxy.size() + 1);
                 ++m_indexProxy;
-                m_proxy[m_indexProxy].resize(m_defaultAllocSize);
-                m_headProxy = &m_proxy[m_indexProxy][0];
+				m_proxy[m_indexProxy] = new std::vector<T*>;
+                m_proxy[m_indexProxy]->resize(m_defaultAllocSize);
+                m_headProxy = &m_proxy[m_indexProxy]->front();
             }
             proxy = m_headProxy;
             ++m_headProxy;  
@@ -121,13 +124,14 @@ namespace Dx11Sandbox
     {
         T** proxy = getProxy();
 
-        AllocationUnit<T>* end = &m_pool[m_indexPool].vector[0] + m_pool[m_indexPool].vector.size();
+        AllocationUnit<T>* end = &m_pool[m_indexPool].vector->front() + m_pool[m_indexPool].vector->size();
         if(m_headPool == end)
         {
             m_pool.resize(m_pool.size() + 1);
             ++m_indexPool;
-            m_pool[m_indexPool].vector.resize(m_defaultAllocSize);
-            m_headPool = &m_pool[m_indexPool].vector[0];
+			m_pool[m_indexPool].vector =  new std::vector<AllocationUnit<T> >;
+            m_pool[m_indexPool].vector->resize(m_defaultAllocSize);
+            m_headPool = &m_pool[m_indexPool].vector->front();
         }
         m_pool[m_indexPool].count += 1; 
         m_headPool->proxy = proxy;
@@ -141,10 +145,10 @@ namespace Dx11Sandbox
     {
         AllocationUnit<T>* unit = reinterpret_cast<AllocationUnit<T>* >((reinterpret_cast<char*>(*obj)) - offsetof(AllocationUnit<T>,data));
         deallocateProxy(obj);
-        if(m_headPool == &m_pool[m_indexPool].vector[0])
+        if(m_headPool == &m_pool[m_indexPool].vector->front())
         {
             --m_indexPool;
-            m_headPool = &m_pool[m_indexPool].vector.back();
+            m_headPool = &m_pool[m_indexPool].vector->back();
         }else
         {
             --m_headPool;
@@ -172,6 +176,15 @@ namespace Dx11Sandbox
     template <typename T>
     void DynamicPoolAllocator<T>::deallocateDynamicAll()
     {
+		for(int i = 0; i < m_pool.size(); ++i){
+			delete m_pool[i].vector;
+		}
+
+		for(int i = 0; i < m_proxy.size(); ++i){
+			delete m_proxy[i];
+		}
+
+
         m_pool.resize(0);
         m_proxy.resize(0);
         m_proxyRecycle.resize(0);

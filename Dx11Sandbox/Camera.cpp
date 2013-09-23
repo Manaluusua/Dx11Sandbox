@@ -9,7 +9,6 @@ namespace Dx11Sandbox
         m_aspectRatio(0),
         m_near(0),
         m_far(0),
-		m_cameraPriority(0),
         m_cacheValid(false),
         m_reflected(false)
         
@@ -110,18 +109,7 @@ namespace Dx11Sandbox
         return m_far;
     }
 
-	void Camera::setCameraPriority(INT32 priority)
-	{
-		m_cameraPriority = priority;
-	}
-		
-
-        
-
-	INT32 Camera::getCameraPriority() const
-	{
-		return m_cameraPriority;
-	}
+	
 
 
     void  Camera::setTranslation(FLOAT x, FLOAT y, FLOAT z)
@@ -191,7 +179,7 @@ namespace Dx11Sandbox
         float angle;
         
 
-        angle = acos(D3DXVec3Dot( &ref, &axisTo ))*0.5;
+        angle = acos(D3DXVec3Dot( &ref, &axisTo ))*0.5f;
 
         m_orientation = D3DXQUATERNION(sin(angle)*rotAxis.x, sin(angle)*rotAxis.y, sin(angle)*rotAxis.z, cos(angle));
 
@@ -200,7 +188,7 @@ namespace Dx11Sandbox
         D3DXVECTOR3 rotatedUp = MathUtil::rotateVec3ByQuat(&axisUp, &m_orientation);
         if(D3DXVec3Dot(&rotatedUp,&up)<0)
         {
-            m_orientation = D3DXQUATERNION(axisTo.x*sin(MathUtil::PI*0.5),axisTo.y*sin(MathUtil::PI*0.5), axisTo.z*sin(MathUtil::PI*0.5), cos(MathUtil::PI*0.5)) * m_orientation;
+            m_orientation = D3DXQUATERNION(axisTo.x*sin(MathUtil::PI*0.5f),axisTo.y*sin(MathUtil::PI*0.5f), axisTo.z*sin(MathUtil::PI*0.5f), cos(MathUtil::PI*0.5f)) * m_orientation;
         }
 
 

@@ -13,7 +13,7 @@ namespace Dx11Sandbox
     public:
         IndexBuffer(void);
         IndexBuffer( ID3D11Device* device,void* indices,
-            DXGI_FORMAT indexFormat,UINT numIndices,D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccess = 0);
+            DXGI_FORMAT indexFormat,UINT numIndices,bool makeShadowBuffer = true, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccess = 0);
         IndexBuffer( DXGI_FORMAT format, UINT indexCount, ID3D11Buffer* buffer );
         virtual ~IndexBuffer(void);
 

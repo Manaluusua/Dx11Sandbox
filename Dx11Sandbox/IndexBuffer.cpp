@@ -12,10 +12,13 @@ namespace Dx11Sandbox
     }
 
     IndexBuffer::IndexBuffer( ID3D11Device* device,void* indices,
-            DXGI_FORMAT indexFormat,UINT numIndices,D3D11_USAGE usage, UINT cpuAccess)
+            DXGI_FORMAT indexFormat,UINT numIndices,bool makeShadowBuffer, D3D11_USAGE usage, UINT cpuAccess)
             :m_format( DXGI_FORMAT_UNKNOWN ),
         m_indexCount( 0 )
     {
+		if(makeShadowBuffer){
+			setShadowBuffer(indices, (indexFormat == DXGI_FORMAT_R16_UINT?2:4)*numIndices);
+		}
         allocate(device, indices, indexFormat, numIndices, usage, cpuAccess );
     }
 

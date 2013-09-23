@@ -6,6 +6,7 @@
 #include "DXUT.h"
 #include "SDKmisc.h"
 #include "RCObject.h"
+#include "ReleasePtr.h"
 #include <d3dx11effect.h>
 #include "ILDescriptions.h"
 
@@ -39,8 +40,8 @@ namespace Dx11Sandbox
         //key: name of the samplervariable, value: name of the referenced tex to be bind in to the samplervariable
         std::map<string, wstring> m_textureRefs;
 
-        ID3DX11Effect* m_effect;
-        ID3D11InputLayout* m_layout;
+        ReleasePtr<ID3DX11Effect> m_effect;
+        ReleasePtr<ID3D11InputLayout> m_layout;
     };
 
 }

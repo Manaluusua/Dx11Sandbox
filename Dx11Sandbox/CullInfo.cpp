@@ -2,13 +2,12 @@
 namespace Dx11Sandbox
 {
 
-    const CullInfo::CULLINFO_FLAGS CullInfo::CULLINFO_VISIBLE = 0x1;
 
     CullInfo::CullInfo()
         :boundingSphere(-1,-1,-1,-1),
         object(0),
         binIDFlag( 0 ),
-        flags( CULLINFO_VISIBLE )
+        flags( 0xFFFFFFFF )
     {
 
     }

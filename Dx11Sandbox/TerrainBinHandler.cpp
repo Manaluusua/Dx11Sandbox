@@ -55,7 +55,7 @@ namespace Dx11Sandbox
 
     void TerrainBinHandler::reallocateIndexBuffer(RenderContext* state, unsigned int indexCount )
     {
-        m_cachedMesh.setIndexBuffer( new IndexBuffer( state->getDevice(), 0, m_formatToUse, indexCount, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE ) );
+        m_cachedMesh.setIndexBuffer( new IndexBuffer( state->getDevice(), 0, m_formatToUse, indexCount, false,D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE ) );
         m_cachedShadowBuffer.resize( (m_formatToUse == DXGI_FORMAT_R16_UINT?2:4) * indexCount );
     }
 
@@ -87,7 +87,7 @@ namespace Dx11Sandbox
         for( unsigned int i = 0; i < objects.size(); ++i )
         {
 			IndexBuffer* ib = objects[i]->object->getMesh()->getIndexBuffer();
-            if( ib && (objects[i]->flags & CullInfo::CULLINFO_VISIBLE) )
+            if( ib )
             {
                 memcpy( &m_cachedShadowBuffer[ indexOffset ], ib->getShadowBuffer(), ib->getShadowBufferSize() ); 
                 indexOffset += ib->getIndexCount() * indexSize;

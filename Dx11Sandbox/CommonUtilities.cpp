@@ -15,9 +15,9 @@ namespace Dx11Sandbox
 
     }
 
-    unsigned long generateID()
+    GIDTYPE generateID()
     {
-       static unsigned long i = 0;
+       static GIDTYPE i = 0;
        ++i;
        return i;
     }

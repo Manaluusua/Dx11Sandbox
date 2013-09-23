@@ -13,7 +13,7 @@ namespace Dx11Sandbox
     public:
         VertexBuffer(void);
         VertexBuffer( UINT stride, UINT vertexCount, ID3D11Buffer* buffer );
-        VertexBuffer( ID3D11Device* device, void* vertices, UINT stride, UINT numVertices,D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccess = 0,
+        VertexBuffer( ID3D11Device* device, void* vertices, UINT stride, UINT numVertices,bool makeShadowBuffer = true, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccess = 0,
             bool createSOBuffer = false );
         virtual ~VertexBuffer(void);
 

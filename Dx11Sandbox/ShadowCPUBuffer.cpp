@@ -25,15 +25,20 @@ namespace Dx11Sandbox
         destroyShadowBuffer();
     }
 
-    void ShadowCPUBuffer::setShadowBuffer( void* buffer, unsigned int size )
+    void ShadowCPUBuffer::setShadowBuffer( void* buffer, unsigned int size, bool makeCopy )
     {
         if( m_cpuBuffer )
         {
             destroyShadowBuffer();
         }
 
-        m_cpuBuffer = new BYTE[size];
-        memcpy( m_cpuBuffer, buffer, size );
+		if(makeCopy){
+			m_cpuBuffer = new BYTE[size];
+			memcpy( m_cpuBuffer, buffer, size );
+		}else{
+			m_cpuBuffer = buffer;
+		}
+        
         m_cpuBufferSize = size;
     } 
 

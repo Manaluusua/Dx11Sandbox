@@ -46,7 +46,7 @@ PS_INPUT VS( VS_INPUT input )
     
     output.position = mul( float4(input.position,0), viewProj );
 	
-	//meh, far clip plane will clip if z is exactly 1, so need to make it a bit less. Anyway projecting depth to far clip plane.
+	//far clip plane will clip if z is exactly 1, so need to make it a bit less. Anyway projecting depth to far clip plane.
 	output.position.w = output.position.z +0.000001f;
 	
     output.uv = input.uv;

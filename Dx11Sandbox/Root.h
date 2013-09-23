@@ -23,7 +23,7 @@ namespace Dx11Sandbox
         virtual void handleWindowMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
                               bool* pbNoFurtherProcessing, void* pUserContext )=0;
     };
-
+	
 
     class Root
     {

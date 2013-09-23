@@ -11,13 +11,16 @@ namespace Dx11Sandbox
     {
     }
 
-    VertexBuffer::VertexBuffer(ID3D11Device* device, void* vertices, UINT stride, UINT numVertices,D3D11_USAGE usage, UINT cpuAccess ,
+    VertexBuffer::VertexBuffer(ID3D11Device* device, void* vertices, UINT stride,  UINT numVertices, bool makeShadowBuffer,D3D11_USAGE usage, UINT cpuAccess ,
             bool createSOBuffer)
             :
             m_stride( 0 ),
             m_vertexCount( 0 )
            
     {
+		if(makeShadowBuffer){
+			setShadowBuffer(vertices, numVertices * stride);
+		}
         allocate( device, vertices, stride, numVertices, usage, cpuAccess, createSOBuffer );
     }
 

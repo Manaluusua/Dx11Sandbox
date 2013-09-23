@@ -22,6 +22,9 @@ namespace Dx11Sandbox
         HRESULT hr;
         wstring errMsg;
 
+		ID3DX11Effect* effect;
+        ID3D11InputLayout* layout;
+
 #if defined( DEBUG ) || defined( _DEBUG )
         dwShaderFlags |= D3DCOMPILE_DEBUG;
 #endif
@@ -41,14 +44,14 @@ namespace Dx11Sandbox
                                             effectBuffer->GetBufferSize(),
                                             0,
                                             pd3dDevice,
-                                            &m_effect ) ))
+                                            &effect ) ))
             {
                 errMsg = L"Failed to create effect file";
                 errMsg += effectName.c_str();
                 showErrorDialog( (WCHAR*)errMsg.c_str() );
                 succesfull = false;
             }
-
+			m_effect = effect;
 
             SAFE_RELEASE( effectBuffer );
         }
@@ -61,10 +64,14 @@ namespace Dx11Sandbox
         m_effect->GetTechniqueByIndex(0)->GetPassByIndex( 0 )->GetDesc( &PassDesc );
         hr =  pd3dDevice->CreateInputLayout( Dx11Sandbox::MeshInputLayouts::getElementDescForType(type),
             Dx11Sandbox::MeshInputLayouts::getElementCountForType(type), PassDesc.pIAInputSignature,
-            PassDesc.IAInputSignatureSize, &m_layout );
+            PassDesc.IAInputSignatureSize, &layout );
 
+		
         if(FAILED(hr))
             showErrorDialog("Failed to create input layout");
+
+		m_layout = layout;
+
 
         return succesfull;
     }
@@ -72,8 +79,8 @@ namespace Dx11Sandbox
 
     Material::~Material()
     {
-        SAFE_RELEASE(m_effect);
-        SAFE_RELEASE( m_layout );
+        
+        
     }
 
     void Material::setTexture(const string shaderVariable, const wstring textureName)

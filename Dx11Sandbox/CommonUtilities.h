@@ -1,8 +1,8 @@
 #ifndef DX11SANDBOX_COMMONUTILITIES_H
 #define DX11SANDBOX_COMMONUTILITIES_H
+#include "CommonTypes.h"
 
-#include <windows.h>
-#include <string>
+
 
 namespace Dx11Sandbox
 {
@@ -37,13 +37,12 @@ namespace Dx11Sandbox
     //
 
 
-    typedef std::basic_string<TCHAR> wstring;
-    typedef std::string string;
+    
 
     void showErrorDialog(WCHAR* msg);
     void showErrorDialog(char* msg);
 
-    unsigned long generateID();
+    GIDTYPE generateID();
 
     string numberToString(int number);
 

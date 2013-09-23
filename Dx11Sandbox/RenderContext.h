@@ -20,7 +20,6 @@ namespace Dx11Sandbox
         RenderContext(void);
         ~RenderContext(void);
 
-        void resetContext();
 
         ID3D11Device* getDevice(){return m_device;}
         void setDevice(ID3D11Device* device){m_device = device;}

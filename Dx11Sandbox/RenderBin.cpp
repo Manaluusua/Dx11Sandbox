@@ -83,11 +83,16 @@ namespace Dx11Sandbox
             m_binHandlers[id] = handler;
         }
     }
-    void RenderBin::appendPrimitivesToBins(std::vector<RenderBin::PRIMITIVETYPE*> &primitives)
+    void RenderBin::appendPrimitivesToBins(std::vector<RenderBin::PRIMITIVETYPE*> &primitives, RenderMask mask)
     {
         for( int i = 0; i < primitives.size(); ++i )
         {
-            m_bins[primitives[i]->binIDFlag].push_back( primitives[i] );
+			RenderBin::PRIMITIVETYPE* primitive = primitives[i];
+			if(mask & primitive->flags)
+			{
+				m_bins[primitives[i]->binIDFlag].push_back( primitives[i] );
+			}
+            
         }
     }
     void RenderBin::renderBin( RenderBin::IDTYPE binID, RenderContext* context, Camera* camera )

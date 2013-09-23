@@ -51,7 +51,7 @@ namespace Dx11Sandbox
         IDTYPE getIDForBinName( const NAMETYPE& name ) const;
         IDTYPE setRenderBinHandlerForBinWithName(const NAMETYPE& name, RCObjectPtr<RenderBinHandler> RenderBinHandler );  
         void setRenderBinHandlerForBinWithID( IDTYPE id, RCObjectPtr<RenderBinHandler> RenderBinHandler );
-        void appendPrimitivesToBins(std::vector<PRIMITIVETYPE*> &primitives);
+        void appendPrimitivesToBins(std::vector<PRIMITIVETYPE*> &primitives, RenderMask mask);
         void renderBin( IDTYPE binID, RenderContext* context, Camera* camera );
         void renderAllBins(RenderContext* context, Camera* camera);
         void renderBinsUpToPriority( int priority, RenderContext* context, Camera* camera );

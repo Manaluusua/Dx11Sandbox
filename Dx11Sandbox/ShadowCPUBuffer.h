@@ -14,7 +14,7 @@ namespace Dx11Sandbox
         ShadowCPUBuffer( ID3D11Buffer* buffer );
         virtual ~ShadowCPUBuffer(void);
 
-        void setShadowBuffer( void* buffer, unsigned int size );
+        void setShadowBuffer( void* buffer, unsigned int size, bool makeCopy = true );
         void* getShadowBuffer();
         unsigned int getShadowBufferSize();
 

@@ -12,8 +12,7 @@ RasterizerState rasterState
 };
 
 //shader impl and uniforms
-static const float3 waterColor = float3(0.8f,0.95f,0.95f);
-static const float3 ambient   = float3( 0.1f, 0.1f, 0.1f );
+static const float3 waterColor = float3(0.3f,0.6f,0.6f);
 static const float4 specular = float4(1.0f,0.7f,0.4f,64.f);
 
 Texture2D refraction;

@@ -1,23 +1,36 @@
 #include "RenderObject.h"
+
 #include "CullInfoManager.h"
 #include "RenderObjectManager.h"
-#include "Mesh.h"
-#include "Material.h"
+
 namespace Dx11Sandbox
 {
 	RenderObject::RenderObject(void)
-		:m_mesh(0),
-		m_material(0),
+		:m_cullingInformation(0),
 		m_mngr(0)
 	{
-		m_cullingInformation = CullInfoManager::singleton()->allocate();
-		(*m_cullingInformation)->object = this;
+		setVisible(true);
 	}
 
 
 	RenderObject::~RenderObject(void)
 	{
-		CullInfoManager::singleton()->deallocate(m_cullingInformation);
+		setVisible(false);
+	}
+
+	void RenderObject::setVisible(bool value){
+		if(value)
+		{
+			if(m_cullingInformation == 0){
+				m_cullingInformation = CullInfoManager::singleton()->allocate();
+				(*m_cullingInformation)->object = this;
+			}
+		}else{
+			if(m_cullingInformation != 0){
+				CullInfoManager::singleton()->deallocate(m_cullingInformation);
+				m_cullingInformation = 0;
+			}
+		}
 	}
 
 	void RenderObject::destroy()
@@ -39,23 +52,4 @@ namespace Dx11Sandbox
 		(*m_cullingInformation)->flags = flags;
 	}
 	
-	void RenderObject::setMesh(Mesh* m)
-	{
-		m_mesh = m;
-	}
-
-	void RenderObject::setMaterial(Material* mat)
-	{
-		m_material = mat;
-	}
-
-	RCObjectPtr<Material> RenderObject::getMaterial()
-	{
-		return m_material;
-	}
-
-	RCObjectPtr<Mesh> RenderObject::getMesh()
-	{
-		return m_mesh;
-	}
 }

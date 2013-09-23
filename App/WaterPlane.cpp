@@ -6,7 +6,7 @@
 #include "Texture.h"
 #include "RenderObject.h"
 #include "Frustrum.h"
-#include "RCReleasePtr.h"
+#include "ReleasePtr.h"
 #include "MathUtil.h"
 
 WaterPlane::WaveDefinition::WaveDefinition()
@@ -57,9 +57,9 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 
 
     //some wave values
-    m_waves[0] = WaveDefinition(D3DXVECTOR2(1.f,0.f),0.6f,50.f,15.f);
-    m_waves[1] = WaveDefinition(D3DXVECTOR2(0.f,1.f),0.5f,20.f,8.f);
-    m_waves[2] = WaveDefinition(D3DXVECTOR2(0.7f,0.07f),0.6f,30.f,18.f);
+    m_waves[0] = WaveDefinition(D3DXVECTOR2(1.f,0.8f),1.f,50.f,15.f);
+    m_waves[1] = WaveDefinition(D3DXVECTOR2(0.f,1.f),1.4,20.f,8.f);
+    m_waves[2] = WaveDefinition(D3DXVECTOR2(0.7f,0.7f),0.7,30.f,18.f);
     
     setupWaves();
 }
@@ -104,13 +104,13 @@ void WaterPlane::setupWaves()
 
 void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbox::SceneManager* mngr, double fTime, float fElapsedTime)
 {
-
+	
     //hide the plane when rendering stuff
-	m_renderObject->setCullInfoFlags( 0xFFFFFFFE ); 
+	m_renderObject->setVisible(false);
 
     Dx11Sandbox::RenderBin& rbhandler =  mngr->getRenderBin();
 
-    Dx11Sandbox::RCObjectPtr<Dx11Sandbox::Camera> cam = mngr->getMainCamera();
+    Dx11Sandbox::RCObjectPtr<Dx11Sandbox::RenderCamera> cam = mngr->getMainCamera();
 
     float originalFOV = cam->getFOVY();
     cam->setFOVY( originalFOV * 1.2f );
@@ -145,7 +145,7 @@ void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbo
     rdesc.CullMode = D3D11_CULL_FRONT;
     context->getDevice()->CreateRasterizerState(&rdesc,&cwRaw);
 
-    Dx11Sandbox::RCReleasePtr<ID3D11RasterizerState> original( originalRaw), cw( cwRaw );
+    Dx11Sandbox::ReleasePtr<ID3D11RasterizerState> original( originalRaw), cw( cwRaw );
 
 
     ic->RSSetState(cw);
@@ -156,9 +156,8 @@ void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbo
 
 
 
-    Dx11Sandbox::Frustrum frust;
-    cam->calculateFrustrum(&frust);
-    mngr->cullObjectsToRenderQueues(frust);
+    
+    mngr->cullObjectsToRenderQueues(cam);
 
     rbhandler.renderBinsUpToPriority( rbhandler.getPriorityOfRenderBin( rbhandler.getIDForBinName( Dx11Sandbox::RenderBin::RENDERBIN_SKYBOX ) ), context, cam );
 
@@ -179,8 +178,8 @@ void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbo
     context->getImmediateContext()->ClearDepthStencilView( DXUTGetD3D11DepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0 );
     context->bindRenderTargets(1, views, DXUTGetD3D11DepthStencilView());
 
-    cam->calculateFrustrum(&frust);
-    mngr->cullObjectsToRenderQueues(frust);
+    
+    mngr->cullObjectsToRenderQueues(cam);
 
     rbhandler.renderBinsUpToPriority( rbhandler.getPriorityOfRenderBin( rbhandler.getIDForBinName( Dx11Sandbox::RenderBin::RENDERBIN_SKYBOX ) ), context, cam );
     
@@ -203,7 +202,7 @@ void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbo
     //cleanup
     context->bindBackBuffer();
 
-    m_renderObject->setCullInfoFlags( 0x1 ); 
+	m_renderObject->setVisible(true);
 
    
     clipplane = D3DXVECTOR4(0,0,0,0);
