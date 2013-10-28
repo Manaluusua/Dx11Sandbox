@@ -80,7 +80,7 @@ namespace Dx11Sandbox
 	void SceneManager::removeCamera(RCObjectPtr<RenderCamera> camera){
 		if(camera == 0) return;
 
-		for(int i = 0; i < m_cameras.size(); ++i)
+		for(unsigned int i = 0; i < m_cameras.size(); ++i)
 		{
 			if(m_cameras[i].rawPtr() == camera.rawPtr()){
 				m_cameras.erase(m_cameras.begin() + i );
@@ -187,11 +187,11 @@ namespace Dx11Sandbox
 		});
 
 
-		for( int i = 0; i < m_cameras.size(); ++i)
+		for( unsigned int i = 0; i < m_cameras.size(); ++i)
 		{
 			RCObjectPtr<RenderCamera> cam = m_cameras[i];
 			cullObjectsToRenderQueues(cam);
-			m_RenderBin.renderAllBins( &m_renderContext, cam );
+			
 				
 		}
 

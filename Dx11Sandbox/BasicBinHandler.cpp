@@ -23,6 +23,14 @@ namespace Dx11Sandbox
     {
     }
 
+
+	void BasicBinHandler::setupForRendering(RenderObject* objects, unsigned int objectCount, RenderData** objectsOut, unsigned int *objectsOutCount, RenderContext* state)
+	{
+		*objectsOut = static_cast<RenderData*>(objects);
+		*objectsOutCount = objectCount;
+	}
+
+	/*
     void BasicBinHandler::render(std::vector<CullInfo*>& objects, RenderContext* state, Camera* camera)
     {
 
@@ -81,5 +89,5 @@ namespace Dx11Sandbox
                 }
             }
         }
-    }
+    }*/
 }

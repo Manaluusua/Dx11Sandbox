@@ -3,22 +3,21 @@
 
 #include "RCObject.h"
 #include <vector>
-#include <BaseTsd.h>
 
 
 namespace Dx11Sandbox
 {
     class Camera;
-    class CullInfo;
+    class RenderObject;
+	class RenderData;
     class RenderContext;
 
     class RenderBinHandler: public RCObject
     {
     public:
-        RenderBinHandler(void);
-        ~RenderBinHandler(void);
+		virtual ~RenderBinHandler(void){};
 
-        virtual void render(std::vector<CullInfo*>& objects, RenderContext* state, Camera* camera) = 0;
+        virtual void setupForRendering(RenderObject* objects, unsigned int objectCount, RenderData** objectsOut, unsigned int *objectsOutCount, RenderContext* state) = 0;
         
 
     };

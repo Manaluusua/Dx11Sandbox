@@ -5,13 +5,16 @@
 namespace Dx11Sandbox
 {
 
+	class RenderBin;
+	class RenderContext;
+
 	class RenderCamera :
 		public Camera
 	{
 		friend class SceneManager;
 	public:
 		
-		
+		void render(RenderBin& renderBin, RenderContext* state);
 
 		void setCameraPriority(INT32 priority);
 		INT32 getCameraPriority() const;

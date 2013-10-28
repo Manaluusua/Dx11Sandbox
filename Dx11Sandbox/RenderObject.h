@@ -5,7 +5,6 @@
 #include "CullInfo.h"
 #include "CommonUtilities.h"
 
-
 namespace Dx11Sandbox
 {
 	class CullInfo;
@@ -15,14 +14,16 @@ namespace Dx11Sandbox
 
 	class RenderObject : public RenderData
 	{
-
 		friend class RenderObjectManager;
+
 	public:
 		void setBoundingSphere(const D3DXVECTOR4& bounds); 
-        void setBinFlags(int flags);
-        void setCullInfoFlags(CullInfo::CULLINFO_FLAGS flags);
+        void setRenderMask(RenderMask mask);
+        void setRenderQueue(RenderQueueID queue);
 
 		void setVisible(bool value);
+
+		RenderQueueID getRenderQueue() const;
 
 		void destroy();
 
@@ -31,14 +32,18 @@ namespace Dx11Sandbox
 		virtual ~RenderObject();
 
 		DISABLE_COPY(RenderObject);
-		
 
 		CullInfo** m_cullingInformation;
 		RenderObjectManager* m_mngr;
+
+		RenderQueueID m_renderQueue;
 	};
 
 
-	
+	inline RenderQueueID RenderObject::getRenderQueue() const
+	{
+		return m_renderQueue;
+	}
 	
 };
 

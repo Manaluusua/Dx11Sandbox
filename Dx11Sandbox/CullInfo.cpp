@@ -6,8 +6,7 @@ namespace Dx11Sandbox
     CullInfo::CullInfo()
         :boundingSphere(-1,-1,-1,-1),
         object(0),
-        binIDFlag( 0 ),
-        flags( 0xFFFFFFFF )
+        renderMask( RENDERMASK_DEFAULT_OPAQUE )
     {
 
     }

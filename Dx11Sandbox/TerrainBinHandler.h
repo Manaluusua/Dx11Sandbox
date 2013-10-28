@@ -2,7 +2,7 @@
 #define DX11SANDBOX_TerrainBinHandler_H
 #include "RenderBinHandler.h"
 #include "RCObjectPtr.h"
-#include "Mesh.h"
+#include "RenderData.h"
 #include <DXGIFormat.h>
 #include <vector>
 
@@ -17,19 +17,20 @@ namespace Dx11Sandbox
     public:
         TerrainBinHandler(void);
         virtual ~TerrainBinHandler(void);
-        void render(std::vector<CullInfo*>& objects, RenderContext* state,  Camera* camera);
+		void setupForRendering(RenderObject* objects, unsigned int objectCount, RenderData** objectsOut, unsigned int *objectsOutCount, RenderContext* state);
 
         void reallocateIndexBuffer( RenderContext* state, unsigned int indexCount );
 
         void setFormatToUse( DXGI_FORMAT format );
         void setCacheIncreaseRatio( float ratio );
     private:
-        Mesh m_cachedMesh;
+        RenderData m_cachedRenderData;
+		std::vector<RenderData*> m_cachedRenderList;
         std::vector<BYTE> m_cachedShadowBuffer;
         float m_cacheIncreaseRatio;
         DXGI_FORMAT m_formatToUse;
 
-        unsigned int getTotalIndexCount( std::vector<CullInfo*>& objects ); 
+        unsigned int getTotalIndexCount( RenderObject* objects, unsigned int objectCount ); 
             
     };
 

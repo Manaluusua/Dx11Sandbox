@@ -1,4 +1,7 @@
 #include "RenderCamera.h"
+#include "RenderBin.h"
+#include "RenderContext.h"
+
 
 namespace Dx11Sandbox
 {
@@ -11,6 +14,11 @@ namespace Dx11Sandbox
 	}
 	 
 	RenderCamera::~RenderCamera(void)
+	{
+
+	}
+
+	void RenderCamera::render(RenderBin& renderBin, RenderContext* state)
 	{
 
 	}

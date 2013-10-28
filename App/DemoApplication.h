@@ -13,7 +13,7 @@ using namespace Dx11Sandbox;
 class WaterPlane;
 
 
-class DemoApplication: public Application, public RenderBin::RenderBinListener
+class DemoApplication: public Application
 {
 public:
 
@@ -30,7 +30,7 @@ public:
     virtual void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
 
 
-    virtual void renderingBin(std::vector< RenderBin::PRIMITIVETYPE*> &primitives, RenderContext* state);
+    virtual void objectBeingRendered(RenderObject* obj);
 
 private:
 

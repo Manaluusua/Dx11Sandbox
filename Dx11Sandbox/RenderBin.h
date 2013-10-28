@@ -2,7 +2,6 @@
 #define DX11SANDBOX_RenderBin_H
 
 #include "CommonUtilities.h"
-#include "CullInfo.h"
 #include "RenderBinHandler.h"
 #include "RCObjectPtr.h"
 #include <map>
@@ -14,72 +13,38 @@
 namespace Dx11Sandbox
 {
 
-
-
     class RenderContext;
     class Camera;
     class SceneManager;
+	class RenderData;
+	class RenderObject;
+	class CullInfo;
     class RenderBin
     {
     public:
-
-
-
-        typedef int IDTYPE;
-        typedef std::string NAMETYPE;
-        typedef CullInfo PRIMITIVETYPE;
-
-        //some basic rendering bins
-        static const std::string RENDERBIN_DEFAULT;
-        static const std::string RENDERBIN_SKYBOX;
-        static const std::string RENDERBIN_TRANSPARENT;
-        static const std::string RENDERBIN_SCENEINPUT;
-
-        class RenderBinListener
-        {
-        public:
-            virtual void renderingBin(std::vector< PRIMITIVETYPE*> &primitives, RenderContext* state)=0;
-        };
-
-        
 
         RenderBin(RenderBinHandler* defaultRenderBinHandler = 0);
         ~RenderBin();
  
         void setDefaultBinRenderBinHandler( RCObjectPtr<RenderBinHandler> RenderBinHandler ); 
-        void setRenderPriorityForBin( int priority, IDTYPE binID );
-        IDTYPE getIDForBinName( const NAMETYPE& name ) const;
-        IDTYPE setRenderBinHandlerForBinWithName(const NAMETYPE& name, RCObjectPtr<RenderBinHandler> RenderBinHandler );  
-        void setRenderBinHandlerForBinWithID( IDTYPE id, RCObjectPtr<RenderBinHandler> RenderBinHandler );
-        void appendPrimitivesToBins(std::vector<PRIMITIVETYPE*> &primitives, RenderMask mask);
-        void renderBin( IDTYPE binID, RenderContext* context, Camera* camera );
-        void renderAllBins(RenderContext* context, Camera* camera);
-        void renderBinsUpToPriority( int priority, RenderContext* context, Camera* camera );
-        int getPriorityOfRenderBin( IDTYPE id );
+       
+        void setRenderBinHandlerForBin( RenderQueueID id, RCObjectPtr<RenderBinHandler> RenderBinHandler );
+        void appendPrimitivesToBins(std::vector<CullInfo*> &primitives, RenderMask mask);
         void clearBins();
 
-        void addRenderBinListener(RenderBinListener* l);
-        void removeRenderBinListener( RenderBinListener* l);
-
+		std::map<RenderQueueID, std::vector<RenderObject*> >& getRenderBins();
+		RCObjectPtr<RenderBinHandler> getHandlerForBin(RenderQueueID id);
     private:
         
-        static IDTYPE m_nextBinID;
+    
 
-        std::map<IDTYPE, RCObjectPtr<RenderBinHandler> > m_binHandlers;
-        std::map<IDTYPE, std::vector<PRIMITIVETYPE*> > m_bins;
-        mutable std::map<NAMETYPE, IDTYPE> m_nameToIDMap;
-        std::vector<IDTYPE> m_binRenderingOrder;
+        std::map<RenderQueueID, RCObjectPtr<RenderBinHandler> > m_binHandlers;
+        std::map<RenderQueueID, std::vector<RenderObject*> > m_bins;
+      
         RCObjectPtr<RenderBinHandler> m_defaultRenderBinHandler;
 
-        std::vector<RenderBinListener*> m_listeners;
-
-        static IDTYPE getNextBinID();
+        
     };
-
-    inline RenderBin::IDTYPE RenderBin::getNextBinID()
-    {
-        return m_nextBinID++;
-    }
     
 }
 #endif

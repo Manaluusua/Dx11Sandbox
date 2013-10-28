@@ -1,4 +1,5 @@
 #include "WaterPlane.h"
+#include "CommonTypes.h"
 #include "MeshUtility.h"
 #include "MaterialManager.h"
 #include "Material.h"
@@ -37,7 +38,8 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
     m_renderObject = Dx11Sandbox::MeshUtility::createFinitePlane(device,mngr,name,normal,d,extends1, extends2, static_cast<int>( tesselationX ), static_cast<int>( tesselationY ) );
 	Dx11Sandbox::RCObjectPtr<Dx11Sandbox::Material> mat = Dx11Sandbox::MaterialManager::singleton()->getOrCreateMaterial(device, L"waterplane.fx",  L"waterplane",Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
 	m_renderObject->setMaterial(mat);
-	m_renderObject->setBinFlags( mngr->getRenderBin().getIDForBinName( Dx11Sandbox::RenderBin::RENDERBIN_SCENEINPUT ) );
+	m_renderObject->setRenderQueue(Dx11Sandbox::RENDERQUEUE_OPAQUE_SCENE_INPUT);
+	m_renderObject->setRenderMask(Dx11Sandbox::RENDERMASK_OPAQUE_SCENE_INPUT);
 
     //hack, always use same name. Later on take the name from name passed in to avoid name collision when multiple waterplanes in the scene
     Dx11Sandbox::wstring reflTexName = L"waterplanereflection";
@@ -58,8 +60,8 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 
     //some wave values
     m_waves[0] = WaveDefinition(D3DXVECTOR2(1.f,0.8f),1.f,50.f,15.f);
-    m_waves[1] = WaveDefinition(D3DXVECTOR2(0.f,1.f),1.4,20.f,8.f);
-    m_waves[2] = WaveDefinition(D3DXVECTOR2(0.7f,0.7f),0.7,30.f,18.f);
+    m_waves[1] = WaveDefinition(D3DXVECTOR2(0.f,1.f),1.4f,20.f,8.f);
+    m_waves[2] = WaveDefinition(D3DXVECTOR2(0.7f,0.7f),0.7f,30.f,18.f);
     
     setupWaves();
 }
@@ -159,7 +161,7 @@ void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbo
     
     mngr->cullObjectsToRenderQueues(cam);
 
-    rbhandler.renderBinsUpToPriority( rbhandler.getPriorityOfRenderBin( rbhandler.getIDForBinName( Dx11Sandbox::RenderBin::RENDERBIN_SKYBOX ) ), context, cam );
+    //rbhandler.renderBinsUpToPriority( rbhandler.getPriorityOfRenderBin( rbhandler.getIDForBinName( Dx11Sandbox::RenderBin::RENDERBIN_SKYBOX ) ), context, cam );
 
 
     context->clearState();
@@ -181,7 +183,7 @@ void WaterPlane::renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbo
     
     mngr->cullObjectsToRenderQueues(cam);
 
-    rbhandler.renderBinsUpToPriority( rbhandler.getPriorityOfRenderBin( rbhandler.getIDForBinName( Dx11Sandbox::RenderBin::RENDERBIN_SKYBOX ) ), context, cam );
+    //rbhandler.renderBinsUpToPriority( rbhandler.getPriorityOfRenderBin( rbhandler.getIDForBinName( Dx11Sandbox::RenderBin::RENDERBIN_SKYBOX ) ), context, cam );
     
     context->clearState();
 

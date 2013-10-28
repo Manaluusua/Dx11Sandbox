@@ -10,7 +10,7 @@ namespace Dx11Sandbox
         BasicBinHandler(void);
         ~BasicBinHandler(void);
 
-        void render(std::vector<CullInfo*>& objects, RenderContext* state,  Camera* camera);
+        void setupForRendering(RenderObject* objects, unsigned int objectCount, RenderData** objectsOut, unsigned int *objectsOutCount, RenderContext* state);
     };
 }
 

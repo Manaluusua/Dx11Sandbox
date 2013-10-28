@@ -12,16 +12,13 @@ namespace Dx11Sandbox
     class CullInfo
     {
     public:
-        typedef int CULLINFO_FLAGS;
-
+        
         CullInfo();
         ~CullInfo();
 
         D3DXVECTOR4 boundingSphere;
         RenderObject* object;
-        int binIDFlag;
-        CULLINFO_FLAGS flags;
-        
+        RenderMask renderMask;
     };
 }
 #endif

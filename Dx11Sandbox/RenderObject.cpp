@@ -3,6 +3,8 @@
 #include "CullInfoManager.h"
 #include "RenderObjectManager.h"
 
+
+
 namespace Dx11Sandbox
 {
 	RenderObject::RenderObject(void)
@@ -43,13 +45,15 @@ namespace Dx11Sandbox
 		(*m_cullingInformation)->boundingSphere = bounds;
 	}
 
-    void RenderObject::setBinFlags(int flags)
+    void RenderObject::setRenderMask(RenderMask mask)
 	{
-		(*m_cullingInformation)->binIDFlag = flags;
+		(*m_cullingInformation)->renderMask = mask;
 	}
-    void RenderObject::setCullInfoFlags(CullInfo::CULLINFO_FLAGS flags)
+	void RenderObject::setRenderQueue(RenderQueueID queue)
 	{
-		(*m_cullingInformation)->flags = flags;
+		m_renderQueue = queue;
 	}
 	
+	
+
 }

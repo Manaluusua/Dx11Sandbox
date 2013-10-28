@@ -49,8 +49,8 @@ namespace Dx11Sandbox
         frac1 = std::modf(frac1,&temp); 
         frac2 = std::modf(frac2,&temp);
 
-        frac1 = frac1*0.5 + (1.f-std::cos(frac1*MathUtil::PI))*0.25f;
-        frac2 = frac2*0.5 + (1.f-std::cos(frac2*MathUtil::PI))*0.25f;
+        frac1 = frac1*0.5f + (1.f-std::cos(frac1*MathUtil::PI))*0.25f;
+        frac2 = frac2*0.5f + (1.f-std::cos(frac2*MathUtil::PI))*0.25f;
 
         heights[0] = (((float)(map->getPixel(x1,y1).r))/256)*scale;
         heights[1] = (((float)(map->getPixel(x2,y1).r))/256)*scale;
@@ -209,9 +209,9 @@ namespace Dx11Sandbox
         ptr[2] = (BYTE*)UV;
         //create "point cloud"
         //positions
-        for(i=0,zz=-1.f;i<pointsZ;++i,zz+=incrementZ)
+        for(i=0u,zz=-1.f;i<pointsZ;++i,zz+=incrementZ)
         {
-            for(j=0,xx = -1.f;j<pointsX;++j, xx+=incrementX)
+            for(j=0u,xx = -1.f;j<pointsX;++j, xx+=incrementX)
             {
                 
                 positions[i*pointsX + j] =normal*-d + vec1*extends1*xx + vec2*extends2*zz;
@@ -219,9 +219,9 @@ namespace Dx11Sandbox
         }
 
         //normals & UVS
-        for(i=0;i<pointsZ;++i)
+        for(i=0u;i<pointsZ;++i)
         {
-            for(j=0;j<pointsX;++j)
+            for(j=0u;j<pointsX;++j)
             {
                 
                 normals[i*pointsX + j] = getNormalForPosition(j,i,pointsX, pointsZ,positions);
@@ -401,15 +401,15 @@ namespace Dx11Sandbox
             {
                 
                 normals[i*totalPointsX + j] = getNormalForPosition(j,i,totalPointsX, totalPointsZ,positions);
-                UV[i*totalPointsX*2 + j*2] = 0.5*((float)(j))/tesselationFactor;
-                UV[i*totalPointsX*2 + j*2 + 1] = 0.5*((float)(i))/tesselationFactor;
+                UV[i*totalPointsX*2 + j*2] = 0.5f*((float)(j))/tesselationFactor;
+                UV[i*totalPointsX*2 + j*2 + 1] = 0.5f*((float)(i))/tesselationFactor;
             }
         }
         
         vertices->createVertexBuffer(device,ptr,totalPointsX*totalPointsZ,MeshInputLayouts::POS3NORM3TEX2);
 
         terrainName = terrainName + "Indices";
-        Mesh* mesh;
+
         UINT indicesCount = (tesselationFactor)*(tesselationFactor)*6;
         UINT32 *indices = new UINT32[indicesCount];
         unsigned int pwidth, pheight;
@@ -461,7 +461,8 @@ namespace Dx11Sandbox
 				obj->setMesh( mesh );
 				obj->setMaterial( mat );
 				obj->setBoundingSphere( calculateBoundingSphereForPositions(indices,pwidth * pheight * 6 , positions) );
-				obj->setBinFlags( mngr->getRenderBin().getIDForBinName("TERRAIN") );
+				obj->setRenderMask(Dx11Sandbox::RENDERMASK_DEFAULT_OPAQUE);
+				obj->setRenderQueue(Dx11Sandbox::RENDERQUEUE_TERRAIN);
             }
         }
 
@@ -488,7 +489,7 @@ namespace Dx11Sandbox
         float maximum[3] = {-FLT_MAX,-FLT_MAX,-FLT_MAX};
         
         //find point cloud extends
-        for(int i=0;i<numIndices;++i)
+        for(unsigned int i=0;i<numIndices;++i)
         {
             UINT32 index = indices[i];
             const float *position = (float*)&positions[index];
@@ -505,9 +506,9 @@ namespace Dx11Sandbox
             }
         }
 
-        float len = sqrt(pow(maximum[0] - minimum[0],2) + pow(maximum[1] - minimum[1],2)  + pow(maximum[2] - minimum[2],2))*0.5 ;
+        float len = sqrt(pow(maximum[0] - minimum[0],2) + pow(maximum[1] - minimum[1],2)  + pow(maximum[2] - minimum[2],2))*0.5f ;
 
-        D3DXVECTOR4 sphere((minimum[0] + maximum[0])*0.5, (minimum[1] + maximum[1])*0.5,(minimum[2] + maximum[2])*0.5,len);
+        D3DXVECTOR4 sphere((minimum[0] + maximum[0])*0.5f, (minimum[1] + maximum[1])*0.5,(minimum[2] + maximum[2])*0.5f,len);
 
         return sphere;
     }

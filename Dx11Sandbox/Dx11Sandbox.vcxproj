@@ -104,7 +104,6 @@
     <ClCompile Include="PixelBox.cpp" />
     <ClCompile Include="RCObject.cpp" />
     <ClCompile Include="RenderBin.cpp" />
-    <ClCompile Include="RenderBinHandler.cpp" />
     <ClCompile Include="CullInfo.cpp" />
     <ClCompile Include="RenderCamera.cpp" />
     <ClCompile Include="RenderContext.cpp" />

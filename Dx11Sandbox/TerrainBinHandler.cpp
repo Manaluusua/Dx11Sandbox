@@ -2,7 +2,7 @@
 
 
 #include "RenderContext.h"
-
+#include "Mesh.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "Material.h"
@@ -20,6 +20,8 @@ namespace Dx11Sandbox
         :m_cacheIncreaseRatio( 0.5 ),
         m_formatToUse( DXGI_FORMAT_R32_UINT )
     {
+		m_cachedRenderData.setMesh(new Mesh);
+		m_cachedRenderList.push_back(&m_cachedRenderData);
     }
 
 
@@ -27,13 +29,12 @@ namespace Dx11Sandbox
     {
     }
 
-    unsigned int TerrainBinHandler::getTotalIndexCount( std::vector<CullInfo*>& objects )
+    unsigned int TerrainBinHandler::getTotalIndexCount( RenderObject* objects, unsigned int objectCount )
     {
         unsigned int totalIndexCount = 0;
-        for( unsigned int i = 0; i < objects.size(); ++i )
+        for( unsigned int i = 0; i < objectCount; ++i )
         {
-			 const CullInfo* cullingInfo = objects[i];
-			RenderObject* object = cullingInfo->object;
+			RenderObject* object = &objects[i];
 
 			
             IndexBuffer* ib = object->getMesh()->getIndexBuffer();
@@ -55,10 +56,55 @@ namespace Dx11Sandbox
 
     void TerrainBinHandler::reallocateIndexBuffer(RenderContext* state, unsigned int indexCount )
     {
-        m_cachedMesh.setIndexBuffer( new IndexBuffer( state->getDevice(), 0, m_formatToUse, indexCount, false,D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE ) );
+		m_cachedRenderData.getMesh()->setIndexBuffer( new IndexBuffer( state->getDevice(), 0, m_formatToUse, indexCount, false,D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE ) );
         m_cachedShadowBuffer.resize( (m_formatToUse == DXGI_FORMAT_R16_UINT?2:4) * indexCount );
     }
 
+	void TerrainBinHandler::setupForRendering(RenderObject* objects, unsigned int objectCount, RenderData** objectsOut, unsigned int *objectsOutCount, RenderContext* state)
+	{
+		 //early out
+        if( objectCount == 0 )
+        {
+            return;
+        }
+
+
+        //make sure we have enough space for the indices
+        unsigned int indexCount = getTotalIndexCount( objects, objectCount );
+
+        if( !m_cachedRenderData.getMesh()->getIndexBuffer() ||  m_cachedRenderData.getMesh()->getIndexBuffer()->getIndexCount() < indexCount )
+        {
+            reallocateIndexBuffer( state, indexCount + static_cast<unsigned int>( static_cast<float>( indexCount) * m_cacheIncreaseRatio ) );
+        }
+		Mesh* prototypeMesh = objects->getMesh();
+		Material* prototypeMaterial = objects->getMaterial();
+        IndexBuffer* aggbuffer = m_cachedRenderData.getMesh()->getIndexBuffer();
+
+        //copy indices to one buffer
+        int indexOffset = 0;
+        int indexSize = (m_formatToUse == DXGI_FORMAT_R16_UINT?2:4);
+        int indexesToDraw = 0;
+        for( unsigned int i = 0; i < objectCount; ++i )
+        {
+			IndexBuffer* ib = objects->getMesh()->getIndexBuffer();
+            if( ib )
+            {
+                memcpy( &m_cachedShadowBuffer[ indexOffset ], ib->getShadowBuffer(), ib->getShadowBufferSize() ); 
+                indexOffset += ib->getIndexCount() * indexSize;
+                indexesToDraw += ib->getIndexCount();
+            }
+			++objects;
+        }
+
+        //cpu -> gpu
+        aggbuffer->setDataFromCPUBuffer( state->getImmediateContext(), &m_cachedShadowBuffer[0], indexOffset );
+		m_cachedRenderData.getMesh()->setVertexBuffer( prototypeMesh->getVertexBuffer() );
+
+		m_cachedRenderData.setMaterial(prototypeMaterial);
+		objectsOut = m_cachedRenderList.data();
+		*objectsOutCount = m_cachedRenderList.size();
+	}
+	/*
     void TerrainBinHandler::render(std::vector<CullInfo*>& objects, RenderContext* state,  Camera* camera)
     {
 
@@ -142,7 +188,7 @@ namespace Dx11Sandbox
             }
         }
     }
-
+	*/
 
 	
 }
