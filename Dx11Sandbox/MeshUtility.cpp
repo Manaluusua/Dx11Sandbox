@@ -6,7 +6,7 @@
 #include "Texture.h"
 #include "PixelBox.h"
 #include "Material.h"
-#include "RenderObject.h"
+#include "CullableGeometry.h"
 #include "MeshManager.h"
 #include "SceneManager.h"
 #include "IndexBuffer.h"
@@ -168,7 +168,7 @@ namespace Dx11Sandbox
     }
 
 
-    RenderObject* MeshUtility::createFinitePlane(ID3D11Device *device,SceneManager* mngr, const string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, int tesselationFactorX, int tesselationFactorZ)
+    CullableGeometry* MeshUtility::createFinitePlane(ID3D11Device *device,SceneManager* mngr, const string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, int tesselationFactorX, int tesselationFactorZ)
     {
 
         assert( tesselationFactorX > 0 && tesselationFactorZ > 0 );
@@ -191,7 +191,7 @@ namespace Dx11Sandbox
         D3DXVec3Normalize(&vec1,&vec1);
         D3DXVec3Normalize(&vec2,&vec2);
 
-		RenderObject* ro = mngr->CreateRenderObject();
+		CullableGeometry* ro = mngr->CreateRenderObject();
         Mesh* mesh = MeshManager::singleton()->createMesh(name + "Mesh");
         
         //
@@ -447,7 +447,7 @@ namespace Dx11Sandbox
                 }
                 
                 //create object
-				RenderObject* obj = mngr->CreateRenderObject();
+				CullableGeometry* obj = mngr->CreateRenderObject();
 
                 Mesh* mesh = MeshManager::singleton()->createMesh(terrainName + numberToString(pz*pagesX + px));
 

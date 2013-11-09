@@ -1,8 +1,6 @@
 #include "CullInfo.h"
 namespace Dx11Sandbox
 {
-
-
     CullInfo::CullInfo()
         :boundingSphere(-1,-1,-1,-1),
         object(0),

@@ -30,7 +30,7 @@ public:
     virtual void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
 
 
-    virtual void objectBeingRendered(RenderObject* obj);
+    virtual void objectBeingRendered(CullableGeometry* obj);
 
 private:
 

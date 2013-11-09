@@ -1,6 +1,6 @@
 #ifndef DX11SANDBOX_TerrainBinHandler_H
 #define DX11SANDBOX_TerrainBinHandler_H
-#include "RenderBinHandler.h"
+#include "GeometryBinHandler.h"
 #include "RCObjectPtr.h"
 #include "RenderData.h"
 #include <DXGIFormat.h>
@@ -12,12 +12,12 @@ namespace Dx11Sandbox
     class Mesh;
 
     class TerrainBinHandler :
-        public RenderBinHandler
+        public GeometryBinHandler
     {
     public:
         TerrainBinHandler(void);
         virtual ~TerrainBinHandler(void);
-		void setupForRendering(RenderObject* objects, unsigned int objectCount, RenderData** objectsOut, unsigned int *objectsOutCount, RenderContext* state);
+		void setupForRendering(RenderData** objects, unsigned int objectCount, RenderData** objectsOut, unsigned int *objectsOutCount, RenderContext* state);
 
         void reallocateIndexBuffer( RenderContext* state, unsigned int indexCount );
 
@@ -30,7 +30,7 @@ namespace Dx11Sandbox
         float m_cacheIncreaseRatio;
         DXGI_FORMAT m_formatToUse;
 
-        unsigned int getTotalIndexCount( RenderObject* objects, unsigned int objectCount ); 
+        unsigned int getTotalIndexCount( RenderData** objects, unsigned int objectCount ); 
             
     };
 

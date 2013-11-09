@@ -1,14 +1,14 @@
 #include "RenderBin.h"
-#include "RenderObject.h"
+#include "CullableGeometry.h"
 #include "TerrainBinHandler.h"
 namespace Dx11Sandbox
 {
 
 	//renderbin
-    RenderBin::RenderBin(RenderBinHandler* defaultRenderBinHandler)
-        :m_defaultRenderBinHandler(defaultRenderBinHandler)
+    RenderBin::RenderBin(GeometryBinHandler* defaultGeometryBinHandler)
+        :m_defaultGeometryBinHandler(defaultGeometryBinHandler)
     {
-		m_binHandlers[RENDERQUEUE_TERRAIN] = new TerrainBinHandler;
+		m_geometryBinHandlers[RENDERQUEUE_TERRAIN] = new TerrainBinHandler;
     }
 
     RenderBin::~RenderBin()
@@ -16,88 +16,67 @@ namespace Dx11Sandbox
     }
 
 
-    void RenderBin::setDefaultBinRenderBinHandler( RCObjectPtr<RenderBinHandler> rbh )
+    void RenderBin::setDefaultGeometryBinHandler( RCObjectPtr<GeometryBinHandler> rbh )
     {
-        m_defaultRenderBinHandler = rbh;
+        m_defaultGeometryBinHandler = rbh;
     }
 
   
 
    
-    void RenderBin::setRenderBinHandlerForBin( RenderQueueID id, RCObjectPtr<RenderBinHandler> handler )
+    void RenderBin::setRenderBinHandlerForGeometryBin( RenderQueueID id, RCObjectPtr<GeometryBinHandler> handler )
     {
         if(handler.rawPtr() )
         {
-            m_binHandlers[id] = handler;
+            m_geometryBinHandlers[id] = handler;
         }
     }
-    void RenderBin::appendPrimitivesToBins(std::vector<CullInfo*> &primitives, RenderMask mask)
+    void RenderBin::appendPrimitives(std::vector<CullInfo*> &primitives, RenderMask mask)
     {
         for( unsigned int i = 0; i < primitives.size(); ++i )
         {
 			CullInfo* primitive = primitives[i];
 			if(mask & primitive->renderMask)
 			{
-				RenderObject* obj = primitive->object;
-				RenderQueueID id = obj->getRenderQueue();
+				Cullable* cullable = primitive->object;
+
+				if(cullable->GetCullableType() == CULLABLE_GEOMETRY)
+				{
+					CullableGeometry* obj = static_cast<CullableGeometry*>(cullable);
+					RenderQueueID id = obj->getRenderQueue();
+					m_geometryBins[id].push_back( obj );
+				}
+
 				
-				m_bins[id].push_back( obj );
+				
+				
 			}
             
         }
     }
 
-	std::map<RenderQueueID, std::vector<RenderObject*> >& RenderBin::getRenderBins()
+	std::map<RenderQueueID, std::vector<RenderData*> >& RenderBin::getGeometryBins()
 	{
-		return m_bins;
+		return m_geometryBins;
 	}
 
-	RCObjectPtr<RenderBinHandler> RenderBin::getHandlerForBin(RenderQueueID id)
+	RCObjectPtr<GeometryBinHandler> RenderBin::getGeometryHandlerForBin(RenderQueueID id)
 	{
-		RCObjectPtr<RenderBinHandler> renderBinHandler = m_defaultRenderBinHandler;
+		RCObjectPtr<GeometryBinHandler> renderBinHandler = m_defaultGeometryBinHandler;
 
-        //choose RenderBinHandler
-        if( m_binHandlers.find( id ) != m_binHandlers.end() )
+        //choose GeometryBinHandler
+        if( m_geometryBinHandlers.find( id ) != m_geometryBinHandlers.end() )
         {
-            renderBinHandler = m_binHandlers[id];
+            renderBinHandler = m_geometryBinHandlers[id];
         }
 		return renderBinHandler;
 	}
 
-   /* void RenderBin::renderBin( RenderBin::IDTYPE binID, RenderContext* context, Camera* camera )
-    {
-        RenderBinHandler* RenderBinHandler = m_defaultRenderBinHandler;
-
-
-
-        
-        //choose RenderBinHandler
-        if( m_binHandlers.find( binID ) != m_binHandlers.end() )
-        {
-            RenderBinHandler = m_binHandlers[binID];
-        }
-
-        //get primitives
-        std::vector<PRIMITIVETYPE*>& prims = m_bins[binID];
-
-        //notify listeners
-        for( int i = 0; i < m_listeners.size(); ++i )
-        {
-            m_listeners[i]->renderingBin( prims, context );
-        }
-
-        //render
-        if( prims.size() > 0 )
-        {
-            RenderBinHandler->render( prims, context, camera );
-        }
-
-    }
-	*/
+ 
     void RenderBin::clearBins()
     {
-        auto iter = m_bins.begin();
-        while( iter != m_bins.end() )
+        auto iter = m_geometryBins.begin();
+        while( iter != m_geometryBins.end() )
         {
             iter->second.clear();
             ++iter;

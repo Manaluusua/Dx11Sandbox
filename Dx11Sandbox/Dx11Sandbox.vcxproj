@@ -86,11 +86,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BasicBinHandler.cpp" />
+    <ClCompile Include="BasicForwardRenderer.cpp" />
     <ClCompile Include="Batcher.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommonUtilities.cpp" />
     <ClCompile Include="Compositor.cpp" />
-    <ClCompile Include="CullInfoManager.cpp" />
+    <ClCompile Include="Cullable.cpp" />
+    <ClCompile Include="CullInfo.cpp" />
     <ClCompile Include="Frustrum.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
     <ClCompile Include="ILDescriptions.cpp" />
@@ -104,11 +106,10 @@
     <ClCompile Include="PixelBox.cpp" />
     <ClCompile Include="RCObject.cpp" />
     <ClCompile Include="RenderBin.cpp" />
-    <ClCompile Include="CullInfo.cpp" />
     <ClCompile Include="RenderCamera.cpp" />
     <ClCompile Include="RenderContext.cpp" />
     <ClCompile Include="RenderData.cpp" />
-    <ClCompile Include="RenderObject.cpp" />
+    <ClCompile Include="CullableGeometry.cpp" />
     <ClCompile Include="RenderObjectManager.cpp" />
     <ClCompile Include="Root.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -121,11 +122,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicBinHandler.h" />
+    <ClInclude Include="BasicForwardRenderer.h" />
     <ClInclude Include="Batcher.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="CommonUtilities.h" />
     <ClInclude Include="Compositor.h" />
+    <ClInclude Include="Cullable.h" />
     <ClInclude Include="Culler.h" />
     <ClInclude Include="CullInfoManager.h" />
     <ClInclude Include="DynamicPoolAllocator.h" />
@@ -146,12 +149,13 @@
     <ClInclude Include="RenderBin.h" />
     <ClInclude Include="RenderCamera.h" />
     <ClInclude Include="RenderData.h" />
-    <ClInclude Include="RenderObject.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="CullableGeometry.h" />
     <ClInclude Include="RenderObjectManager.h" />
     <ClInclude Include="ShadowCPUBuffer.h" />
     <ClInclude Include="SIMDCuller.h" />
     <ClInclude Include="Singleton.h" />
-    <ClInclude Include="RenderBinHandler.h" />
+    <ClInclude Include="GeometryBinHandler.h" />
     <ClInclude Include="CullInfo.h" />
     <ClInclude Include="RenderContext.h" />
     <ClInclude Include="Root.h" />

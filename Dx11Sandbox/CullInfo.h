@@ -7,7 +7,7 @@
 namespace Dx11Sandbox
 {
 
-	class RenderObject;
+	class Cullable;
 
     class CullInfo
     {
@@ -17,7 +17,7 @@ namespace Dx11Sandbox
         ~CullInfo();
 
         D3DXVECTOR4 boundingSphere;
-        RenderObject* object;
+        Cullable* object;
         RenderMask renderMask;
     };
 }

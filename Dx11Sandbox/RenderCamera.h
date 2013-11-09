@@ -2,11 +2,22 @@
 #define DX11SANDBOX_RENDERCAMERA_H
 
 #include "Camera.h"
+#include "RCObjectPtr.h"
+#include <set>
+
 namespace Dx11Sandbox
 {
-
+	class Renderer;
 	class RenderBin;
 	class RenderContext;
+	class RenderCamera;
+
+	class RenderCameraListener
+	{
+	public:
+		virtual void cameraStartedRendering(RenderCamera& camera, RenderBin& renderbin, RenderContext* state); 
+
+	};
 
 	class RenderCamera :
 		public Camera
@@ -22,12 +33,20 @@ namespace Dx11Sandbox
 		void setRenderMask(RenderMask mask);
 		RenderMask getRenderMask() const;
 
+		void addRenderListener(RenderCameraListener *l);
+		void removeRenderListener(RenderCameraListener *l);
+
+		void setRenderer(RCObjectPtr<Renderer> renderer);
+		RCObjectPtr<Renderer> getRenderer() const;
 	protected:
 		
+		std::set<RenderCameraListener*> m_renderListeners;
+
 		DISABLE_COPY(RenderCamera)
 		RenderCamera(void);
 		virtual ~RenderCamera(void);
 
+		RCObjectPtr<Renderer> m_renderer;
 
 		INT32 m_cameraPriority;
 		RenderMask m_renderMask;

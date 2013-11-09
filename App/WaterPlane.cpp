@@ -5,7 +5,7 @@
 #include "Material.h"
 #include "TextureManager.h"
 #include "Texture.h"
-#include "RenderObject.h"
+#include "CullableGeometry.h"
 #include "Frustrum.h"
 #include "ReleasePtr.h"
 #include "MathUtil.h"

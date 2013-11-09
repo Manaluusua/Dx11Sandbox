@@ -50,7 +50,7 @@ namespace Dx11Sandbox
 
     public:
         DynamicPoolAllocator(size_t defaultSize=40);
-        ~DynamicPoolAllocator(void);
+        virtual ~DynamicPoolAllocator(void);
 
         PoolVector<AllocationUnit<T> >& getDynamicPoolVector(size_t index);
         size_t getNumberOfDynamicPoolVectors() const;

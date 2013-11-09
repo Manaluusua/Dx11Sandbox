@@ -10,7 +10,7 @@ namespace Dx11Sandbox
 {
     class Mesh;
     class Texture;
-    class CullInfo;
+
 }
 
 #define WATERPLANE_WAVECOUNT 3
@@ -40,7 +40,7 @@ private:
 
     WaveDefinition m_waves[WATERPLANE_WAVECOUNT];
     D3DXVECTOR3 m_normal;
-    Dx11Sandbox::RenderObject* m_renderObject;
+    Dx11Sandbox::CullableGeometry* m_renderObject;
     Dx11Sandbox::Texture* m_reflection;
     Dx11Sandbox::Texture* m_refraction;
     Dx11Sandbox::Texture* m_normalMap;

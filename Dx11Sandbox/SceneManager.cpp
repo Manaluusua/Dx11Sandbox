@@ -11,6 +11,7 @@
 #include "Frustrum.h"
 #include "CullInfo.h"
 #include "SIMDCuller.h"
+#include "BasicForwardRenderer.h"
 #include <algorithm>
 namespace Dx11Sandbox
 {
@@ -24,6 +25,7 @@ namespace Dx11Sandbox
     {
         m_mainCamera = new RenderCamera;
 		addCamera(m_mainCamera);
+		m_defaultRenderer = new BasicForwardRenderer();
 
     }
 
@@ -47,9 +49,13 @@ namespace Dx11Sandbox
         MaterialManager::destroyInstance();
         MeshManager::destroyInstance();
 		
-		CullInfoManager::destroyInstance();
 		
     }
+
+	CullableGeometry* SceneManager::CreateRenderObject()
+	{
+		return m_renderObjectManager.CreateRenderObject();
+	}
 
     void SceneManager::addRenderStartListener(RenderStartListener* l)
     {
@@ -73,6 +79,12 @@ namespace Dx11Sandbox
 		if(camera == 0) return;
 
 		m_cameras.push_back(camera);
+
+		//if no renderer set, set default
+		if(camera->getRenderer().rawPtr() == 0)
+		{
+			camera->setRenderer(m_defaultRenderer);
+		}
 
 	}
 
@@ -134,9 +146,8 @@ namespace Dx11Sandbox
 
     void SceneManager::destroyWorld()
     {
-		DestroyAllRenderObjects();
         clearRenderQueues();
-		CullInfoManager::singleton()->deallocateAll();
+		m_renderObjectManager.DestroyAllRenderObjects();
     }
 
     void SceneManager::clearRenderQueues()
@@ -211,14 +222,16 @@ namespace Dx11Sandbox
 
         m_cachedVisibleList.clear();
 
-		for( unsigned int i=0;i<CullInfoManager::singleton()->getNumberOfPools();++i)
+		CullInfoManager& cullingInfo = m_renderObjectManager.GetCullingManager();
+
+		for( unsigned int i=0;i<cullingInfo.getNumberOfDynamicPoolVectors();++i)
         {
 
-			CullInfoPool &objects = CullInfoManager::singleton()->getCullInfoPool(i);
+			CullInfoPool &objects = cullingInfo.getDynamicPoolVector(i);
             m_culler->cull(frust,objects,m_cachedVisibleList);
         }
 
-		m_RenderBin.appendPrimitivesToBins( m_cachedVisibleList, cam->getRenderMask() );
+		m_RenderBin.appendPrimitives( m_cachedVisibleList, cam->getRenderMask() );
 
 
     }

@@ -3,25 +3,31 @@
 
 
 #include <set>
+#include "CullInfoManager.h"
 
 namespace Dx11Sandbox
 {
 	
-	class RenderObject;
+	class CullableGeometry;
 	
 	class RenderObjectManager
 	{
-		friend class RenderObject;
+		friend class CullableGeometry;
 	public:
 		RenderObjectManager();
 		virtual ~RenderObjectManager();
-		RenderObject* CreateRenderObject();
+		CullableGeometry* CreateRenderObject();
 		
+		CullInfoManager& GetCullingManager();
+
+		void DestroyAllRenderObjects();
 
 	protected:
-		void DestroyAllRenderObjects();
-		void DestroyRenderObject(RenderObject* obj);
-		std::set<RenderObject*> m_renderObjects;
+		
+		void DestroyRenderObject(CullableGeometry* obj);
+		
+		CullInfoManager m_cullingInfoManager;
+		std::set<CullableGeometry*> m_renderObjects;
 
 	};
 

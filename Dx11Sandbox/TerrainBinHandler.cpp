@@ -8,7 +8,7 @@
 #include "Material.h"
 #include "Camera.h"
 #include "CullInfo.h"
-#include "RenderObject.h"
+#include "CullableGeometry.h"
 #include "d3dx11effect.h"
 #include <D3D11.h>
 #include <d3dx9math.h>
@@ -29,12 +29,12 @@ namespace Dx11Sandbox
     {
     }
 
-    unsigned int TerrainBinHandler::getTotalIndexCount( RenderObject* objects, unsigned int objectCount )
+    unsigned int TerrainBinHandler::getTotalIndexCount( RenderData** objects, unsigned int objectCount )
     {
         unsigned int totalIndexCount = 0;
         for( unsigned int i = 0; i < objectCount; ++i )
         {
-			RenderObject* object = &objects[i];
+			RenderData* object = objects[i];
 
 			
             IndexBuffer* ib = object->getMesh()->getIndexBuffer();
@@ -44,7 +44,7 @@ namespace Dx11Sandbox
 #if defined( DEBUG )           
                 if( ib->getFormat() != m_formatToUse )
                 {
-                    showErrorDialog( " Tried to use incorrect index format in Terrain RenderBinHandler" );
+                    showErrorDialog( " Tried to use incorrect index format in Terrain GeometryBinHandler" );
                 }
 #endif
 
@@ -60,7 +60,7 @@ namespace Dx11Sandbox
         m_cachedShadowBuffer.resize( (m_formatToUse == DXGI_FORMAT_R16_UINT?2:4) * indexCount );
     }
 
-	void TerrainBinHandler::setupForRendering(RenderObject* objects, unsigned int objectCount, RenderData** objectsOut, unsigned int *objectsOutCount, RenderContext* state)
+	void TerrainBinHandler::setupForRendering(RenderData** objects, unsigned int objectCount, RenderData** objectsOut, unsigned int *objectsOutCount, RenderContext* state)
 	{
 		 //early out
         if( objectCount == 0 )
@@ -75,9 +75,12 @@ namespace Dx11Sandbox
         if( !m_cachedRenderData.getMesh()->getIndexBuffer() ||  m_cachedRenderData.getMesh()->getIndexBuffer()->getIndexCount() < indexCount )
         {
             reallocateIndexBuffer( state, indexCount + static_cast<unsigned int>( static_cast<float>( indexCount) * m_cacheIncreaseRatio ) );
-        }
-		Mesh* prototypeMesh = objects->getMesh();
-		Material* prototypeMaterial = objects->getMaterial();
+		}
+
+		RenderData* protoObject = *objects;
+
+		Mesh* prototypeMesh = protoObject->getMesh();
+		Material* prototypeMaterial = protoObject->getMaterial();
         IndexBuffer* aggbuffer = m_cachedRenderData.getMesh()->getIndexBuffer();
 
         //copy indices to one buffer
@@ -86,7 +89,7 @@ namespace Dx11Sandbox
         int indexesToDraw = 0;
         for( unsigned int i = 0; i < objectCount; ++i )
         {
-			IndexBuffer* ib = objects->getMesh()->getIndexBuffer();
+			IndexBuffer* ib = objects[i]->getMesh()->getIndexBuffer();
             if( ib )
             {
                 memcpy( &m_cachedShadowBuffer[ indexOffset ], ib->getShadowBuffer(), ib->getShadowBufferSize() ); 

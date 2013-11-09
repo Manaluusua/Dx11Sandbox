@@ -19,7 +19,7 @@
 namespace Dx11Sandbox
 {
     class Material;
-    class RenderBinHandler;
+    class GeometryBinHandler;
     class RenderContext;
     class SceneManager;
     class Frustrum;
@@ -27,7 +27,7 @@ namespace Dx11Sandbox
 
     
     
-    // RenderBinHandler listener to listen and act for rendering events
+    // GeometryBinHandler listener to listen and act for rendering events
     class RenderStartListener
     {
     public:
@@ -37,7 +37,7 @@ namespace Dx11Sandbox
 
     
 
-    class SceneManager : public RenderObjectManager
+    class SceneManager 
     {
     friend class Root;
     public:
@@ -56,6 +56,8 @@ namespace Dx11Sandbox
 
 
         RenderBin& getRenderBin();
+
+		CullableGeometry* CreateRenderObject();
 
         //listeners
         void addRenderStartListener(RenderStartListener* l);
@@ -84,6 +86,8 @@ namespace Dx11Sandbox
 
         RenderBin    m_RenderBin;
 
+		RenderObjectManager m_renderObjectManager;
+
         std::set<RenderStartListener*> m_renderStartListeners;
 
         std::vector<CullInfo*> m_cachedVisibleList;
@@ -96,7 +100,7 @@ namespace Dx11Sandbox
 
         RenderContext m_renderContext;
 
-        
+        RCObjectPtr<Renderer> m_defaultRenderer;
         
         UINT m_screenWidth, m_screenHeight;
     private:

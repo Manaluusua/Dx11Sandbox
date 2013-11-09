@@ -3,6 +3,7 @@
 
 #include "RenderData.h"
 #include "CullInfo.h"
+#include "Cullable.h"
 #include "CommonUtilities.h"
 
 namespace Dx11Sandbox
@@ -12,7 +13,7 @@ namespace Dx11Sandbox
 	class Material;
 	class RenderObjectManager;
 
-	class RenderObject : public RenderData
+	class CullableGeometry : public RenderData, public Cullable
 	{
 		friend class RenderObjectManager;
 
@@ -23,15 +24,17 @@ namespace Dx11Sandbox
 
 		void setVisible(bool value);
 
+		virtual CullableType GetCullableType() const;
+
 		RenderQueueID getRenderQueue() const;
 
 		void destroy();
 
 	protected:
-		RenderObject();
-		virtual ~RenderObject();
+		CullableGeometry(RenderObjectManager* mngr);
+		virtual ~CullableGeometry();
 
-		DISABLE_COPY(RenderObject);
+		DISABLE_COPY(CullableGeometry);
 
 		CullInfo** m_cullingInformation;
 		RenderObjectManager* m_mngr;
@@ -40,7 +43,7 @@ namespace Dx11Sandbox
 	};
 
 
-	inline RenderQueueID RenderObject::getRenderQueue() const
+	inline RenderQueueID CullableGeometry::getRenderQueue() const
 	{
 		return m_renderQueue;
 	}

@@ -2,7 +2,7 @@
 #define DX11SANDBOX_RenderBin_H
 
 #include "CommonUtilities.h"
-#include "RenderBinHandler.h"
+#include "GeometryBinHandler.h"
 #include "RCObjectPtr.h"
 #include <map>
 #include <vector>
@@ -17,31 +17,33 @@ namespace Dx11Sandbox
     class Camera;
     class SceneManager;
 	class RenderData;
-	class RenderObject;
+	class CullableGeometry;
 	class CullInfo;
     class RenderBin
     {
     public:
 
-        RenderBin(RenderBinHandler* defaultRenderBinHandler = 0);
+        RenderBin(GeometryBinHandler* defaultGeometryBinHandler = 0);
         ~RenderBin();
- 
-        void setDefaultBinRenderBinHandler( RCObjectPtr<RenderBinHandler> RenderBinHandler ); 
-       
-        void setRenderBinHandlerForBin( RenderQueueID id, RCObjectPtr<RenderBinHandler> RenderBinHandler );
-        void appendPrimitivesToBins(std::vector<CullInfo*> &primitives, RenderMask mask);
+		
+		void appendPrimitives(std::vector<CullInfo*> &primitives, RenderMask mask);
         void clearBins();
 
-		std::map<RenderQueueID, std::vector<RenderObject*> >& getRenderBins();
-		RCObjectPtr<RenderBinHandler> getHandlerForBin(RenderQueueID id);
+        void setDefaultGeometryBinHandler( RCObjectPtr<GeometryBinHandler> GeometryBinHandler ); 
+        void setRenderBinHandlerForGeometryBin( RenderQueueID id, RCObjectPtr<GeometryBinHandler> geometryBinHandler );
+        
+		std::map<RenderQueueID, std::vector<RenderData*> >& getGeometryBins();
+		RCObjectPtr<GeometryBinHandler> getGeometryHandlerForBin(RenderQueueID id);
+
+
     private:
         
     
 
-        std::map<RenderQueueID, RCObjectPtr<RenderBinHandler> > m_binHandlers;
-        std::map<RenderQueueID, std::vector<RenderObject*> > m_bins;
-      
-        RCObjectPtr<RenderBinHandler> m_defaultRenderBinHandler;
+        std::map<RenderQueueID, RCObjectPtr<GeometryBinHandler> > m_geometryBinHandlers;
+        std::map<RenderQueueID, std::vector<RenderData*> > m_geometryBins;
+		
+        RCObjectPtr<GeometryBinHandler> m_defaultGeometryBinHandler;
 
         
     };

@@ -1,6 +1,6 @@
 #include "RenderObjectManager.h"
 
-#include "RenderObject.h"
+#include "CullableGeometry.h"
 
 namespace Dx11Sandbox
 {
@@ -13,14 +13,19 @@ namespace Dx11Sandbox
 	{
 	}
 
-	RenderObject* RenderObjectManager::CreateRenderObject()
+	CullableGeometry* RenderObjectManager::CreateRenderObject()
 	{
-		RenderObject* ro = new RenderObject;
-		ro->m_mngr = this;
+		CullableGeometry* ro = new CullableGeometry(this);
 		m_renderObjects.insert(ro);
 		return ro;
 	}
-	void RenderObjectManager::DestroyRenderObject(RenderObject* obj)
+
+	CullInfoManager& RenderObjectManager::GetCullingManager()
+	{
+		return m_cullingInfoManager;
+	}
+
+	void RenderObjectManager::DestroyRenderObject(CullableGeometry* obj)
 	{
 		if(obj == 0) return;
 
@@ -35,5 +40,7 @@ namespace Dx11Sandbox
 			delete *iter;
 		}
 		m_renderObjects.clear();
+
+		m_cullingInfoManager.deallocateDynamicAll();
 	}
 }

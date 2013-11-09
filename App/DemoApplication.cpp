@@ -6,7 +6,7 @@
 #include "Material.h"
 #include "MeshManager.h"
 #include "TerrainBinHandler.h"
-#include "RenderObject.h"
+#include "CullableGeometry.h"
 
 DemoApplication::DemoApplication()
     :m_leftDown(false),
@@ -96,7 +96,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
     //objects
     Material* mat = 0; 
     Mesh* mesh = 0; 
-    RenderObject *ro;
+    CullableGeometry *ro;
 
     //skybox
     mat = MaterialManager::singleton()->getOrCreateMaterial(device, L"skybox.fx", L"skybox",MeshInputLayouts::POS3TEX3);
@@ -235,7 +235,7 @@ void DemoApplication::shutDown(SceneManager* mngr)
 }
 
 
-void DemoApplication::objectBeingRendered(RenderObject* obj)
+void DemoApplication::objectBeingRendered(CullableGeometry* obj)
 {
 	//Tämä pois kokonaan lopulta, engine hoitaa. For now laita listeneri rendereriin (saa staten ja listan renderdatoista)
 	Dx11Sandbox::RenderContext& state = m_mngr->getRenderContext();
