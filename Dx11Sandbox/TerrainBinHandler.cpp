@@ -7,7 +7,7 @@
 #include "IndexBuffer.h"
 #include "Material.h"
 #include "Camera.h"
-#include "CullInfo.h"
+#include "CullData.h"
 #include "CullableGeometry.h"
 #include "d3dx11effect.h"
 #include <D3D11.h>
@@ -60,12 +60,12 @@ namespace Dx11Sandbox
         m_cachedShadowBuffer.resize( (m_formatToUse == DXGI_FORMAT_R16_UINT?2:4) * indexCount );
     }
 
-	void TerrainBinHandler::setupForRendering(RenderData** objects, unsigned int objectCount, RenderData** objectsOut, unsigned int *objectsOutCount, RenderContext* state)
+	 RenderData** TerrainBinHandler::setupForRendering(RenderData** objects, unsigned int objectCount, unsigned int *objectsOutCount, RenderContext* state)
 	{
 		 //early out
         if( objectCount == 0 )
         {
-            return;
+            return 0;
         }
 
 
@@ -96,7 +96,6 @@ namespace Dx11Sandbox
                 indexOffset += ib->getIndexCount() * indexSize;
                 indexesToDraw += ib->getIndexCount();
             }
-			++objects;
         }
 
         //cpu -> gpu
@@ -104,11 +103,11 @@ namespace Dx11Sandbox
 		m_cachedRenderData.getMesh()->setVertexBuffer( prototypeMesh->getVertexBuffer() );
 
 		m_cachedRenderData.setMaterial(prototypeMaterial);
-		objectsOut = m_cachedRenderList.data();
 		*objectsOutCount = m_cachedRenderList.size();
+		return m_cachedRenderList.data();
 	}
 	/*
-    void TerrainBinHandler::render(std::vector<CullInfo*>& objects, RenderContext* state,  Camera* camera)
+    void TerrainBinHandler::render(std::vector<CullData*>& objects, RenderContext* state,  Camera* camera)
     {
 
 
@@ -151,7 +150,7 @@ namespace Dx11Sandbox
         D3DX11_TECHNIQUE_DESC techDesc;
         D3DX11_PASS_DESC passDesc;
 
-        const CullInfo* object = objects[0];
+        const CullData* object = objects[0];
 
 		Mesh* prototypeMesh = object->object->getMesh();
 		Material* mat = object->object->getMaterial();

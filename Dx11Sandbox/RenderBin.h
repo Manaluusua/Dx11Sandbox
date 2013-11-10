@@ -18,7 +18,7 @@ namespace Dx11Sandbox
     class SceneManager;
 	class RenderData;
 	class CullableGeometry;
-	class CullInfo;
+	class Cullable;
     class RenderBin
     {
     public:
@@ -26,7 +26,7 @@ namespace Dx11Sandbox
         RenderBin(GeometryBinHandler* defaultGeometryBinHandler = 0);
         ~RenderBin();
 		
-		void appendPrimitives(std::vector<CullInfo*> &primitives, RenderMask mask);
+		void appendPrimitives(std::vector<Cullable*> &primitives);
         void clearBins();
 
         void setDefaultGeometryBinHandler( RCObjectPtr<GeometryBinHandler> GeometryBinHandler ); 
@@ -37,8 +37,6 @@ namespace Dx11Sandbox
 
 
     private:
-        
-    
 
         std::map<RenderQueueID, RCObjectPtr<GeometryBinHandler> > m_geometryBinHandlers;
         std::map<RenderQueueID, std::vector<RenderData*> > m_geometryBins;

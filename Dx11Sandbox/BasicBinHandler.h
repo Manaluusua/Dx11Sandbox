@@ -10,7 +10,7 @@ namespace Dx11Sandbox
         BasicBinHandler(void);
         ~BasicBinHandler(void);
 
-        void setupForRendering(RenderData** objects, unsigned int objectCount, RenderData** objectsOut, unsigned int *objectsOutCount, RenderContext* state);
+        RenderData** setupForRendering(RenderData** objects, unsigned int objectCount,  unsigned int *objectsOutCount, RenderContext* state);
     };
 }
 

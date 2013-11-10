@@ -30,18 +30,26 @@ namespace Dx11Sandbox
 
 		std::map<RenderQueueID, std::vector<RenderData*> >& renderObjects = renderBin.getGeometryBins();
 
-		RenderData** renderData = 0; 
 		unsigned int count = 0;
 		auto mapIter = renderObjects.begin();
 		RenderQueueID queue = Dx11Sandbox::RENDERQUEUE_FIRST;
 
+		m_renderer->renderBegin(this, state);
+
 		//before light pass
 		while(mapIter != renderObjects.end() && queue < Dx11Sandbox::RENDERQUEUE_AFTERLIGHTPASS){
-			queue = mapIter->first;
 			std::vector<RenderData*>& objects = mapIter->second;
-			RCObjectPtr<GeometryBinHandler> handler = renderBin.getGeometryHandlerForBin(queue);
-			handler->setupForRendering(objects.data(),objects.size(), renderData, &count, state);
-			m_renderer->render(renderData, count, state);
+
+			if(objects.size() > 0)
+			{
+				queue = mapIter->first;
+				RCObjectPtr<GeometryBinHandler> handler = renderBin.getGeometryHandlerForBin(queue);
+				RenderData** renderData = handler->setupForRendering(objects.data(),objects.size(), &count, state);
+				m_renderer->render(renderData, count);
+			}
+
+			++mapIter;
+			
 		}
 
 
@@ -49,14 +57,21 @@ namespace Dx11Sandbox
 
 		//rest
 		while(mapIter != renderObjects.end()){
-			queue = mapIter->first;
 			std::vector<RenderData*>& objects = mapIter->second;
-			RCObjectPtr<GeometryBinHandler> handler = renderBin.getGeometryHandlerForBin(queue);
-			handler->setupForRendering(objects.data(),objects.size(), renderData, &count, state);
-			m_renderer->render(renderData, count, state);
+
+			if(objects.size() > 0)
+			{
+				queue = mapIter->first;
+				RCObjectPtr<GeometryBinHandler> handler = renderBin.getGeometryHandlerForBin(queue);
+				RenderData** renderData = handler->setupForRendering(objects.data(),objects.size(), &count, state);
+				m_renderer->render(renderData, count);
+			}
+
+			
+			++mapIter;
 		}
 
-
+		m_renderer->renderEnd();
 	}
 
 	void RenderCamera::addRenderListener(RenderCameraListener *l)
@@ -92,11 +107,11 @@ namespace Dx11Sandbox
 		return m_cameraPriority;
 	}
 
-	void RenderCamera::setRenderMask(RenderMask mask){
+	void RenderCamera::setRenderMask(RenderLayer mask){
 		m_renderMask = mask;
 	}
 
-	RenderMask RenderCamera::getRenderMask() const
+	RenderLayer RenderCamera::getRenderMask() const
 	{
 			return m_renderMask;
 	}

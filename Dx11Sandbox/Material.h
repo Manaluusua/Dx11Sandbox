@@ -1,14 +1,15 @@
 #ifndef DX11SANDBOX_MATERIAL_H
 #define DX11SANDBOX_MATERIAL_H
 
-#include <map>
+
 #include "CommonUtilities.h"
 #include "DXUT.h"
 #include "SDKmisc.h"
 #include "RCObject.h"
 #include "ReleasePtr.h"
-#include <d3dx11effect.h>
 #include "ILDescriptions.h"
+#include <map>
+#include <d3dx11effect.h>
 
 namespace Dx11Sandbox
 {

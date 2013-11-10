@@ -30,8 +30,8 @@ namespace Dx11Sandbox
 		void setCameraPriority(INT32 priority);
 		INT32 getCameraPriority() const;
 
-		void setRenderMask(RenderMask mask);
-		RenderMask getRenderMask() const;
+		void setRenderMask(RenderLayer mask);
+		RenderLayer getRenderMask() const;
 
 		void addRenderListener(RenderCameraListener *l);
 		void removeRenderListener(RenderCameraListener *l);
@@ -49,7 +49,7 @@ namespace Dx11Sandbox
 		RCObjectPtr<Renderer> m_renderer;
 
 		INT32 m_cameraPriority;
-		RenderMask m_renderMask;
+		RenderLayer m_renderMask;
 
 	};
 };

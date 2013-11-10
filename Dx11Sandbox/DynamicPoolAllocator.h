@@ -49,7 +49,7 @@ namespace Dx11Sandbox
         inline void deallocateProxy(T** proxy);
 
     public:
-        DynamicPoolAllocator(size_t defaultSize=40);
+        DynamicPoolAllocator(size_t defaultSize=60);
         virtual ~DynamicPoolAllocator(void);
 
         PoolVector<AllocationUnit<T> >& getDynamicPoolVector(size_t index);
@@ -83,6 +83,7 @@ namespace Dx11Sandbox
     template <typename T>
     DynamicPoolAllocator<T>::~DynamicPoolAllocator(void)
     {
+		deallocateDynamicAll();
     }
 
 
@@ -176,11 +177,11 @@ namespace Dx11Sandbox
     template <typename T>
     void DynamicPoolAllocator<T>::deallocateDynamicAll()
     {
-		for(int i = 0; i < m_pool.size(); ++i){
+		for(unsigned int i = 0; i < m_pool.size(); ++i){
 			delete m_pool[i].vector;
 		}
 
-		for(int i = 0; i < m_proxy.size(); ++i){
+		for(unsigned int i = 0; i < m_proxy.size(); ++i){
 			delete m_proxy[i];
 		}
 

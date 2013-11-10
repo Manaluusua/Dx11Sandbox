@@ -11,7 +11,7 @@ namespace Dx11Sandbox
         SIMDCuller(void);
         virtual ~SIMDCuller(void);
     
-        virtual void cull(const Frustrum& frusta,PoolVector<AllocationUnit<CullInfo> > &in ,std::vector<CullInfo*>& out);
+        virtual void cull(const Frustrum& frusta,PoolVector<AllocationUnit<CullData> > &in ,std::vector<Cullable*>& out);
     };
 
 

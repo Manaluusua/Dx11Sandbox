@@ -39,7 +39,7 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 	Dx11Sandbox::RCObjectPtr<Dx11Sandbox::Material> mat = Dx11Sandbox::MaterialManager::singleton()->getOrCreateMaterial(device, L"waterplane.fx",  L"waterplane",Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
 	m_renderObject->setMaterial(mat);
 	m_renderObject->setRenderQueue(Dx11Sandbox::RENDERQUEUE_OPAQUE_SCENE_INPUT);
-	m_renderObject->setRenderMask(Dx11Sandbox::RENDERMASK_OPAQUE_SCENE_INPUT);
+	m_renderObject->setRenderMask(Dx11Sandbox::RENDERLAYER_OPAQUE_SCENE_INPUT);
 
     //hack, always use same name. Later on take the name from name passed in to avoid name collision when multiple waterplanes in the scene
     Dx11Sandbox::wstring reflTexName = L"waterplanereflection";

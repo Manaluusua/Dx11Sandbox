@@ -31,28 +31,24 @@ namespace Dx11Sandbox
             m_geometryBinHandlers[id] = handler;
         }
     }
-    void RenderBin::appendPrimitives(std::vector<CullInfo*> &primitives, RenderMask mask)
+    void RenderBin::appendPrimitives(std::vector<Cullable*> &primitives)
     {
         for( unsigned int i = 0; i < primitives.size(); ++i )
         {
-			CullInfo* primitive = primitives[i];
-			if(mask & primitive->renderMask)
+			Cullable* cullable = primitives[i];
+
+			if(cullable->GetCullableType() == CULLABLE_GEOMETRY)
 			{
-				Cullable* cullable = primitive->object;
+				CullableGeometry* obj = static_cast<CullableGeometry*>(cullable);
+				RenderQueueID id = obj->getRenderQueue();
+				m_geometryBins[id].push_back( obj );
+			} else if(cullable->GetCullableType() == CULLABLE_LIGHT)
+			{
 
-				if(cullable->GetCullableType() == CULLABLE_GEOMETRY)
-				{
-					CullableGeometry* obj = static_cast<CullableGeometry*>(cullable);
-					RenderQueueID id = obj->getRenderQueue();
-					m_geometryBins[id].push_back( obj );
-				}
-
-				
-				
-				
 			}
-            
-        }
+
+		}
+
     }
 
 	std::map<RenderQueueID, std::vector<RenderData*> >& RenderBin::getGeometryBins()

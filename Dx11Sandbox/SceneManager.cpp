@@ -1,7 +1,7 @@
 #include "SceneManager.h"
 #include "Root.h"
 #include "TextureManager.h"
-#include "CullInfoManager.h"
+#include "CullDataAllocator.h"
 #include "Material.h"
 #include "MaterialManager.h"
 #include "MeshUtility.h"
@@ -9,10 +9,11 @@
 #include "Mesh.h"
 #include "BasicBinHandler.h"
 #include "Frustrum.h"
-#include "CullInfo.h"
+#include "CullData.h"
 #include "SIMDCuller.h"
 #include "BasicForwardRenderer.h"
 #include <algorithm>
+
 namespace Dx11Sandbox
 {
     SceneManager::SceneManager(Root* root)
@@ -23,9 +24,10 @@ namespace Dx11Sandbox
         m_screenWidth(0),
         m_screenHeight(0)
     {
+		m_defaultRenderer = new BasicForwardRenderer();
         m_mainCamera = new RenderCamera;
 		addCamera(m_mainCamera);
-		m_defaultRenderer = new BasicForwardRenderer();
+		
 
     }
 
@@ -52,9 +54,9 @@ namespace Dx11Sandbox
 		
     }
 
-	CullableGeometry* SceneManager::CreateRenderObject()
+	CullableGeometry* SceneManager::createCullableGeometry()
 	{
-		return m_renderObjectManager.CreateRenderObject();
+		return m_renderGeometryManager.create();
 	}
 
     void SceneManager::addRenderStartListener(RenderStartListener* l)
@@ -147,7 +149,7 @@ namespace Dx11Sandbox
     void SceneManager::destroyWorld()
     {
         clearRenderQueues();
-		m_renderObjectManager.DestroyAllRenderObjects();
+		m_renderGeometryManager.destroyAll();
     }
 
     void SceneManager::clearRenderQueues()
@@ -202,7 +204,7 @@ namespace Dx11Sandbox
 		{
 			RCObjectPtr<RenderCamera> cam = m_cameras[i];
 			cullObjectsToRenderQueues(cam);
-			
+			cam->render(m_RenderBin, &m_renderContext);
 				
 		}
 
@@ -222,16 +224,32 @@ namespace Dx11Sandbox
 
         m_cachedVisibleList.clear();
 
-		CullInfoManager& cullingInfo = m_renderObjectManager.GetCullingManager();
+		std::map<RenderLayer, CullDataAllocator*>& cullDataPools = m_renderGeometryManager.GetCullDataAllocators();
 
-		for( unsigned int i=0;i<cullingInfo.getNumberOfDynamicPoolVectors();++i)
-        {
+		RenderLayer camMask = cam->getRenderMask();
 
-			CullInfoPool &objects = cullingInfo.getDynamicPoolVector(i);
-            m_culler->cull(frust,objects,m_cachedVisibleList);
-        }
+		for(auto iter = cullDataPools.begin(); iter != cullDataPools.end(); ++iter)
+		{
+			if(!(iter->first & camMask)) continue;
+			
+			CullDataAllocator* cullDataPool = iter->second;
 
-		m_RenderBin.appendPrimitives( m_cachedVisibleList, cam->getRenderMask() );
+			for( unsigned int i=0;i<cullDataPool->getNumberOfDynamicPoolVectors();++i)
+			{
+
+				CullDataPool &objects = cullDataPool->getDynamicPoolVector(i);
+				m_culler->cull(frust,objects,m_cachedVisibleList);
+			}
+
+			m_RenderBin.appendPrimitives( m_cachedVisibleList );
+		
+
+		}
+
+		
+		
+
+		
 
 
     }

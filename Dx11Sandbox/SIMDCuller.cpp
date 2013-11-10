@@ -14,7 +14,7 @@ namespace Dx11Sandbox
     }
 
 
-    void SIMDCuller::cull(const Frustrum& frusta,PoolVector<AllocationUnit<CullInfo> > &in ,std::vector<CullInfo*>& out)
+    void SIMDCuller::cull(const Frustrum& frusta,PoolVector<AllocationUnit<CullData> > &in ,std::vector<Cullable*>& out)
     {
         Frustrum::SIMDFrustrum simdFrust;
         frusta.convertToSimdFrustrum(simdFrust);
@@ -34,21 +34,21 @@ namespace Dx11Sandbox
 
             if(result & 0x1)
             {
-                CullInfo* ro = &(*in.vector)[i].data;
-                out.push_back(ro);
+				Cullable* obj = (*in.vector)[i].data.object;
+                out.push_back(obj);
             }
             
             if(  ((i+1 <= maxSphereInd) && (result & 0x2)) )
             {
-                CullInfo* ro = &(*in.vector)[i+1].data;
-                out.push_back(ro);
+				Cullable* obj  = (*in.vector)[i+1].data.object;
+                out.push_back(obj);
             }
 
         }
 
     }
 
-inline UINT32 cullSpheresSSE(Frustrum::SIMDFrustrum& frust,  const D3DXVECTOR4& sphere1, const D3DXVECTOR4& sphere2 )
+UINT32 cullSpheresSSE(Frustrum::SIMDFrustrum& frust,  const D3DXVECTOR4& sphere1, const D3DXVECTOR4& sphere2 )
 {
     UINT32 cullmask = 0x0;
 

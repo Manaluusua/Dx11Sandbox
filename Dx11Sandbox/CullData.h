@@ -9,16 +9,15 @@ namespace Dx11Sandbox
 
 	class Cullable;
 
-    class CullInfo
+    class CullData
     {
     public:
         
-        CullInfo();
-        ~CullInfo();
+        CullData();
+        ~CullData();
 
         D3DXVECTOR4 boundingSphere;
         Cullable* object;
-        RenderMask renderMask;
     };
 }
 #endif

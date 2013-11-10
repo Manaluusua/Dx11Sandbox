@@ -2,13 +2,13 @@
 #define DX11SANDBOX_CULLINFOMANAGER_H
 
 #include "DynamicPoolAllocator.h"
-#include "CullInfo.h"
+#include "CullData.h"
 
 namespace Dx11Sandbox
 {
 
-	typedef PoolVector<AllocationUnit<CullInfo> > CullInfoPool;
-	typedef DynamicPoolAllocator<CullInfo> CullInfoManager;
+	typedef PoolVector<AllocationUnit<CullData> > CullDataPool;
+	typedef DynamicPoolAllocator<CullData> CullDataAllocator;
 };
 
 #endif

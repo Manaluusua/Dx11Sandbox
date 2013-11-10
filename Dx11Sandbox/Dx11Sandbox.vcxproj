@@ -87,16 +87,18 @@
   <ItemGroup>
     <ClCompile Include="BasicBinHandler.cpp" />
     <ClCompile Include="BasicForwardRenderer.cpp" />
+    <ClCompile Include="BasicMaterialPropertiesSetter.cpp" />
     <ClCompile Include="Batcher.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommonUtilities.cpp" />
     <ClCompile Include="Compositor.cpp" />
     <ClCompile Include="Cullable.cpp" />
-    <ClCompile Include="CullInfo.cpp" />
+    <ClCompile Include="CullData.cpp" />
     <ClCompile Include="Frustrum.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
     <ClCompile Include="ILDescriptions.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
     <ClCompile Include="MathUtil.cpp" />
@@ -110,7 +112,6 @@
     <ClCompile Include="RenderContext.cpp" />
     <ClCompile Include="RenderData.cpp" />
     <ClCompile Include="CullableGeometry.cpp" />
-    <ClCompile Include="RenderObjectManager.cpp" />
     <ClCompile Include="Root.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="ShadowCPUBuffer.cpp" />
@@ -123,6 +124,7 @@
   <ItemGroup>
     <ClInclude Include="BasicBinHandler.h" />
     <ClInclude Include="BasicForwardRenderer.h" />
+    <ClInclude Include="BasicMaterialPropertiesSetter.h" />
     <ClInclude Include="Batcher.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CommonTypes.h" />
@@ -130,14 +132,16 @@
     <ClInclude Include="Compositor.h" />
     <ClInclude Include="Cullable.h" />
     <ClInclude Include="Culler.h" />
-    <ClInclude Include="CullInfoManager.h" />
+    <ClInclude Include="CullDataAllocator.h" />
     <ClInclude Include="DynamicPoolAllocator.h" />
     <ClInclude Include="Frustrum.h" />
     <ClInclude Include="GPUBuffer.h" />
     <ClInclude Include="ILDescriptions.h" />
     <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialManager.h" />
+    <ClInclude Include="MaterialPropertiesSetter.h" />
     <ClInclude Include="MathUtil.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />
@@ -151,12 +155,12 @@
     <ClInclude Include="RenderData.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="CullableGeometry.h" />
-    <ClInclude Include="RenderObjectManager.h" />
+    <ClInclude Include="CullableObjectManager.h" />
     <ClInclude Include="ShadowCPUBuffer.h" />
     <ClInclude Include="SIMDCuller.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="GeometryBinHandler.h" />
-    <ClInclude Include="CullInfo.h" />
+    <ClInclude Include="CullData.h" />
     <ClInclude Include="RenderContext.h" />
     <ClInclude Include="Root.h" />
     <ClInclude Include="SceneManager.h" />

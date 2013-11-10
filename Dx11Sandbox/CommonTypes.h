@@ -13,7 +13,7 @@ namespace Dx11Sandbox
 
 	//RenderQueueID
 	typedef unsigned int RenderQueueID;
-	typedef unsigned int RenderMask;
+	typedef unsigned int RenderLayer;
 
 	const RenderQueueID RENDERQUEUE_FIRST = 0;
 	const RenderQueueID RENDERQUEUE_TERRAIN = 500;
@@ -25,12 +25,12 @@ namespace Dx11Sandbox
 	const RenderQueueID RENDERQUEUE_TRANSPARENT = 4000;
 	const RenderQueueID RENDERQUEUE_HUD = 5000;
 
-	const RenderMask RENDERMASK_DEFAULT_OPAQUE = 0x1;
-	const RenderMask RENDERMASK_LIGHTPASS = 0x2;
-	const RenderMask RENDERMASK_SKYBOX = 0x4;
-	const RenderMask RENDERMASK_OPAQUE_SCENE_INPUT = 0x8;
-	const RenderMask RENDERMASK_TRANSPARENT = 0x10;
-	const RenderMask RENDERMASK_HUD = 0x20;
+	const RenderLayer RENDERLAYER_DEFAULT_OPAQUE = 0x1;
+	const RenderLayer RENDERLAYER_LIGHTPASS = 0x2;
+	const RenderLayer RENDERLAYER_SKYBOX = 0x4;
+	const RenderLayer RENDERLAYER_OPAQUE_SCENE_INPUT = 0x8;
+	const RenderLayer RENDERLAYER_TRANSPARENT = 0x10;
+	const RenderLayer RENDERLAYER_HUD = 0x20;
 
 }
 

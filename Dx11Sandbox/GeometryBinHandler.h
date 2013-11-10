@@ -17,7 +17,7 @@ namespace Dx11Sandbox
     public:
 		virtual ~GeometryBinHandler(void){};
 
-        virtual void setupForRendering(RenderData** objects, unsigned int objectCount, RenderData** objectsOut, unsigned int *objectsOutCount, RenderContext* state) = 0;
+        virtual  RenderData** setupForRendering(RenderData** objects, unsigned int objectCount, unsigned int *objectsOutCount, RenderContext* state) = 0;
         
 
     };

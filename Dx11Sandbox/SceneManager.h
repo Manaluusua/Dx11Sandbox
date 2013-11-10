@@ -4,12 +4,11 @@
 #include "RenderCamera.h"
 #include "CommonUtilities.h"
 #include "RenderContext.h"
-#include "DynamicPoolAllocator.h"
 #include "RCObjectPtr.h"
-#include "CullInfo.h"
+#include "CullData.h"
 #include "RenderBin.h"
-#include "RenderObjectManager.h"
-
+#include "CullableGeometry.h"
+#include "CullableObjectManager.h"
 #include "DXUT.h"
 #include <map>
 #include <set>
@@ -57,7 +56,7 @@ namespace Dx11Sandbox
 
         RenderBin& getRenderBin();
 
-		CullableGeometry* CreateRenderObject();
+		CullableGeometry* createCullableGeometry();
 
         //listeners
         void addRenderStartListener(RenderStartListener* l);
@@ -86,11 +85,12 @@ namespace Dx11Sandbox
 
         RenderBin    m_RenderBin;
 
-		RenderObjectManager m_renderObjectManager;
+		
+		CullableGeometryManager m_renderGeometryManager;
 
         std::set<RenderStartListener*> m_renderStartListeners;
 
-        std::vector<CullInfo*> m_cachedVisibleList;
+        std::vector<Cullable*> m_cachedVisibleList;
         
         RCObjectPtr<Culler> m_culler;
 

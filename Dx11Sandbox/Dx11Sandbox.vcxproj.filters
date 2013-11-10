@@ -96,16 +96,10 @@
     <ClCompile Include="Batcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RenderObjectManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RenderCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RenderData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CullInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BasicForwardRenderer.cpp">
@@ -115,6 +109,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CullableGeometry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CullData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicMaterialPropertiesSetter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -191,9 +194,6 @@
     <ClInclude Include="IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CullInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GPUBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -209,16 +209,10 @@
     <ClInclude Include="RenderBin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CullInfoManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Batcher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderObjectManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CommonTypes.h">
@@ -246,6 +240,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GeometryBinHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CullableObjectManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CullData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CullDataAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialPropertiesSetter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicMaterialPropertiesSetter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

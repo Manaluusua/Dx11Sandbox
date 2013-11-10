@@ -17,7 +17,7 @@ namespace Dx11Sandbox
     public:
         TerrainBinHandler(void);
         virtual ~TerrainBinHandler(void);
-		void setupForRendering(RenderData** objects, unsigned int objectCount, RenderData** objectsOut, unsigned int *objectsOutCount, RenderContext* state);
+		RenderData** setupForRendering(RenderData** objects, unsigned int objectCount, unsigned int *objectsOutCount, RenderContext* state);
 
         void reallocateIndexBuffer( RenderContext* state, unsigned int indexCount );
 

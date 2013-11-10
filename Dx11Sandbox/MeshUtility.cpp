@@ -49,8 +49,8 @@ namespace Dx11Sandbox
         frac1 = std::modf(frac1,&temp); 
         frac2 = std::modf(frac2,&temp);
 
-        frac1 = frac1*0.5f + (1.f-std::cos(frac1*MathUtil::PI))*0.25f;
-        frac2 = frac2*0.5f + (1.f-std::cos(frac2*MathUtil::PI))*0.25f;
+        frac1 = frac1*0.5f + (1.f-std::cos(frac1*(float)MathUtil::PI))*0.25f;
+        frac2 = frac2*0.5f + (1.f-std::cos(frac2*(float)MathUtil::PI))*0.25f;
 
         heights[0] = (((float)(map->getPixel(x1,y1).r))/256)*scale;
         heights[1] = (((float)(map->getPixel(x2,y1).r))/256)*scale;
@@ -176,8 +176,8 @@ namespace Dx11Sandbox
         float incrementX = (1.f/(tesselationFactorX))*2;
         float incrementZ = (1.f/(tesselationFactorZ))*2;
 
-        int pointsX = tesselationFactorX+1;
-        int pointsZ = tesselationFactorZ+1;
+        unsigned int pointsX = tesselationFactorX+1;
+        unsigned int pointsZ = tesselationFactorZ+1;
 
         extends1 *= 0.5f;
         extends2 *= 0.5f;
@@ -191,7 +191,7 @@ namespace Dx11Sandbox
         D3DXVec3Normalize(&vec1,&vec1);
         D3DXVec3Normalize(&vec2,&vec2);
 
-		CullableGeometry* ro = mngr->CreateRenderObject();
+		CullableGeometry* ro = mngr->createCullableGeometry();
         Mesh* mesh = MeshManager::singleton()->createMesh(name + "Mesh");
         
         //
@@ -413,6 +413,7 @@ namespace Dx11Sandbox
         UINT indicesCount = (tesselationFactor)*(tesselationFactor)*6;
         UINT32 *indices = new UINT32[indicesCount];
         unsigned int pwidth, pheight;
+
         //separate to pages and triangulate
         for(unsigned int pz = 0;pz < pagesZ;++pz)
         {
@@ -447,7 +448,7 @@ namespace Dx11Sandbox
                 }
                 
                 //create object
-				CullableGeometry* obj = mngr->CreateRenderObject();
+				CullableGeometry* obj = mngr->createCullableGeometry();
 
                 Mesh* mesh = MeshManager::singleton()->createMesh(terrainName + numberToString(pz*pagesX + px));
 
@@ -461,8 +462,9 @@ namespace Dx11Sandbox
 				obj->setMesh( mesh );
 				obj->setMaterial( mat );
 				obj->setBoundingSphere( calculateBoundingSphereForPositions(indices,pwidth * pheight * 6 , positions) );
-				obj->setRenderMask(Dx11Sandbox::RENDERMASK_DEFAULT_OPAQUE);
+				obj->setRenderMask(Dx11Sandbox::RENDERLAYER_DEFAULT_OPAQUE);
 				obj->setRenderQueue(Dx11Sandbox::RENDERQUEUE_TERRAIN);
+
             }
         }
 
@@ -508,7 +510,7 @@ namespace Dx11Sandbox
 
         float len = sqrt(pow(maximum[0] - minimum[0],2) + pow(maximum[1] - minimum[1],2)  + pow(maximum[2] - minimum[2],2))*0.5f ;
 
-        D3DXVECTOR4 sphere((minimum[0] + maximum[0])*0.5f, (minimum[1] + maximum[1])*0.5,(minimum[2] + maximum[2])*0.5f,len);
+        D3DXVECTOR4 sphere((minimum[0] + maximum[0])*0.5f, (minimum[1] + maximum[1])*0.5f,(minimum[2] + maximum[2])*0.5f,len);
 
         return sphere;
     }

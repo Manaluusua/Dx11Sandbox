@@ -101,12 +101,12 @@ void DemoApplication::createWorld(SceneManager* mngr)
     //skybox
     mat = MaterialManager::singleton()->getOrCreateMaterial(device, L"skybox.fx", L"skybox",MeshInputLayouts::POS3TEX3);
     mesh = MeshUtility::createSkyBoxMesh(device, "skybox" + generateID());
-	ro = mngr->CreateRenderObject();
+	ro = mngr->createCullableGeometry();
 	ro->setBoundingSphere( D3DXVECTOR4( 0,0,0, FLT_MAX ) );
 	ro->setMaterial( mat );
 	ro->setMesh( mesh );
 	ro->setRenderQueue(RENDERQUEUE_SKYBOX);
-	ro->setRenderMask(RENDERMASK_SKYBOX);
+	ro->setRenderMask(RENDERLAYER_SKYBOX);
 
     mat->setTexture("cubemap", L"skyboxCube.dds");
     TextureManager::singleton()->createTexture(device, L"skyboxCube.dds", L"skyboxCube.dds");
@@ -122,8 +122,6 @@ void DemoApplication::createWorld(SceneManager* mngr)
 
     mat->setTexture("texture2", L"grass.jpg");
     TextureManager::singleton()->createTexture(device, L"grass.jpg", L"grass.jpg");
-
-	RenderBin& bin = mngr->getRenderBin();
 
  
     //mat->setTexture("textureWeights", L"terrainweights.png");

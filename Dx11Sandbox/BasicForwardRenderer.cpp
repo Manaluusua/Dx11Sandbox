@@ -5,6 +5,7 @@
 #include "IndexBuffer.h"
 #include "Material.h"
 #include "RenderData.h"
+#include "RenderCamera.h"
 #include "d3dx11effect.h"
 #include <D3D11.h>
 #include <d3dx9math.h>
@@ -12,6 +13,7 @@
 namespace Dx11Sandbox
 {
 	BasicForwardRenderer::BasicForwardRenderer(void)
+		:m_state(0)
 	{
 	}
 
@@ -21,7 +23,19 @@ namespace Dx11Sandbox
 	}
 
 
-	void BasicForwardRenderer::render(RenderData** objects, unsigned int objectCount, RenderContext* state)
+	void BasicForwardRenderer::renderBegin(RenderCamera* cam,RenderContext* state)
+	{
+		m_state = state;
+		m_cam = cam;
+		m_materialPropertySetter.SetCurrentCamera(cam);
+	}
+
+	void BasicForwardRenderer::renderEnd()
+	{
+		m_state=  0;
+	}
+
+	void BasicForwardRenderer::render(RenderData** objects, unsigned int objectCount)
 	{
         D3DX11_EFFECT_DESC effectDesc;
         D3DX11_TECHNIQUE_DESC techDesc;
@@ -36,9 +50,11 @@ namespace Dx11Sandbox
         
             if(!mesh || !mat )
                 return;
-        
+			
+			m_materialPropertySetter.SetShaderProperties(mat);
+
             ID3DX11Effect* effect = mat->getEffect();
-            ID3D11DeviceContext* context = state->getImmediateContext();
+            ID3D11DeviceContext* context = m_state->getImmediateContext();
 
 
         
@@ -56,8 +72,8 @@ namespace Dx11Sandbox
 
 
 
-            state->bindMesh(mesh);
-            state->bindMaterial(mat);
+            m_state->bindMesh(mesh);
+            m_state->bindMaterial(mat);
 
             
         

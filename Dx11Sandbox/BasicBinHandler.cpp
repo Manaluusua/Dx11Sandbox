@@ -1,5 +1,5 @@
 #include "BasicBinHandler.h"
-#include "CullInfo.h"
+#include "CullData.h"
 
 #include "RenderContext.h"
 #include "Mesh.h"
@@ -24,10 +24,10 @@ namespace Dx11Sandbox
     }
 
 
-	void BasicBinHandler::setupForRendering(RenderData** objects, unsigned int objectCount, RenderData** objectsOut, unsigned int *objectsOutCount, RenderContext* state)
+	 RenderData** BasicBinHandler::setupForRendering(RenderData** objects, unsigned int objectCount, unsigned int *objectsOutCount, RenderContext* state)
 	{
-		objectsOut = objects;
 		*objectsOutCount = objectCount;
+		return objects;
 	}
 
 	
