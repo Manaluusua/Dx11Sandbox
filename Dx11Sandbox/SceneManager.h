@@ -9,7 +9,9 @@
 #include "RenderBin.h"
 #include "CullableGeometry.h"
 #include "CullableObjectManager.h"
+#include "CullableLight.h"
 #include "DXUT.h"
+
 #include <map>
 #include <set>
 #include <vector>
@@ -47,28 +49,27 @@ namespace Dx11Sandbox
 
         void renderScene( );
 
-        RCObjectPtr<RenderCamera> getMainCamera();
+        RenderCamera* getMainCamera();
         RenderContext& getRenderContext();
-
-        UINT getScreenWidth() const;
-        UINT getScreenHeight() const;
 
 
         RenderBin& getRenderBin();
 
 		CullableGeometry* createCullableGeometry();
+		CullableLight* createLight();
 
         //listeners
         void addRenderStartListener(RenderStartListener* l);
         void removeRenderStartListener(RenderStartListener* l);
 
         
-		void addCamera(RCObjectPtr<RenderCamera> camera);
-		void removeCamera(RCObjectPtr<RenderCamera> camera);
+		RenderCamera* createCamera();
+		void destroyCamera(RenderCamera* camera);
         
 
 
-        void cullObjectsToRenderQueues(RCObjectPtr<RenderCamera> cam);
+        void cullObjectsToRenderQueues(RenderCamera* cam);
+		
 
     protected:
         void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
@@ -77,32 +78,32 @@ namespace Dx11Sandbox
         void beginDraw(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime, float fElapsedTime);
         
 
+		void cullObjectsFromPools(std::map<RenderLayer, CullDataAllocator*>& pools, RenderCamera* cam);
+
         void destroyWorld();
         void clearRenderQueues();
         void destroyManagers();
 
-		std::vector<RCObjectPtr<RenderCamera>> m_cameras;
+		std::vector<RenderCamera*> m_cameras;
 
         RenderBin    m_RenderBin;
 
-		
 		CullableGeometryManager m_renderGeometryManager;
+		CullableLightManager m_lightManager;
 
         std::set<RenderStartListener*> m_renderStartListeners;
-
         std::vector<Cullable*> m_cachedVisibleList;
         
         RCObjectPtr<Culler> m_culler;
 
-        RCObjectPtr<RenderCamera> m_mainCamera;
+        RenderCamera* m_mainCamera;
 
         Root* m_root;
 
         RenderContext m_renderContext;
 
         RCObjectPtr<Renderer> m_defaultRenderer;
-        
-        UINT m_screenWidth, m_screenHeight;
+
     private:
         static SceneManager* createSceneManager(Root* root);
         DISABLE_COPY(SceneManager)

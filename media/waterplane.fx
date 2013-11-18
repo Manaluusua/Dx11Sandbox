@@ -19,15 +19,7 @@ Texture2D refraction;
 Texture2D reflection;  
 Texture2D normalmap;
 
-cbuffer sceneInfo
-{
-	float4x4 viewProj;
-    float4	sunDirection;
-	float4	sunColor;
-	float4 camPos;
-	float4 clipPlane;
-	float time;
-};
+#include "commonUniforms.fx"
 
 cbuffer waterPlaneInfo
 {

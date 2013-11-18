@@ -1,6 +1,8 @@
 #include "RenderBin.h"
 #include "CullableGeometry.h"
 #include "TerrainBinHandler.h"
+#include "CullableLight.h"
+
 namespace Dx11Sandbox
 {
 
@@ -44,12 +46,18 @@ namespace Dx11Sandbox
 				m_geometryBins[id].push_back( obj );
 			} else if(cullable->GetCullableType() == CULLABLE_LIGHT)
 			{
-
+				CullableLight* light = static_cast<CullableLight*>(cullable);
+				m_lights.push_back(light);
 			}
 
 		}
 
     }
+
+	std::vector<Light*>& RenderBin::getLights()
+	{
+		return m_lights;
+	}
 
 	std::map<RenderQueueID, std::vector<RenderData*> >& RenderBin::getGeometryBins()
 	{
@@ -78,5 +86,6 @@ namespace Dx11Sandbox
             ++iter;
         }
         
+		m_lights.clear();
     }
 }

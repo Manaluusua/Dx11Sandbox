@@ -18,7 +18,7 @@ DemoApplication::DemoApplication()
     m_moveMouse(false),
     m_lastMousePos(-1,-1),
     m_mouseDelta(0,0),
-    m_lastPassID(0),
+	m_mouseSensitivity(0.01f),
     m_time(0),
     m_waterPlane(0)
 {
@@ -83,7 +83,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
 {
     
     m_mngr = mngr;
-    RCObjectPtr<Camera> cam = mngr->getMainCamera();
+    Camera* cam = mngr->getMainCamera();
 
     ID3D11Device* device = mngr->getRenderContext().getDevice();
     //camera
@@ -135,7 +135,9 @@ void DemoApplication::createWorld(SceneManager* mngr)
     
     
    
-   
+	sun = m_mngr->createLight();
+	sun->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
+	sun->setColor(D3DXVECTOR4(1.0f,1.f,1.f,0));
 
 }
 void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime)
@@ -143,14 +145,15 @@ void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime
     m_time += fElapsedTime;
     handleInput(mngr,fElapsedTime, static_cast<float>( fTime ) );
 
-    m_lastMaterial = 0;
-
+	D3DXVECTOR4 sunDir( std::cos( m_time ), 0.f, std::sin( m_time ),0 );
+    D3DXVec4Normalize(&sunDir, &sunDir);
+	sun->setLightParameters(sunDir);
 }
 
 
 void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTime)
 {
-    RCObjectPtr<Camera> cam = mngr->getMainCamera();
+    Camera* cam = mngr->getMainCamera();
 
     //cam movement
     //keyboard
@@ -223,7 +226,7 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 
     if(m_mouseDelta != D3DXVECTOR2(0,0))
     {
-        cam->rotateCameraViewRelative(-m_mouseDelta.y*mouseSens*dt ,-m_mouseDelta.x*mouseSens*dt, 0);
+        cam->rotateCameraViewRelative(-m_mouseDelta.y*mouseSens*m_mouseSensitivity ,-m_mouseDelta.x*mouseSens*m_mouseSensitivity, 0);
     }
 
 }
@@ -243,9 +246,6 @@ void DemoApplication::objectBeingRendered(CullableGeometry* obj)
     //new pass, don't try to skip effect state setting
     
 
-     if(mat == m_lastMaterial)
-		return;
-    m_lastMaterial = mat;
 
         //D3DXMATRIX *world;
 	const D3DXMATRIX *view = m_mngr->getMainCamera()->getViewMatrix();
@@ -256,7 +256,7 @@ void DemoApplication::objectBeingRendered(CullableGeometry* obj)
     D3DXVECTOR4 sunDir( std::cos( m_time ), 0.f, std::sin( m_time ),0 );
     D3DXVec4Normalize(&sunDir, &sunDir);
     D3DXVECTOR4 sunCol(1.0f,1.f,1.f,0);
-    D3DXVECTOR3 transl = -(*m_mngr->getMainCamera()->getTranslation());
+    D3DXVECTOR3 transl = -(m_mngr->getMainCamera()->getTranslation());
     D3DXVECTOR4 camPos(transl.x, transl.y, transl.z, 1);
 
     ID3DX11Effect* effect =  mat->getEffect();

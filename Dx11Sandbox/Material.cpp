@@ -1,11 +1,13 @@
 #include "Material.h"
-#include <iostream>
 #include "RenderContext.h"
 #include "Texture.h"
 #include "TextureManager.h"
+#include "ShaderIncludeHandler.h"
+#include <iostream>
+
+
 namespace Dx11Sandbox
 {
-
     Material::Material()
         :m_effect(0),
         m_layout(0)
@@ -141,6 +143,7 @@ namespace Dx11Sandbox
         WCHAR workingPath[MAX_PATH], filePath[MAX_PATH];
         WCHAR *strLastSlash = NULL;
         bool  resetCurrentDir = false;
+		ShaderIncludeHandler includeHandler;
 
         // Get the current working directory so we can restore it later
         UINT nBytes = GetCurrentDirectory( MAX_PATH, workingPath );
@@ -190,7 +193,7 @@ namespace Dx11Sandbox
 
         // Compile the shader using optional defines and an include handler for header processing
         ID3DBlob* pErrorBlob;
-        hr = D3DCompile( pFileData, FileSize.LowPart, "none", 0,    0, 
+		hr = D3DCompile( pFileData, FileSize.LowPart, "none", 0,   &includeHandler, 
                          szEntryPoint, szShaderModel, flags, D3DCOMPILE_EFFECT_ALLOW_SLOW_OPS, ppBlobOut, &pErrorBlob );
 
         delete []pFileData;

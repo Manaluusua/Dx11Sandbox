@@ -13,15 +13,7 @@ SamplerState samLinear
 static const float3 ambient   = float3( 0.1f, 0.1f, 0.1f );  
 static const float3 heightLevels = float3(60.f,0,0);
 
-cbuffer sceneInfo
-{
-	float4x4 viewProj;
-    float3	sunDirection;
-	float3	sunColor;
-	float3 camPos;
-	float4 clipPlane;
-	float time;
-};
+#include "commonUniforms.fx"
 
 Texture2D texture1;  
 Texture2D texture2;

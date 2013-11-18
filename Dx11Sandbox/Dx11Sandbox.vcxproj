@@ -94,10 +94,12 @@
     <ClCompile Include="Compositor.cpp" />
     <ClCompile Include="Cullable.cpp" />
     <ClCompile Include="CullData.cpp" />
+    <ClCompile Include="EnvironmentInfo.cpp" />
     <ClCompile Include="Frustrum.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
     <ClCompile Include="ILDescriptions.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
+    <ClCompile Include="CullableLight.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
@@ -114,6 +116,7 @@
     <ClCompile Include="CullableGeometry.cpp" />
     <ClCompile Include="Root.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="ShaderIncludeHandler.cpp" />
     <ClCompile Include="ShadowCPUBuffer.cpp" />
     <ClCompile Include="SIMDCuller.cpp" />
     <ClCompile Include="TerrainBinHandler.cpp" />
@@ -138,6 +141,7 @@
     <ClInclude Include="GPUBuffer.h" />
     <ClInclude Include="ILDescriptions.h" />
     <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="CullableLight.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialManager.h" />
@@ -156,6 +160,8 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="CullableGeometry.h" />
     <ClInclude Include="CullableObjectManager.h" />
+    <ClInclude Include="EnvironmentInfo.h" />
+    <ClInclude Include="ShaderIncludeHandler.h" />
     <ClInclude Include="ShadowCPUBuffer.h" />
     <ClInclude Include="SIMDCuller.h" />
     <ClInclude Include="Singleton.h" />

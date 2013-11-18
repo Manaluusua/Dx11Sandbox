@@ -3,10 +3,8 @@
 
 #include "RenderData.h"
 #include "Cullable.h"
-#include "CullData.h"
-
 #include "CommonUtilities.h"
-
+#include <d3dx9math.h>
 
 namespace Dx11Sandbox
 {

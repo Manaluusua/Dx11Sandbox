@@ -2,13 +2,15 @@
 #include "RenderBin.h"
 #include "RenderContext.h"
 #include "Renderer.h"
+#include "DXUT.h"
 #include <algorithm>
 
 namespace Dx11Sandbox
 {
 
 	RenderCamera::RenderCamera(void)
-		:m_cameraPriority(0),
+		:m_clipPlane(0, 0, 0, 0),
+		m_cameraPriority(0),
 		m_renderMask(0xFFFFFFFF)
 	{
 
@@ -28,15 +30,17 @@ namespace Dx11Sandbox
 			std::for_each(m_renderListeners.begin(), m_renderListeners.end(), [this,&renderBin, state](RenderCameraListener* listener) { listener->cameraStartedRendering(*this,renderBin,state);  });
 		}
 
+		state->getImmediateContext()->ClearDepthStencilView( DXUTGetD3D11DepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0 );
+
 		std::map<RenderQueueID, std::vector<RenderData*> >& renderObjects = renderBin.getGeometryBins();
 
 		unsigned int count = 0;
 		auto mapIter = renderObjects.begin();
 		RenderQueueID queue = Dx11Sandbox::RENDERQUEUE_FIRST;
 
-		m_renderer->renderBegin(this, state);
+		m_renderer->renderBegin(this, renderBin.getLights(), state);
 
-		//before light pass
+		//before CullableLight pass
 		while(mapIter != renderObjects.end() && queue < Dx11Sandbox::RENDERQUEUE_AFTERLIGHTPASS){
 			std::vector<RenderData*>& objects = mapIter->second;
 
@@ -72,6 +76,11 @@ namespace Dx11Sandbox
 		}
 
 		m_renderer->renderEnd();
+
+		if(!m_renderListeners.empty())
+		{
+			std::for_each(m_renderListeners.begin(), m_renderListeners.end(), [this,&renderBin, state](RenderCameraListener* listener) { listener->cameraEndedRendering(*this,renderBin,state);  });
+		}
 	}
 
 	void RenderCamera::addRenderListener(RenderCameraListener *l)
@@ -84,6 +93,16 @@ namespace Dx11Sandbox
 	{
 		if(l == 0) return;
 		m_renderListeners.erase(l);
+	}
+
+	const D3DXVECTOR4& RenderCamera::getClipPlane() const
+	{
+		return m_clipPlane;
+	}
+
+	void RenderCamera::setClipPlane(const D3DXVECTOR4& plane)
+	{
+		m_clipPlane = plane;
 	}
 
 
@@ -114,6 +133,14 @@ namespace Dx11Sandbox
 	RenderLayer RenderCamera::getRenderMask() const
 	{
 			return m_renderMask;
+	}
+
+	void RenderCamera::startedCulling()
+	{
+		if(!m_renderListeners.empty())
+		{
+			std::for_each(m_renderListeners.begin(), m_renderListeners.end(), [this](RenderCameraListener* listener) { listener->cameraPreCull(*this);  });
+		}
 	}
 
 };

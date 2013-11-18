@@ -23,11 +23,12 @@ namespace Dx11Sandbox
 	}
 
 
-	void BasicForwardRenderer::renderBegin(RenderCamera* cam,RenderContext* state)
+	void BasicForwardRenderer::renderBegin(RenderCamera* cam,std::vector<Light*>& lights,RenderContext* state)
 	{
 		m_state = state;
 		m_cam = cam;
-		m_materialPropertySetter.SetCurrentCamera(cam);
+		m_materialPropertySetter.setCurrentCamera(cam);
+		m_materialPropertySetter.setLights(lights);
 	}
 
 	void BasicForwardRenderer::renderEnd()
@@ -51,7 +52,7 @@ namespace Dx11Sandbox
             if(!mesh || !mat )
                 return;
 			
-			m_materialPropertySetter.SetShaderProperties(mat);
+			m_materialPropertySetter.setShaderProperties(mat);
 
             ID3DX11Effect* effect = mat->getEffect();
             ID3D11DeviceContext* context = m_state->getImmediateContext();

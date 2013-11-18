@@ -2,9 +2,11 @@
 #define DX11SANDBOX_BASICMATERIALPROPERTIESSETTER_H
 
 #include "MaterialPropertiesSetter.h"
+#include <vector>
 
 namespace Dx11Sandbox
 {
+	class Light;
 	class RenderCamera;
 
 	class BasicMaterialPropertiesSetter : public MaterialPropertiesSetter
@@ -13,14 +15,19 @@ namespace Dx11Sandbox
 		BasicMaterialPropertiesSetter();
 		virtual ~BasicMaterialPropertiesSetter(void);
 
-		virtual void SetCurrentCamera(RenderCamera* cam);
+		virtual void setCurrentCamera(RenderCamera* cam);
+		virtual void setLights(std::vector<Light*>& lights);
 
-		virtual void SetShaderProperties(Material* mat);
+		virtual void setShaderProperties(Material* mat);
 
 
 	protected:
+
+		Light& getLight();
+
 		RenderCamera* m_cam;
 		Material* m_previousMaterial;
+		std::vector<Light*>* m_lights;
 	};
 
 };

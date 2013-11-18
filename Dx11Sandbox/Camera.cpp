@@ -9,7 +9,8 @@ namespace Dx11Sandbox
         m_aspectRatio(0),
         m_near(0),
         m_far(0),
-        m_cacheValid(false),
+        m_viewCacheValid(false),
+		m_projectionCacheValid(false),
         m_reflected(false)
         
     {
@@ -27,8 +28,25 @@ namespace Dx11Sandbox
     {
     }
 
+
+	void Camera::copyCameraParameters(const Camera& other)
+	{
+		setTranslation(other.m_translation);
+		setOrientation(other.m_orientation);
+		m_fovy = other.m_fovy;
+		m_aspectRatio = other.m_aspectRatio;
+		m_near = other.m_near;
+		m_far = other.m_far;
+		
+	}
+
     const D3DXMATRIX* Camera::getProjectionMatrix()
     {
+
+		if(!m_projectionCacheValid)
+		{
+			calculateProjection();
+		}
 
         return &m_projMatrix;
     }
@@ -36,7 +54,7 @@ namespace Dx11Sandbox
 
     const D3DXMATRIX* Camera::getViewMatrix()
     {
-        if(!m_cacheValid)
+        if(!m_viewCacheValid)
         {
             D3DXMATRIX rot;
             D3DXMatrixIdentity(&m_viewMatrix);
@@ -54,10 +72,16 @@ namespace Dx11Sandbox
 
             }
 
-            m_cacheValid = true;
+            m_viewCacheValid = true;
         }
         return &m_viewMatrix;
     }
+
+	void Camera::calculateProjection()
+	{
+		D3DXMatrixPerspectiveFovLH(&m_projMatrix, m_fovy, m_aspectRatio, m_near, m_far);
+		m_projectionCacheValid = true;
+	}
 
     void Camera::setProjection(FLOAT fovY, FLOAT aspectRatio, FLOAT nearDist, FLOAT farDist)
     {
@@ -65,30 +89,31 @@ namespace Dx11Sandbox
         m_aspectRatio = aspectRatio;
         m_near = nearDist;
         m_far = farDist;
-
-        D3DXMatrixPerspectiveFovLH(&m_projMatrix, m_fovy, m_aspectRatio, m_near, m_far);
+		m_projectionCacheValid = false;
     }
+
+	
 
     void Camera::setFOVY( FLOAT y )
     {
         m_fovy = y;
-        setProjection(m_fovy, m_aspectRatio, m_near, m_far);
+        m_projectionCacheValid = false;
     }
     void Camera::setAspectRatio( FLOAT ar )
     {
         m_aspectRatio = ar;
-        setProjection(m_fovy, m_aspectRatio, m_near, m_far);
+        m_projectionCacheValid = false;
 
     }
     void Camera::setNearPlane( FLOAT nearPlane )
     {
         m_near = nearPlane;
-        setProjection(m_fovy, m_aspectRatio, m_near, m_far);
+        m_projectionCacheValid = false;
     }
     void Camera::setFarPlane( FLOAT farPlane )
     {
         m_far = farPlane;
-        setProjection(m_fovy, m_aspectRatio, m_near, m_far);
+        m_projectionCacheValid = false;
     }
 
     FLOAT Camera::getFOVY() const
@@ -114,7 +139,7 @@ namespace Dx11Sandbox
 
     void  Camera::setTranslation(FLOAT x, FLOAT y, FLOAT z)
     {
-        m_cacheValid = false;
+        m_viewCacheValid = false;
         m_translation.x = -x;
         m_translation.y = -y;
         m_translation.z = -z;
@@ -122,32 +147,50 @@ namespace Dx11Sandbox
     }
     void  Camera::addTranslation(FLOAT x, FLOAT y, FLOAT z)
     {
-        m_cacheValid = false;
+        m_viewCacheValid = false;
         m_translation.x += -x;
         m_translation.y += -y;
         m_translation.z += -z;
     }
 
-    const D3DXVECTOR3*  Camera::getTranslation()
+    const D3DXVECTOR3&  Camera::getTranslation() const
     {
-        return &m_translation;
+        return m_translation;
     }
 
-    const D3DXQUATERNION* Camera::getOrientation()
+    const D3DXQUATERNION& Camera::getOrientation() const
     {
-        return &m_orientation;
+        return m_orientation;
     }
+
+	void Camera::setTranslation(const D3DXVECTOR3& translation)
+	{
+		m_viewCacheValid = false;
+		m_translation = translation;
+	}
+
+	void Camera::addTranslation(const D3DXVECTOR3& translation)
+	{
+		m_viewCacheValid = false;
+		m_translation += translation;
+	}
+
+	void Camera::setOrientation(const D3DXQUATERNION& orientation)
+	{
+		m_viewCacheValid = false;
+		m_orientation = orientation;
+	}
 
     void  Camera::setOrientation(FLOAT x, FLOAT y, FLOAT z, FLOAT angle)
     {
-        m_cacheValid = false;
+        m_viewCacheValid = false;
         angle = -angle*0.5f;
         m_orientation = D3DXQUATERNION(sin(angle)*x, sin(angle)*y, sin(angle)*z, cos(angle));
     }
 
     void  Camera::addOrientation(FLOAT x, FLOAT y, FLOAT z, FLOAT angle)
     {
-        m_cacheValid = false;
+        m_viewCacheValid = false;
         angle = -angle*0.5f;
         m_orientation *= D3DXQUATERNION(sin(angle)*x, sin(angle)*y, sin(angle)*z, cos(angle));
     }
@@ -192,7 +235,7 @@ namespace Dx11Sandbox
         }
 
 
-        m_cacheValid = true;
+        m_viewCacheValid = true;
     }
 
 	
@@ -210,7 +253,7 @@ namespace Dx11Sandbox
         D3DXVec3Cross(&right, &up, &dir);
 
         m_translation -= x*right + y*up + z*dir;
-        m_cacheValid = false;
+        m_viewCacheValid = false;
     }
 
     void Camera::rotateCameraViewRelative(FLOAT x, FLOAT y, FLOAT z)
@@ -229,7 +272,7 @@ namespace Dx11Sandbox
         D3DXQUATERNION zrot(dir.x*sin(z*0.5f),dir.y*sin(z*0.5f), dir.z*sin(z*0.5f), cos(z*0.5f));
 
         m_orientation =  yrot * m_orientation * xrot * zrot;
-        m_cacheValid = false;
+        m_viewCacheValid = false;
     }
 
 
@@ -244,7 +287,7 @@ namespace Dx11Sandbox
     {
         if(val!= m_reflected)
         {
-            m_cacheValid = false;
+            m_viewCacheValid = false;
         }
         m_reflected = val;
     }

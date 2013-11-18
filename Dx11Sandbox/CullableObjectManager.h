@@ -9,6 +9,7 @@
 
 namespace Dx11Sandbox
 {
+
 	template<class T>
 	class CullableObjectManager
 	{

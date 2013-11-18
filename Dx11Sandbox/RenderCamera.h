@@ -15,8 +15,9 @@ namespace Dx11Sandbox
 	class RenderCameraListener
 	{
 	public:
-		virtual void cameraStartedRendering(RenderCamera& camera, RenderBin& renderbin, RenderContext* state); 
-
+		virtual void cameraPreCull(RenderCamera& camera) = 0;
+		virtual void cameraStartedRendering(RenderCamera& camera, RenderBin& renderbin, RenderContext* state) = 0; 
+		virtual void cameraEndedRendering(RenderCamera& camera, RenderBin& renderbin, RenderContext* state) = 0;
 	};
 
 	class RenderCamera :
@@ -36,21 +37,28 @@ namespace Dx11Sandbox
 		void addRenderListener(RenderCameraListener *l);
 		void removeRenderListener(RenderCameraListener *l);
 
+		const D3DXVECTOR4& getClipPlane() const;
+		void setClipPlane(const D3DXVECTOR4& plane);
+
+		
+
 		void setRenderer(RCObjectPtr<Renderer> renderer);
 		RCObjectPtr<Renderer> getRenderer() const;
 	protected:
-		
-		std::set<RenderCameraListener*> m_renderListeners;
 
 		DISABLE_COPY(RenderCamera)
 		RenderCamera(void);
 		virtual ~RenderCamera(void);
 
+		D3DXVECTOR4 m_clipPlane;
+
+		std::set<RenderCameraListener*> m_renderListeners;
 		RCObjectPtr<Renderer> m_renderer;
 
 		INT32 m_cameraPriority;
 		RenderLayer m_renderMask;
-
+	private:
+		void startedCulling();
 	};
 };
 #endif

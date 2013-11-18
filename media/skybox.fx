@@ -1,4 +1,5 @@
 //sampler states etc
+
 SamplerState samLinear
 {
     Filter = MIN_MAG_MIP_LINEAR;
@@ -11,18 +12,10 @@ SamplerState samLinear
 
 //shader impl and uniforms
 
+#include "commonUniforms.fx"
 
 TextureCube cubemap; 
 
-cbuffer sceneInfo
-{
-	float4x4 viewProj;
-    float3	sunDirection;
-	float3	sunColor;
-	float3 camPos;
-	float4 clipPlane;
-	float time;
-};
 
 
 

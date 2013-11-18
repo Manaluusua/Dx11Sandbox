@@ -47,15 +47,14 @@ private:
     D3DXVECTOR2 m_lastMousePos;
     D3DXVECTOR2 m_mouseDelta;
 
+	float m_mouseSensitivity;
 
     float m_time;
 
-    //
-    Material* m_lastMaterial;
-    UINT16 m_lastPassID;
+    //ss
     RCObjectPtr<WaterPlane> m_waterPlane;
     SceneManager* m_mngr;
-
+	Light* sun;
 };
 
 #endif

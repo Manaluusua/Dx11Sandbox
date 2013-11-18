@@ -16,6 +16,7 @@ namespace Dx11Sandbox
     class RenderContext;
     class Camera;
     class SceneManager;
+	class Light;
 	class RenderData;
 	class CullableGeometry;
 	class Cullable;
@@ -35,7 +36,7 @@ namespace Dx11Sandbox
 		std::map<RenderQueueID, std::vector<RenderData*> >& getGeometryBins();
 		RCObjectPtr<GeometryBinHandler> getGeometryHandlerForBin(RenderQueueID id);
 
-
+		std::vector<Light*>& getLights();
     private:
 
         std::map<RenderQueueID, RCObjectPtr<GeometryBinHandler> > m_geometryBinHandlers;
@@ -43,7 +44,7 @@ namespace Dx11Sandbox
 		
         RCObjectPtr<GeometryBinHandler> m_defaultGeometryBinHandler;
 
-        
+        std::vector<Light*> m_lights;
     };
     
 }

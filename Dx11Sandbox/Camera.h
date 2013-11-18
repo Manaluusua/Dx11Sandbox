@@ -7,7 +7,7 @@
 
 namespace Dx11Sandbox
 {
-    class Camera : public RCObject 
+    class Camera 
     {
     public:
         Camera(void);
@@ -19,10 +19,13 @@ namespace Dx11Sandbox
         const D3DXMATRIX* getViewMatrix();
     
         void setTranslation(FLOAT x, FLOAT y, FLOAT z);
+		void setTranslation(const D3DXVECTOR3& translation);
         void addTranslation(FLOAT x, FLOAT y, FLOAT z);
-        const D3DXVECTOR3* getTranslation();
+		void addTranslation(const D3DXVECTOR3& translation);
+        const D3DXVECTOR3& getTranslation() const;
 
-        const D3DXQUATERNION* getOrientation();
+        const D3DXQUATERNION& getOrientation() const;
+		void setOrientation(const D3DXQUATERNION& orientation);
         void setOrientation(FLOAT x, FLOAT y, FLOAT z, FLOAT angle);
         void addOrientation(FLOAT x, FLOAT y, FLOAT z, FLOAT angle);
 
@@ -32,7 +35,7 @@ namespace Dx11Sandbox
         void rotateCameraViewRelative(FLOAT x, FLOAT y, FLOAT z);
 
         void setUp(D3DXVECTOR3& up){m_up = up;}
-        const D3DXVECTOR3& getUp(){return m_up;}
+        const D3DXVECTOR3& getUp() const{return m_up;}
 
         void setReflectionPlane(D3DXVECTOR3& normal, float d);
         void setReflectionEnabled(bool val);
@@ -43,7 +46,7 @@ namespace Dx11Sandbox
         void setFarPlane( FLOAT farPlane );
 
 		
-
+		virtual void copyCameraParameters(const Camera& other);
 
         FLOAT getFOVY() const;
         FLOAT getAspectRatio() const;
@@ -55,6 +58,8 @@ namespace Dx11Sandbox
         void calculateFrustrum(Dx11Sandbox::Frustrum* frustrum);
 
     protected:
+
+		void calculateProjection();
 
         D3DXMATRIX m_viewMatrix;
         D3DXMATRIX m_projMatrix;
@@ -74,7 +79,8 @@ namespace Dx11Sandbox
 
 		
 
-		bool m_cacheValid;
+		bool m_viewCacheValid;
+		bool m_projectionCacheValid;
 
         bool m_reflected;
     };

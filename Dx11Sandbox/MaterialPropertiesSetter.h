@@ -4,15 +4,24 @@
 namespace Dx11Sandbox
 {
 	class Material;
-
 	class MaterialPropertiesSetter
 	{
+		friend class SceneManager;
 	public:
 
-		virtual void SetShaderProperties(Material* mat) = 0;
+		virtual void setShaderProperties(Material* mat) = 0;
 
 		virtual ~MaterialPropertiesSetter(void){};
+
+		
+
+	
+
 	};
+
+
+	
+
 
 };
 
