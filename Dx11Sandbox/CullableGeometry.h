@@ -1,9 +1,9 @@
 #ifndef DX11SANDBOX_CULLABLEGEOMETRY_H
 #define DX11SANDBOX_CULLABLEGEOMETRY_H
 
-#include "RenderData.h"
+#include "Geometry.h"
 #include "Cullable.h"
-#include "CommonUtilities.h"
+
 #include <d3dx9math.h>
 
 namespace Dx11Sandbox
@@ -17,7 +17,7 @@ namespace Dx11Sandbox
 
 	typedef CullableObjectManager<CullableGeometry> CullableGeometryManager;
 
-	class CullableGeometry : public RenderData, public Cullable
+	class CullableGeometry : public Geometry, public Cullable
 	{
 		
 		friend class CullableObjectManager<CullableGeometry>;
@@ -25,14 +25,13 @@ namespace Dx11Sandbox
 	public:
 
 		void setBoundingSphere(const D3DXVECTOR4& bounds); 
-        void setRenderMask(RenderLayer mask);
-        void setRenderQueue(RenderQueueID queue);
+        virtual void setRenderMask(RenderLayer mask);
 
 		void setVisible(bool value);
 
 		virtual CullableType GetCullableType() const;
 
-		RenderQueueID getRenderQueue() const;
+		
 
 		void destroy();
 
@@ -50,16 +49,12 @@ namespace Dx11Sandbox
 		D3DXVECTOR4 m_bounds;
 		CullData** m_cullingInformation;
 		CullableGeometryManager* m_mngr;
-		RenderLayer m_renderLayer;
-		RenderQueueID m_renderQueue;
+		
 		
 	};
 
 
-	inline RenderQueueID CullableGeometry::getRenderQueue() const
-	{
-		return m_renderQueue;
-	}
+	
 	
 };
 

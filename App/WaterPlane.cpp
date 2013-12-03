@@ -70,7 +70,7 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 	m_reflectionCamera->setReflectionEnabled(true);
 	D3DXVECTOR4 clipplane(m_normal, m_d);
 	m_reflectionCamera->setClipPlane(clipplane);
-	m_reflectionCamera->setRenderMask(Dx11Sandbox::RENDERLAYER_DEFAULT_OPAQUE | Dx11Sandbox::RENDERLAYER_SKYBOX);
+	m_reflectionCamera->setRenderMask(Dx11Sandbox::RENDERLAYER_DEFAULT_OPAQUE | Dx11Sandbox::RENDERLAYER_SKYBOX | Dx11Sandbox::RENDERLAYER_LIGHTPASS);
 	m_reflectionCamera->addRenderListener(this);
 	m_reflectionCamera->setCameraPriority(-1);
 	
@@ -78,9 +78,9 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 	m_refractionCamera = m_mngr->createCamera();
 	clipplane = D3DXVECTOR4(-m_normal, -m_d);
 	m_refractionCamera->setClipPlane(clipplane);
-	m_refractionCamera->setRenderMask(Dx11Sandbox::RENDERLAYER_DEFAULT_OPAQUE | Dx11Sandbox::RENDERLAYER_SKYBOX);
+	m_refractionCamera->setRenderMask(Dx11Sandbox::RENDERLAYER_DEFAULT_OPAQUE | Dx11Sandbox::RENDERLAYER_SKYBOX | Dx11Sandbox::RENDERLAYER_LIGHTPASS);
 	m_refractionCamera->addRenderListener(this);
-	m_refractionCamera->setCameraPriority(-2);
+	m_refractionCamera->setCameraPriority(-1);
 
 }
 

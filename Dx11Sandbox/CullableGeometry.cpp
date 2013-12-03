@@ -10,9 +10,7 @@ namespace Dx11Sandbox
 	CullableGeometry::CullableGeometry(CullableGeometryManager* mngr)
 		:m_bounds(-1.f, -1.f,-1.f, -1.f),	
 		m_cullingInformation(0),
-		m_mngr(mngr),
-		m_renderQueue( 0 ),
-		m_renderLayer( RENDERLAYER_DEFAULT_OPAQUE )	
+		m_mngr(mngr)	
 	{
 		setVisible(true);
 	}
@@ -81,7 +79,7 @@ namespace Dx11Sandbox
 			returnCullData();
 		}
 
-		m_renderLayer = mask;
+		Geometry::setRenderMask(mask);
 		
 		if(reAcquireCullData)
 		{
@@ -90,11 +88,7 @@ namespace Dx11Sandbox
 		
 		
 	}
-	void CullableGeometry::setRenderQueue(RenderQueueID queue)
-	{
-		m_renderQueue = queue;
-	}
-	
+
 	
 
 }

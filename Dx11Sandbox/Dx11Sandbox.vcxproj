@@ -96,6 +96,7 @@
     <ClCompile Include="CullData.cpp" />
     <ClCompile Include="EnvironmentInfo.cpp" />
     <ClCompile Include="Frustrum.cpp" />
+    <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
     <ClCompile Include="ILDescriptions.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="CullDataAllocator.h" />
     <ClInclude Include="DynamicPoolAllocator.h" />
     <ClInclude Include="Frustrum.h" />
+    <ClInclude Include="Geometry.h" />
     <ClInclude Include="GPUBuffer.h" />
     <ClInclude Include="ILDescriptions.h" />
     <ClInclude Include="IndexBuffer.h" />

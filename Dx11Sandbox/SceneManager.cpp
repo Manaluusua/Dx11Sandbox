@@ -31,7 +31,7 @@ namespace Dx11Sandbox
 
 		m_defaultRenderer = new BasicForwardRenderer();
 		m_mainCamera = createCamera();
-		
+		m_mainCamera->setRenderMask(0xFFFF);
 		
 
     }
@@ -201,9 +201,17 @@ namespace Dx11Sandbox
 
 		//iterate through camera
 		
-		std::sort(m_cameras.begin(), m_cameras.end(), [] ( RenderCamera* cam1, RenderCamera* cam2 )
+		std::sort(m_cameras.begin(), m_cameras.end(), [] ( RenderCamera* cam1, RenderCamera* cam2 ) -> bool
 		{
-			return cam1->getCameraPriority() <= cam2->getCameraPriority();
+			INT32 prio1 = cam1->getCameraPriority();
+			INT32 prio2 = cam2->getCameraPriority();
+
+			if(prio1 == prio2)
+			{
+				return cam1 < cam2;
+			}
+
+			return prio1 < prio2;
 		});
 
 
