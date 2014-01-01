@@ -10,6 +10,13 @@ namespace Dx11Sandbox
     class Camera 
     {
     public:
+
+		enum ProjectionType
+		{
+			PERSPECTIVE,
+			ORTHOGRAPHIC
+		};
+
         Camera(void);
         virtual ~Camera(void);
 
@@ -44,8 +51,9 @@ namespace Dx11Sandbox
         void setAspectRatio( FLOAT ar );
         void setNearPlane( FLOAT nearPlane );
         void setFarPlane( FLOAT farPlane );
+		void setOrthographicSize(FLOAT size);
+		void setProjectionType(ProjectionType type);
 
-		
 		const D3DXVECTOR4& getClipPlane() const;
 		void setClipPlane(const D3DXVECTOR4& plane);
 
@@ -55,8 +63,10 @@ namespace Dx11Sandbox
         FLOAT getAspectRatio() const;
         FLOAT getNearPlane() const;
         FLOAT getFarPlance() const;
-
+		FLOAT getOrthographicSize() const;
 		
+		
+		ProjectionType getProjectionType() const;
 
         void calculateFrustrum(Dx11Sandbox::Frustrum* frustrum);
 
@@ -81,8 +91,9 @@ namespace Dx11Sandbox
         FLOAT m_aspectRatio;
         FLOAT m_near;
         FLOAT m_far;
-
+		FLOAT m_orthoSize;
 		
+		ProjectionType m_projectionType;
 
 		bool m_viewCacheValid;
 		bool m_projectionCacheValid;

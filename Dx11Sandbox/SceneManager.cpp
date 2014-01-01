@@ -153,6 +153,7 @@ namespace Dx11Sandbox
     {
          // Setup the camera's projection parameters
         float aspectRatio = pBackBufferSurfaceDesc->Width / ( FLOAT )pBackBufferSurfaceDesc->Height;
+
         m_mainCamera->setProjection(D3DX_PI / 4, aspectRatio, 0.1f, 800.0f);
 
 		EnvironmentInfo::m_screenWidth = pBackBufferSurfaceDesc->Width;

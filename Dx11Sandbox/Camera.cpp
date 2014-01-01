@@ -10,6 +10,8 @@ namespace Dx11Sandbox
         m_aspectRatio(0),
         m_near(0),
         m_far(0),
+		m_orthoSize(0),
+		m_projectionType(PERSPECTIVE),
         m_viewCacheValid(false),
 		m_projectionCacheValid(false),
         m_reflected(false)
@@ -81,7 +83,13 @@ namespace Dx11Sandbox
 
 	void Camera::calculateProjection()
 	{
-		D3DXMatrixPerspectiveFovLH(&m_projMatrix, m_fovy, m_aspectRatio, m_near, m_far);
+		if(m_projectionType == PERSPECTIVE)
+		{
+			D3DXMatrixPerspectiveFovLH(&m_projMatrix, m_fovy, m_aspectRatio, m_near, m_far);
+		} else {
+			D3DXMatrixOrthoLH(&m_projMatrix, m_orthoSize, m_orthoSize * (1.f / m_aspectRatio), m_near, m_far); 
+		}
+		
 		m_projectionCacheValid = true;
 	}
 
@@ -94,7 +102,23 @@ namespace Dx11Sandbox
 		m_projectionCacheValid = false;
     }
 
-	
+	void Camera::setOrthographicSize(FLOAT size)
+	{
+
+		m_projectionCacheValid = false;
+		m_orthoSize = size;
+	}
+
+	void Camera::setProjectionType(ProjectionType type)
+	{
+		if(type != m_projectionType)
+		{
+			m_projectionCacheValid = false;
+		}
+
+		m_projectionType = type;
+
+	}
 
     void Camera::setFOVY( FLOAT y )
     {
@@ -136,16 +160,27 @@ namespace Dx11Sandbox
         return m_far;
     }
 
+	FLOAT Camera::getOrthographicSize() const
+	{
+		return m_orthoSize;
+	}
 	
 	const D3DXVECTOR4& Camera::getClipPlane() const
 	{
 		return m_clipPlane;
 	}
 
+	Camera::ProjectionType Camera::getProjectionType() const
+	{
+		return m_projectionType;
+	}
+
 	void Camera::setClipPlane(const D3DXVECTOR4& plane)
 	{
 		m_clipPlane = plane;
 	}
+
+	
 
 
     void  Camera::setTranslation(FLOAT x, FLOAT y, FLOAT z)
