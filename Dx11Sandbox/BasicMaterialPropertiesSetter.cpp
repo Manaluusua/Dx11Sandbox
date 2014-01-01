@@ -24,9 +24,9 @@ namespace Dx11Sandbox
 		m_previousMaterial = 0;
 	}
 
-	void BasicMaterialPropertiesSetter::setLights(std::vector<Light*>& lights)
+	void BasicMaterialPropertiesSetter::setLights(std::vector<Light*>* lights)
 	{
-		m_lights = &lights;
+		m_lights = lights;
 	}
 
 	Light& BasicMaterialPropertiesSetter::getLight()
@@ -46,6 +46,11 @@ namespace Dx11Sandbox
 	void BasicMaterialPropertiesSetter::setShaderProperties(Material* mat)
 	{
 		if(m_previousMaterial != 0 && m_previousMaterial == mat)return;
+
+		//if no camera is set, return
+		if(m_cam == 0) return;
+
+
 		const D3DXMATRIX *view = m_cam->getViewMatrix();
 		const D3DXMATRIX *proj = m_cam->getProjectionMatrix();
 		D3DXMATRIX viewProj =  (*view) * (*proj);

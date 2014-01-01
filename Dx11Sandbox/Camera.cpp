@@ -5,6 +5,7 @@ namespace Dx11Sandbox
     Camera::Camera(void)
         :m_up(0,1,0),
         m_translation(0,0,0),
+		m_clipPlane(0, 0, 0, 0),
 		m_fovy(0),
         m_aspectRatio(0),
         m_near(0),
@@ -29,7 +30,7 @@ namespace Dx11Sandbox
     }
 
 
-	void Camera::copyCameraParameters(const Camera& other)
+	void Camera::copyCameraViewAndProjectionParameters(const Camera& other)
 	{
 		setTranslation(other.m_translation);
 		setOrientation(other.m_orientation);
@@ -37,7 +38,8 @@ namespace Dx11Sandbox
 		m_aspectRatio = other.m_aspectRatio;
 		m_near = other.m_near;
 		m_far = other.m_far;
-		
+		m_projectionCacheValid = false;
+		m_viewCacheValid = false;
 	}
 
     const D3DXMATRIX* Camera::getProjectionMatrix()
@@ -135,6 +137,15 @@ namespace Dx11Sandbox
     }
 
 	
+	const D3DXVECTOR4& Camera::getClipPlane() const
+	{
+		return m_clipPlane;
+	}
+
+	void Camera::setClipPlane(const D3DXVECTOR4& plane)
+	{
+		m_clipPlane = plane;
+	}
 
 
     void  Camera::setTranslation(FLOAT x, FLOAT y, FLOAT z)

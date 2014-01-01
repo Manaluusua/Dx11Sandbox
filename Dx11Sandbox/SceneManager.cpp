@@ -13,6 +13,7 @@
 #include "SIMDCuller.h"
 #include "BasicForwardRenderer.h"
 #include "EnvironmentInfo.h"
+#include "DebugDrawer.h"
 #include <algorithm>
 
 namespace Dx11Sandbox
@@ -69,17 +70,41 @@ namespace Dx11Sandbox
 		return m_lightManager.create();
 	}
 
-    void SceneManager::addRenderStartListener(RenderStartListener* l)
-    {
-        m_renderStartListeners.insert(l);
-    }
 
-    void SceneManager::removeRenderStartListener(RenderStartListener* l)
-    {
-        m_renderStartListeners.erase(l);
-    }
+	void SceneManager::addDebugDrawer(DebugDrawer* drawer)
+	{
+		if(drawer == 0) return;
+
+		m_debugDrawList.push_back(drawer);
+	}
+
+	void SceneManager::removeDebugDrawer(DebugDrawer* drawer)
+	{
+		if(drawer == 0) return;
+
+		for( unsigned int i = 0; i < m_debugDrawList.size(); ++i)
+		{
+			if(m_debugDrawList[i] != drawer) continue;
+			m_debugDrawList.erase(m_debugDrawList.begin() + i);
+			--i;
+		}
+
+	}
 
 
+	void SceneManager::addEnvironmentListener(EnvironmentChangedListeners* l)
+	{
+		m_environmentListeners.insert(l);
+	}
+	void SceneManager::removeEnvironmentListener(EnvironmentChangedListeners* l)
+	{
+		m_environmentListeners.erase(l);
+	}
+
+	void SceneManager::drawDebug()
+	{
+		std::for_each(m_debugDrawList.begin(), m_debugDrawList.end(), [this](DebugDrawer* d) {d->Draw(&m_renderContext);});
+	}
 
 	RenderCamera* SceneManager::getMainCamera()
     {
@@ -133,6 +158,11 @@ namespace Dx11Sandbox
 		EnvironmentInfo::m_screenWidth = pBackBufferSurfaceDesc->Width;
         EnvironmentInfo::m_screenHeight = pBackBufferSurfaceDesc->Height;
         
+		for( auto iter = m_environmentListeners.begin(); iter != m_environmentListeners.end(); ++iter)
+		{
+			(*iter)->renderWindowResized(this);  
+		}
+
     }
 
 
@@ -179,13 +209,7 @@ namespace Dx11Sandbox
         m_renderContext.setImmediateContext(pd3dImmediateContext);
         
 
-        //first notify all listeners and let them render what they need
-        std::set<RenderStartListener*>::iterator it = m_renderStartListeners.begin();
-        while(it != m_renderStartListeners.end())
-        {
-            (*it)->renderingStarted( &m_renderContext, this, fTime, fElapsedTime);
-            ++it;
-        }
+        
         // Clear render target and the depth stencil 
         float ClearColor[4] = { 0.f, 0.f, 0.f, 0.0f };
         //pd3dImmediateContext->ClearRenderTargetView( DXUTGetD3D11RenderTargetView(), ClearColor );

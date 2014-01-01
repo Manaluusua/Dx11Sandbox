@@ -31,7 +31,7 @@ namespace Dx11Sandbox
         friend Root* createRoot();
         virtual ~Root();
 
-        const wstring& GetMediaPath() {return m_mediaFolder;}
+        const string& GetMediaPath();
 
 
 
@@ -57,7 +57,7 @@ namespace Dx11Sandbox
                                           const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext );
         //
 
-        void initialize(wstring windowName,UINT windowWidth,UINT windowHeight, D3D_FEATURE_LEVEL level, bool windowed);
+        void initialize(string windowName,UINT windowWidth,UINT windowHeight, D3D_FEATURE_LEVEL level, bool windowed);
         int start();
         void setApplication(Application* app){m_application = app;}
 
@@ -65,7 +65,7 @@ namespace Dx11Sandbox
         Root();
         DISABLE_COPY(Root)
         SceneManager* m_sceneMngr;
-        wstring m_mediaFolder;
+        string m_mediaFolder;
         Application* m_application;
     };
 }

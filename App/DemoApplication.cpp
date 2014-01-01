@@ -99,7 +99,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
     CullableGeometry *ro;
 
     //skybox
-    mat = MaterialManager::singleton()->getOrCreateMaterial(device, L"skybox.fx", L"skybox",MeshInputLayouts::POS3TEX3);
+    mat = MaterialManager::singleton()->getOrCreateMaterial(device, "skybox.fx", "skybox",MeshInputLayouts::POS3TEX3);
     mesh = MeshUtility::createSkyBoxMesh(device, "skybox" + generateID());
 	ro = mngr->createCullableGeometry();
 	ro->setBoundingSphere( D3DXVECTOR4( 0,0,0, FLT_MAX ) );
@@ -108,20 +108,20 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	ro->setRenderQueue(RENDERQUEUE_SKYBOX);
 	ro->setRenderMask(RENDERLAYER_SKYBOX);
 
-    mat->setTexture("cubemap", L"skyboxCube.dds");
-    TextureManager::singleton()->createTexture(device, L"skyboxCube.dds", L"skyboxCube.dds");
+    mat->setTexture("cubemap", "skyboxCube.dds");
+    TextureManager::singleton()->createTexture(device, "skyboxCube.dds", "skyboxCube.dds");
      
     //terrain
-    mat = MaterialManager::singleton()->getOrCreateMaterial(device, L"terrain.fx", L"terrain1",MeshInputLayouts::POS3NORM3TEX2);
-    MeshUtility::createTerrainFromHeightMap(device,mngr, L"heightmapTerrain.png", mat,1000,1000,200,20,20,10);
+    mat = MaterialManager::singleton()->getOrCreateMaterial(device, "terrain.fx", "terrain1",MeshInputLayouts::POS3NORM3TEX2);
+    MeshUtility::createTerrainFromHeightMap(device,mngr, "heightmapTerrain.png", mat,1000,1000,200,20,20,10);
 
     //textures
     //mat->setTexture("texture1", L"roughRock.png");
     //TextureManager::getSingleton()->createTexture(device, L"roughRock.png", L"roughRock.png");
 
 
-    mat->setTexture("texture2", L"grass.jpg");
-    TextureManager::singleton()->createTexture(device, L"grass.jpg", L"grass.jpg");
+    mat->setTexture("texture2", "grass.jpg");
+    TextureManager::singleton()->createTexture(device, "grass.jpg", "grass.jpg");
 
  
     //mat->setTexture("textureWeights", L"terrainweights.png");
@@ -131,7 +131,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
     
     //waterplane
     Dx11Sandbox::string name("waterPlane1");
-    m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-60,340,340,200,200);
+    m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-60,340,340,200,200, 512);
     
     
    

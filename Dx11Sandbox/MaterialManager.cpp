@@ -14,7 +14,7 @@ namespace Dx11Sandbox
             
     }
 
-    bool MaterialManager::createMaterial(ID3D11Device* device, const wstring& filename,const wstring& matname, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type)
+    bool MaterialManager::createMaterial(ID3D11Device* device, const string& filename,const string& matname, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type)
     {
         
 
@@ -40,7 +40,7 @@ namespace Dx11Sandbox
     }
 
 
-    Material* MaterialManager::getOrCreateMaterial(ID3D11Device* device, const wstring& filename,const wstring& matname, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type)
+    Material* MaterialManager::getOrCreateMaterial(ID3D11Device* device, const string& filename,const string& matname, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type)
     {
         Material* mat = getMaterial(matname);
         if(!mat)
@@ -53,7 +53,7 @@ namespace Dx11Sandbox
         return mat;
     }
 
-    bool MaterialManager::releaseMaterial(const wstring& matname)
+    bool MaterialManager::releaseMaterial(const string& matname)
     {
         Material* mat = getMaterial(matname);
         if(mat)
@@ -66,7 +66,7 @@ namespace Dx11Sandbox
         }
     }
 
-    Material* MaterialManager::getMaterial(const wstring& matname)
+    Material* MaterialManager::getMaterial(const string& matname)
     {
         if(m_loadedMaterials.find(matname)!=m_loadedMaterials.end())
             return m_loadedMaterials.at(matname);

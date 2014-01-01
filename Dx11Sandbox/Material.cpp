@@ -17,15 +17,17 @@ namespace Dx11Sandbox
     }
 
 
-    bool Material::loadAndInitializeMaterial(const wstring& effectName, ID3D11Device* pd3dDevice, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type)
+    bool Material::loadAndInitializeMaterial(const string& effectName, ID3D11Device* pd3dDevice, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type)
     {
         bool succesfull = true;
         DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
         HRESULT hr;
-        wstring errMsg;
+        string errMsg;
 
 		ID3DX11Effect* effect;
         ID3D11InputLayout* layout;
+
+		std::unique_ptr<WCHAR> effectNameWide( MultibyteStringToWide(effectName) );
 
 #if defined( DEBUG ) || defined( _DEBUG )
         dwShaderFlags |= D3DCOMPILE_DEBUG;
@@ -33,12 +35,12 @@ namespace Dx11Sandbox
 
         ID3DBlob* effectBuffer = 0;
 
-        if(FAILED( CompileShaderFromFile( (WCHAR*)effectName.c_str(), 0,
+		if(FAILED( CompileShaderFromFile( effectNameWide.get(), 0,
                                     NULL, "fx_5_0", &effectBuffer ) ))
         {
-            errMsg = L"Failed to compile effect file";
+            errMsg = "Failed to compile effect file";
             errMsg += effectName.c_str();
-            showErrorDialog( (WCHAR*)errMsg.c_str() );
+            showErrorDialog( errMsg.c_str() );
             succesfull = false;
         }else
         {
@@ -48,9 +50,9 @@ namespace Dx11Sandbox
                                             pd3dDevice,
                                             &effect ) ))
             {
-                errMsg = L"Failed to create effect file";
+                errMsg = "Failed to create effect file";
                 errMsg += effectName.c_str();
-                showErrorDialog( (WCHAR*)errMsg.c_str() );
+                showErrorDialog( errMsg.c_str() );
                 succesfull = false;
             }
 			m_effect = effect;
@@ -85,7 +87,7 @@ namespace Dx11Sandbox
         
     }
 
-    void Material::setTexture(const string shaderVariable, const wstring textureName)
+    void Material::setTexture(const string shaderVariable, const string textureName)
     {
         m_textureRefs[shaderVariable] = textureName;
     }
@@ -113,7 +115,7 @@ namespace Dx11Sandbox
         context->getImmediateContext()->IASetInputLayout( m_layout );
 
   
-        for(std::map<string, wstring>::iterator iter = m_textureRefs.begin(); iter!=m_textureRefs.end(); ++iter)
+        for(std::map<string, string>::iterator iter = m_textureRefs.begin(); iter!=m_textureRefs.end(); ++iter)
         {
            
             ID3DX11EffectVariable* var = m_effect->GetVariableByName(iter->first.c_str());

@@ -171,7 +171,7 @@ float4 PS( PS_INPUT input) : SV_Target
 	
 	float4 output = float4(0,0,0,1);
 	
-    float3 reflCol = reflection.Sample( samLinear, reflCoords + normal.xy*offsetRefl ).rgb;
+    float3 reflCol = reflection.Sample( samLinear, reflCoords + normal.xy*offsetRefl).rgb;
 	float3 refrCol = refraction.Sample( samLinear, refrCoords + normal.xy*offsetRefr).rgb;
 	
 	output.rgb += waterColor * fresnel(normal, input.camDir, 1.0f, refrCol , reflCol);

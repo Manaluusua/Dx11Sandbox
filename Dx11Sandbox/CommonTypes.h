@@ -6,7 +6,7 @@
 namespace Dx11Sandbox
 {
 	//misc
-	typedef std::basic_string<TCHAR> wstring;
+	typedef std::basic_string<WCHAR> wstring;
     typedef std::string string;
 	typedef unsigned int GIDTYPE;
 
@@ -31,8 +31,6 @@ namespace Dx11Sandbox
 	const RenderLayer RENDERLAYER_OPAQUE_SCENE_INPUT = 0x8;
 	const RenderLayer RENDERLAYER_TRANSPARENT = 0x10;
 	const RenderLayer RENDERLAYER_HUD = 0x20;
-	const RenderLayer RENDERLAYER_GIZMOS = 0x1000000;
-	const RenderLayer RENDERLAYER_DEBUG = 0x10000000;
 }
 
 #endif

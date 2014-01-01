@@ -10,7 +10,7 @@
 namespace Dx11Sandbox
 {
     class Material;
-    typedef std::map<wstring, Material*>::iterator MaterialMapIterator;
+    typedef std::map<string, Material*>::iterator MaterialMapIterator;
     class MaterialManager : public Singleton<MaterialManager>
     {
 		SINGLETON(MaterialManager)
@@ -21,18 +21,18 @@ namespace Dx11Sandbox
 
   
 
-        Material* getMaterial(const wstring& matname);
-        bool releaseMaterial(const wstring& matname);
+        Material* getMaterial(const string& matname);
+        bool releaseMaterial(const string& matname);
 
-        bool createMaterial(ID3D11Device* device, const wstring& filename,const wstring& matname, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type =  Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
-        Material* getOrCreateMaterial(ID3D11Device* device, const wstring& filename,const wstring& matname, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type =  Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
+        bool createMaterial(ID3D11Device* device, const string& filename,const string& matname, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type =  Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
+        Material* getOrCreateMaterial(ID3D11Device* device, const string& filename,const string& matname, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type =  Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
 
     private:
 
         MaterialManager();
         DISABLE_COPY(MaterialManager)
 
-        std::map<wstring, RCObjectPtr<Material> > m_loadedMaterials;
+        std::map<string, RCObjectPtr<Material> > m_loadedMaterials;
     };
 }
 #endif

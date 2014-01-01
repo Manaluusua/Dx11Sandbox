@@ -21,7 +21,7 @@ namespace Dx11Sandbox
             
     }
 
-    Texture* TextureManager::createTexture2D(ID3D11Device* device, const wstring& texname, UINT texWidth, UINT texHeight,
+    Texture* TextureManager::createTexture2D(ID3D11Device* device, const string& texname, UINT texWidth, UINT texHeight,
         UINT arraySize, UINT bindFlags, DXGI_FORMAT format, UINT cpuAccess, D3D11_USAGE usage)
     {
         //names must be UNIQUE
@@ -31,7 +31,7 @@ namespace Dx11Sandbox
             return 0;
         }
 
-        Texture* tex = Texture::CreateEmptyTexture2D(device,texname, texWidth, texHeight, arraySize, bindFlags,format,cpuAccess, usage);
+        Texture* tex = Texture::CreateTexture2D(device,texname, texWidth, texHeight, arraySize, bindFlags,format,cpuAccess, usage);
         if(tex)
         {
             m_loadedTextures[texname] = tex;
@@ -40,7 +40,7 @@ namespace Dx11Sandbox
         return 0;
     }
 
-    Texture* TextureManager::createTexture(ID3D11Device* device, const wstring& filename,const wstring& texname,
+    Texture* TextureManager::createTexture(ID3D11Device* device, const string& filename,const string& texname,
         UINT cpuAccess, D3D11_USAGE usage, UINT filter)
     {
         //names must be UNIQUE
@@ -59,7 +59,7 @@ namespace Dx11Sandbox
         return 0;
     }
 
-    Texture* TextureManager::getOrCreateTexture(ID3D11Device* device, const wstring& texname, UINT texWidth , UINT texHeight,
+    Texture* TextureManager::getOrCreateTexture(ID3D11Device* device, const string& texname, UINT texWidth , UINT texHeight,
         UINT arraySize, UINT bindFlags, DXGI_FORMAT format, UINT cpuAccess, D3D11_USAGE usage )
     {
         
@@ -73,7 +73,7 @@ namespace Dx11Sandbox
         }
         return tex;
     }
-    Texture* TextureManager::getOrCreateTexture(ID3D11Device* device, const wstring& filename,const wstring& texname,
+    Texture* TextureManager::getOrCreateTexture(ID3D11Device* device, const string& filename,const string& texname,
         UINT cpuAccess, D3D11_USAGE usage, UINT filter)
     {
         
@@ -89,7 +89,7 @@ namespace Dx11Sandbox
     }
 
 
-    bool TextureManager::releaseTexture(const wstring& texname)
+    bool TextureManager::releaseTexture(const string& texname)
     {
         Texture* tex = getTexture(texname);
         if(tex)
@@ -103,7 +103,7 @@ namespace Dx11Sandbox
         }
     }
 
-    Texture* TextureManager::getTexture(const wstring& texname)
+    Texture* TextureManager::getTexture(const string& texname)
     {
         if(m_loadedTextures.find(texname)!=m_loadedTextures.end())
             return m_loadedTextures.at(texname);

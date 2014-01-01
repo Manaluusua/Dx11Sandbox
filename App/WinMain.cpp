@@ -18,7 +18,7 @@ int WINAPI wWinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdL
     Dx11Sandbox::Root* root = Dx11Sandbox::createRoot();
     DemoApplication *app = new DemoApplication;
     root->setApplication(app);
-	root->initialize(L"Dx11SandBox", 1024, 768,D3D_FEATURE_LEVEL_10_0 , true);
+	root->initialize("Dx11SandBox", 1024, 768,D3D_FEATURE_LEVEL_11_0 , true);
 
     int exitcode = root->start();
     

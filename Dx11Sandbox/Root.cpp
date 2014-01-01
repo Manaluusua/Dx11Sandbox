@@ -142,7 +142,7 @@ namespace Dx11Sandbox
 
     
     Root::Root()
-        :m_mediaFolder(L"..\\Media\\"),
+        :m_mediaFolder("..\\Media\\"),
         m_application(0)
     {
         m_sceneMngr = Dx11Sandbox::SceneManager::createSceneManager(this);
@@ -156,8 +156,10 @@ namespace Dx11Sandbox
         }
         SAFE_DELETE(m_sceneMngr);
     }
-
-    
+	const string& Root::GetMediaPath()
+    {
+		 return m_mediaFolder;
+	}
     //--------------------------------------------------------------------------------------
     // Reject any D3D11 devices that aren't acceptable by returning false
     //-- ------------------------------------------------------------------------------------
@@ -277,7 +279,7 @@ namespace Dx11Sandbox
         return true;
     }
 
-    void Root::initialize(wstring windowName,UINT windowWidth,UINT windowHeight, D3D_FEATURE_LEVEL level, bool windowed)
+    void Root::initialize(string windowName,UINT windowWidth,UINT windowHeight, D3D_FEATURE_LEVEL level, bool windowed)
     {
        
         if(!m_application)
@@ -287,9 +289,11 @@ namespace Dx11Sandbox
         }
         // Perform any application-level initialization here
 
+		std::unique_ptr<WCHAR> windowNameWide( MultibyteStringToWide(windowName) );
+
         DXUTInit( true, true, NULL ); // Parse the command line, show msgboxes on error, no extra command line params
         DXUTSetCursorSettings( false, false ); // Show the cursor and clip it when in full screen
-        DXUTCreateWindow( windowName.c_str() );
+		DXUTCreateWindow( windowNameWide.get() );
         DXUTCreateDevice(level, windowed, windowWidth, windowHeight );
     }
 

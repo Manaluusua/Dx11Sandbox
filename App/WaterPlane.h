@@ -30,7 +30,7 @@ public:
         float phaseConstant;
     };
 
-    WaterPlane(Dx11Sandbox::SceneManager* mngr, ID3D11Device *device, const Dx11Sandbox::string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, float tesselationX = 5, float tesselationY = 5);
+    WaterPlane(Dx11Sandbox::SceneManager* mngr, ID3D11Device *device, const Dx11Sandbox::string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, float tesselationX, float tesselationY, int textureResolution);
     ~WaterPlane(void);
 
 	virtual void cameraStartedRendering(Dx11Sandbox::RenderCamera& camera, Dx11Sandbox::RenderBin& renderbin, Dx11Sandbox::RenderContext* state); 
@@ -38,11 +38,12 @@ public:
 	virtual void update(double fTime, float fElapsedTime);
 
 	virtual void cameraPreCull(Dx11Sandbox::RenderCamera& camera);
-    virtual void renderingStarted(Dx11Sandbox::RenderContext* context,Dx11Sandbox::SceneManager* mngr, double fTime, float fElapsedTime);
 	virtual void cameraEndedRendering(Dx11Sandbox::RenderCamera& camera, Dx11Sandbox::RenderBin& renderbin, Dx11Sandbox::RenderContext* state);
 
 private:
     void setupWaves();
+
+	void initializeRenderTargets(ID3D11Device *device, Dx11Sandbox::RCObjectPtr<Dx11Sandbox::Material> mat, const Dx11Sandbox::string& name, int textureResolution);
 
 	void setupReflectionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sandbox::RenderContext* state);
 	void cleanupReflectionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sandbox::RenderContext* state);
@@ -59,6 +60,7 @@ private:
     Dx11Sandbox::CullableGeometry* m_renderObject;
     Dx11Sandbox::Texture* m_reflection;
     Dx11Sandbox::Texture* m_refraction;
+	Dx11Sandbox::Texture* m_depthStencil;
     Dx11Sandbox::Texture* m_normalMap;
 
 	Dx11Sandbox::SceneManager* m_mngr;

@@ -10,6 +10,8 @@ struct ID3D11RenderTargetView;
 */
 #include <D3D11.h>
 #include <d3dx9math.h>
+#include <vector>
+
 namespace Dx11Sandbox
 {
     class Mesh;
@@ -17,6 +19,7 @@ namespace Dx11Sandbox
     class RenderContext
     {
     public:
+
         RenderContext(void);
         ~RenderContext(void);
 
@@ -37,8 +40,9 @@ namespace Dx11Sandbox
         void setCustomClipPlane(D3DXVECTOR4& plane){m_customClipPlane = plane;}
         const D3DXVECTOR4& getCustomClipPlane(){return m_customClipPlane;}
 
-        void bindRenderTargets(UINT num, ID3D11RenderTargetView *const *renderTargetViews, ID3D11DepthStencilView *depthStencilView);
-        void bindBackBuffer();
+        void pushRenderTargets(UINT num, ID3D11RenderTargetView *const *renderTargetViews, ID3D11DepthStencilView *depthStencilView);
+		void popRenderTargets();
+        
 
         void clearState();
         
@@ -47,7 +51,17 @@ namespace Dx11Sandbox
         UINT32 getCurrentRenderPassID();
     private:
 
+		struct RenderTargetsState
+		{
+			UINT numberOfBoundTargets;
+			ID3D11RenderTargetView* renderTargets[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT];
+			ID3D11DepthStencilView* depthStencil;
+		};
+
+		void bindCurrentState();
         D3DXVECTOR4 m_customClipPlane;
+
+		std::vector<RenderTargetsState> m_boundStates;
 
         Mesh* m_boundMesh;
         Material *m_boundMaterial;

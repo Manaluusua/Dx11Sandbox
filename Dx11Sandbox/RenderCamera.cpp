@@ -9,8 +9,7 @@ namespace Dx11Sandbox
 {
 
 	RenderCamera::RenderCamera(void)
-		:m_clipPlane(0, 0, 0, 0),
-		m_cameraPriority(0),
+		:m_cameraPriority(0),
 		m_renderMask(0xFFFFFFFF)
 	{
 
@@ -38,7 +37,7 @@ namespace Dx11Sandbox
 		auto mapIter = renderObjects.begin();
 		RenderQueueID queue = Dx11Sandbox::RENDERQUEUE_FIRST;
 
-		m_renderer->renderBegin(this, renderBin.getLights(), state);
+		m_renderer->renderBegin(this, &renderBin.getLights(), state);
 
 		//before CullableLight pass
 		while(mapIter != renderObjects.end() && queue < Dx11Sandbox::RENDERQUEUE_AFTERLIGHTPASS){
@@ -95,16 +94,7 @@ namespace Dx11Sandbox
 		m_renderListeners.erase(l);
 	}
 
-	const D3DXVECTOR4& RenderCamera::getClipPlane() const
-	{
-		return m_clipPlane;
-	}
-
-	void RenderCamera::setClipPlane(const D3DXVECTOR4& plane)
-	{
-		m_clipPlane = plane;
-	}
-
+	
 
 	void RenderCamera::setRenderer(RCObjectPtr<Renderer> renderer)
 	{

@@ -1,13 +1,14 @@
 #include "Texture.h"
 #include "SDKmisc.h"
 #include "PixelBox.h"
-
+#include <memory>
 namespace Dx11Sandbox
 {
-    Texture::Texture(const wstring texname)
+    Texture::Texture(const string texname)
         :m_name(texname),
         m_shaderView(0),
         m_rtView(0),
+		m_dsView(0),
         m_texture(0),
         m_texWidth(0),
         m_texHeight(0),
@@ -25,9 +26,10 @@ namespace Dx11Sandbox
         SAFE_RELEASE(m_texture);
         SAFE_RELEASE(m_shaderView);
         SAFE_RELEASE(m_rtView);
+		SAFE_RELEASE(m_dsView);
     }
 
-    Texture* Texture::CreateEmptyTexture2D(ID3D11Device* device, const wstring& texname, UINT texWidth, UINT texHeight,
+    Texture* Texture::CreateTexture2D(ID3D11Device* device, const string& texname, UINT texWidth, UINT texHeight,
         UINT arraySize, UINT bindFlags, DXGI_FORMAT format, UINT cpuAccess, D3D11_USAGE usage)
     {
         Texture* tex = new Texture(texname);
@@ -40,7 +42,7 @@ namespace Dx11Sandbox
         tex->m_usage = usage;
 
         D3D11_TEXTURE2D_DESC desc;
-        memset(&desc,0,sizeof(desc));
+        memset(&desc,0,sizeof(D3D11_TEXTURE2D_DESC));
         desc.Width = texWidth;
         desc.Height = texHeight;
         desc.MipLevels = 1;
@@ -64,15 +66,28 @@ namespace Dx11Sandbox
         if(tex->m_flags & D3D11_BIND_RENDER_TARGET)
         {
             D3D11_RENDER_TARGET_VIEW_DESC rtDesc;
+			memset(&rtDesc,0,sizeof(D3D11_RENDER_TARGET_VIEW_DESC));
             rtDesc.Format = desc.Format;
             rtDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
             rtDesc.Texture2D.MipSlice = 0;
 
             device->CreateRenderTargetView( tex->m_texture, &rtDesc, &tex->m_rtView );
+        } else if(tex->m_flags & D3D11_BIND_DEPTH_STENCIL)
+        {
+			D3D11_DEPTH_STENCIL_VIEW_DESC dsDesc;
+			memset(&dsDesc,0,sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+			dsDesc.Format = desc.Format;
+			dsDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+			dsDesc.Texture2D.MipSlice = 0;
+			device->CreateDepthStencilView(tex->m_texture, &dsDesc, &tex->m_dsView );
+
         }
+
+
         if(tex->m_flags & D3D11_BIND_SHADER_RESOURCE)
         {
             D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+			memset(&srvDesc,0,sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
             srvDesc.Format = desc.Format;
             srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
             srvDesc.Texture2D.MipLevels = desc.MipLevels;
@@ -81,15 +96,12 @@ namespace Dx11Sandbox
 
             device->CreateShaderResourceView( tex->m_texture, &srvDesc, &tex->m_shaderView );
         }
-        if(tex->m_flags & D3D11_BIND_DEPTH_STENCIL)
-        {
-            //create depth stencil view
-        }
+		
 
         return tex;
         
     }
-    Texture* Texture::CreateTextureFromFile(ID3D11Device* device,const wstring& filename, const wstring& texname,
+    Texture* Texture::CreateTextureFromFile(ID3D11Device* device,const string& filename, const string& texname,
         UINT cpuAccess, D3D11_USAGE usage, UINT filter)
     {
         Texture* tex = new Texture(texname);
@@ -99,9 +111,13 @@ namespace Dx11Sandbox
         info.Filter = filter ;
         tex->m_cpuAccess = cpuAccess;
         tex->m_usage = usage;
+
+
+		std::unique_ptr<WCHAR> fileNameWide( MultibyteStringToWide(filename) );
+
         WCHAR wstr[MAX_PATH];
 
-        if FAILED( DXUTFindDXSDKMediaFileCch( wstr, MAX_PATH, filename.c_str()))
+        if FAILED( DXUTFindDXSDKMediaFileCch( wstr, MAX_PATH, fileNameWide.get()))
         {
             showErrorDialog("Tex not found!");
             return 0;
@@ -155,6 +171,21 @@ namespace Dx11Sandbox
         return tex;
     }
 
+
+	ID3D11ShaderResourceView* Texture::GetShaderResourceView() 
+	{ 
+		return m_shaderView; 
+	}
+
+	ID3D11RenderTargetView* Texture::GetRenderTargetView() 
+	{ 
+		return m_rtView; 
+	}
+
+	ID3D11DepthStencilView* Texture::GetDepthStencilView()
+	{
+		return m_dsView;
+	}
 
 
     PixelBox* Texture::readPixelBoxFromTexture(UINT arrayIndex, UINT mipSlice, UINT mips)

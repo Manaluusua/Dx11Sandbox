@@ -37,8 +37,7 @@ namespace Dx11Sandbox
 		void addRenderListener(RenderCameraListener *l);
 		void removeRenderListener(RenderCameraListener *l);
 
-		const D3DXVECTOR4& getClipPlane() const;
-		void setClipPlane(const D3DXVECTOR4& plane);
+		
 
 		
 
@@ -50,7 +49,7 @@ namespace Dx11Sandbox
 		RenderCamera(void);
 		virtual ~RenderCamera(void);
 
-		D3DXVECTOR4 m_clipPlane;
+		
 
 		std::set<RenderCameraListener*> m_renderListeners;
 		RCObjectPtr<Renderer> m_renderer;

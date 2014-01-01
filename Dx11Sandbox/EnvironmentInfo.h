@@ -16,6 +16,8 @@ namespace Dx11Sandbox
 		static uint32_t getScreenWidth();
 		static uint32_t getScreenHeight();
 
+		static float getScreenAspectRatio();
+
 	protected:
 		static double m_accumulatedTime;
 		static float m_deltaTime;

@@ -37,10 +37,15 @@ namespace Dx11Sandbox
     //
 
 
-    
+    char* WideStringToMultibyte(const wstring src);
+	WCHAR* MultibyteStringToWide(const string src);
 
-    void showErrorDialog(WCHAR* msg);
-    void showErrorDialog(char* msg);
+	size_t WideStringToMultibyte(const WCHAR* src, char* dest, int count, bool makeNullTerminated = true);
+	size_t MultibyteStringToWide(const char* src, WCHAR* dest, int count, bool makeNullTerminated = true);
+
+
+    void showErrorDialog(const WCHAR* msg);
+    void showErrorDialog(const char* msg);
 
     GIDTYPE generateID();
 

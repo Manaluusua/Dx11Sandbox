@@ -42,21 +42,44 @@ namespace Dx11Sandbox
 
 
 
-    void RenderContext::bindRenderTargets(UINT num, ID3D11RenderTargetView *const *renderTargetViews, ID3D11DepthStencilView *depthStencilView)
+    void RenderContext::pushRenderTargets(UINT num, ID3D11RenderTargetView *const *renderTargetViews, ID3D11DepthStencilView *depthStencilView)
     {
         
-        m_imContext->OMSetRenderTargets(num, renderTargetViews, depthStencilView);
+		RenderTargetsState currentState;
+
+
+		currentState.numberOfBoundTargets = num;
+		currentState.depthStencil = depthStencilView;
+
+		for(int i = 0; i < num; ++i)
+		{
+			currentState.renderTargets[i] = renderTargetViews[i];
+		}
+		
+		m_boundStates.push_back(currentState);
+
+        bindCurrentState();
     }
 
+	void RenderContext::popRenderTargets()
+	{
+		m_boundStates.pop_back();
+		bindCurrentState();
+	}
 
-        
-    void RenderContext::bindBackBuffer()
-    {
+    void RenderContext::bindCurrentState()
+	{
+		if(m_boundStates.size() == 0u)
+		{
+			ID3D11RenderTargetView * backBuffer[1];
+			backBuffer[0] = DXUTGetD3D11RenderTargetView();
+			m_imContext->OMSetRenderTargets(1, backBuffer, DXUTGetD3D11DepthStencilView());
+		}else{
+			const RenderTargetsState& currentState = m_boundStates.back();
+			m_imContext->OMSetRenderTargets(currentState.numberOfBoundTargets, currentState.renderTargets, currentState.depthStencil);
+		}
 
-        ID3D11RenderTargetView * backBuffer[1];
-        backBuffer[0] = DXUTGetD3D11RenderTargetView();
-        m_imContext->OMSetRenderTargets(1, backBuffer, DXUTGetD3D11DepthStencilView());
+		
+	}
 
-         
-    }
 }

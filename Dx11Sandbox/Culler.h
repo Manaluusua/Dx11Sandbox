@@ -18,6 +18,7 @@ namespace Dx11Sandbox
 
     
         virtual void cull(const Frustrum& frusta,PoolVector<AllocationUnit<CullData> > &in ,std::vector<Cullable*>& out) =0;
+		
         
     };
 

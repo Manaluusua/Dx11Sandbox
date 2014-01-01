@@ -10,6 +10,11 @@ namespace Dx11Sandbox
 	uint32_t EnvironmentInfo::m_screenWidth = 0;
 	uint32_t EnvironmentInfo::m_screenHeight = 0;
 
+	float EnvironmentInfo::getScreenAspectRatio()
+	{
+		return static_cast<float>( m_screenWidth ) / m_screenHeight;
+	}
+
 	float EnvironmentInfo::getDeltaTime()
 	{
 		return m_deltaTime;

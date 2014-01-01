@@ -14,7 +14,7 @@ namespace Dx11Sandbox
 	public:
 		BasicForwardRenderer(void);
 		~BasicForwardRenderer(void);
-		virtual void renderBegin(RenderCamera* cam, std::vector<Light*>& lights, RenderContext* state) ;
+		virtual void renderBegin(RenderCamera* cam, std::vector<Light*>* lights, RenderContext* state) ;
 		virtual void renderEnd();
 		virtual void render(RenderData** objects, unsigned int objectCount);
 

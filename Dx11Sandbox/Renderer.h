@@ -16,7 +16,7 @@ namespace Dx11Sandbox
 	{
 	public:
 		
-		virtual void renderBegin(RenderCamera* cam, std::vector<Light*>& lights, RenderContext* state) = 0;
+		virtual void renderBegin(RenderCamera* cam, std::vector<Light*>* lights, RenderContext* state) = 0;
 		virtual void render(RenderData** objects, unsigned int objectCount) = 0;
 		virtual void renderEnd() = 0;
 	protected:

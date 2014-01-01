@@ -21,16 +21,16 @@ namespace Dx11Sandbox
         friend class MaterialManager;
         virtual ~Material();
 
-        virtual bool loadAndInitializeMaterial(const wstring& effectName, ID3D11Device* pd3dDevice,
+        virtual bool loadAndInitializeMaterial(const string& effectName, ID3D11Device* pd3dDevice,
             Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type =  Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
 
-        void setTexture(const string shaderVariable, const wstring textureName);
+        void setTexture(const string shaderVariable, const string textureName);
         ID3DX11Effect* getEffect(){return m_effect;}
         ID3D11InputLayout* getInputLayout(){return m_layout;}
 
         bool bind(RenderContext* context);
 
-        std::map<string,wstring>& getTextureReferences(){return m_textureRefs;}
+        std::map<string, string>& getTextureReferences(){return m_textureRefs;}
 
     private:
         Material();
@@ -39,7 +39,7 @@ namespace Dx11Sandbox
 
 
         //key: name of the samplervariable, value: name of the referenced tex to be bind in to the samplervariable
-        std::map<string, wstring> m_textureRefs;
+        std::map<string, string> m_textureRefs;
 
         ReleasePtr<ID3DX11Effect> m_effect;
         ReleasePtr<ID3D11InputLayout> m_layout;

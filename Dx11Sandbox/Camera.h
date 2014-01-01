@@ -46,7 +46,10 @@ namespace Dx11Sandbox
         void setFarPlane( FLOAT farPlane );
 
 		
-		virtual void copyCameraParameters(const Camera& other);
+		const D3DXVECTOR4& getClipPlane() const;
+		void setClipPlane(const D3DXVECTOR4& plane);
+
+		virtual void copyCameraViewAndProjectionParameters(const Camera& other);
 
         FLOAT getFOVY() const;
         FLOAT getAspectRatio() const;
@@ -71,6 +74,8 @@ namespace Dx11Sandbox
         D3DXVECTOR3 m_up;
 
         D3DXVECTOR3 m_translation;
+
+		D3DXVECTOR4 m_clipPlane;
 
 		FLOAT m_fovy;
         FLOAT m_aspectRatio;

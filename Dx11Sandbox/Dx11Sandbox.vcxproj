@@ -94,6 +94,9 @@
     <ClCompile Include="Compositor.cpp" />
     <ClCompile Include="Cullable.cpp" />
     <ClCompile Include="CullData.cpp" />
+    <ClCompile Include="DebugDrawer.cpp" />
+    <ClCompile Include="DebugDrawTextureToScreen.cpp" />
+    <ClCompile Include="EnvironmentChangedListeners.cpp" />
     <ClCompile Include="EnvironmentInfo.cpp" />
     <ClCompile Include="Frustrum.cpp" />
     <ClCompile Include="Geometry.cpp" />
@@ -137,6 +140,9 @@
     <ClInclude Include="Cullable.h" />
     <ClInclude Include="Culler.h" />
     <ClInclude Include="CullDataAllocator.h" />
+    <ClInclude Include="DebugDrawTextureToScreen.h" />
+    <ClInclude Include="DebugDrawer.h" />
+    <ClInclude Include="EnvironmentChangedListeners.h" />
     <ClInclude Include="DynamicPoolAllocator.h" />
     <ClInclude Include="Frustrum.h" />
     <ClInclude Include="Geometry.h" />

@@ -23,10 +23,11 @@ namespace Dx11Sandbox
 	}
 
 
-	void BasicForwardRenderer::renderBegin(RenderCamera* cam,std::vector<Light*>& lights,RenderContext* state)
+	void BasicForwardRenderer::renderBegin(RenderCamera* cam,std::vector<Light*>* lights,RenderContext* state)
 	{
 		m_state = state;
 		m_cam = cam;
+
 		m_materialPropertySetter.setCurrentCamera(cam);
 		m_materialPropertySetter.setLights(lights);
 	}

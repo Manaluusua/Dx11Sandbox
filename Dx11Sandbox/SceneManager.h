@@ -9,6 +9,7 @@
 #include "RenderBin.h"
 #include "CullableGeometry.h"
 #include "CullableObjectManager.h"
+#include "EnvironmentChangedListeners.h"
 #include "CullableLight.h"
 #include "DXUT.h"
 
@@ -25,7 +26,7 @@ namespace Dx11Sandbox
     class SceneManager;
     class Frustrum;
     class Culler;
-
+	class DebugDrawer;
     
     
     // GeometryBinHandler listener to listen and act for rendering events
@@ -58,10 +59,11 @@ namespace Dx11Sandbox
 		CullableGeometry* createCullableGeometry();
 		CullableLight* createLight();
 
-        //listeners
-        void addRenderStartListener(RenderStartListener* l);
-        void removeRenderStartListener(RenderStartListener* l);
+		void addDebugDrawer(DebugDrawer* drawer);
+		void removeDebugDrawer(DebugDrawer* drawer);
 
+		void addEnvironmentListener(EnvironmentChangedListeners* l);
+		void removeEnvironmentListener(EnvironmentChangedListeners* l);
         
 		RenderCamera* createCamera();
 		void destroyCamera(RenderCamera* camera);
@@ -77,6 +79,7 @@ namespace Dx11Sandbox
         void update(double fTime, float fElapsedTime);
         void beginDraw(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime, float fElapsedTime);
         
+		void drawDebug();
 
 		void cullObjectsFromPools(std::map<RenderLayer, CullDataAllocator*>& pools, RenderCamera* cam);
 
@@ -90,10 +93,12 @@ namespace Dx11Sandbox
 
 		CullableGeometryManager m_renderGeometryManager;
 		CullableLightManager m_lightManager;
-
-        std::set<RenderStartListener*> m_renderStartListeners;
         std::vector<Cullable*> m_cachedVisibleList;
+		std::vector<DebugDrawer*> m_debugDrawList;
         
+		std::set<EnvironmentChangedListeners*> m_environmentListeners;
+
+
         RCObjectPtr<Culler> m_culler;
 
         RenderCamera* m_mainCamera;

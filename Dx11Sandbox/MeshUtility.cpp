@@ -325,7 +325,7 @@ namespace Dx11Sandbox
     }
 
 
-    void MeshUtility::createTerrainFromHeightMap(ID3D11Device *device, SceneManager* mngr, const  wstring& heightmapName,Material* mat, float scaleX, float scaleZ,float scaleY, unsigned int pagesX, unsigned int pagesZ, unsigned int tesselationFactor)
+    void MeshUtility::createTerrainFromHeightMap(ID3D11Device *device, SceneManager* mngr, const string& heightmapName,Material* mat, float scaleX, float scaleZ,float scaleY, unsigned int pagesX, unsigned int pagesZ, unsigned int tesselationFactor)
     {
         TextureManager::singleton()->createTexture(device, heightmapName, heightmapName, D3D11_CPU_ACCESS_READ, D3D11_USAGE_STAGING);
         Texture *tex = TextureManager::singleton()->getTexture(heightmapName);
