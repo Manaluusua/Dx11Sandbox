@@ -11,6 +11,10 @@
 
 using namespace Dx11Sandbox;
 class WaterPlane;
+namespace Dx11Sandbox
+{
+	class DebugDrawTextureToScreen;
+};
 
 
 class DemoApplication: public Application
@@ -43,6 +47,8 @@ private:
     bool m_upDown;
     bool m_downDown;
     bool m_moveMouse;
+
+	DebugDrawTextureToScreen* m_debugDrawerTexture;
 
     D3DXVECTOR2 m_lastMousePos;
     D3DXVECTOR2 m_mouseDelta;

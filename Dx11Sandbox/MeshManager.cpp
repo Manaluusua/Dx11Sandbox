@@ -54,4 +54,9 @@ namespace Dx11Sandbox
         return mesh;
     }
 
+	Mesh* MeshManager::createMeshUnmanaged()
+	{
+		return new Mesh;
+	}
+
 }

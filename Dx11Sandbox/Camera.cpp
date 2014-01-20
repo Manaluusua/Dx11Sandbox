@@ -93,14 +93,25 @@ namespace Dx11Sandbox
 		m_projectionCacheValid = true;
 	}
 
-    void Camera::setProjection(FLOAT fovY, FLOAT aspectRatio, FLOAT nearDist, FLOAT farDist)
+    void Camera::setProjectionPerspective(FLOAT fovY, FLOAT aspectRatio, FLOAT nearDist, FLOAT farDist)
     {
         m_fovy = fovY;
         m_aspectRatio = aspectRatio;
         m_near = nearDist;
         m_far = farDist;
 		m_projectionCacheValid = false;
+		m_projectionType = PERSPECTIVE;
     }
+
+	void Camera::setProjectionOrthographic(FLOAT size, FLOAT aspectRatio, FLOAT nearDist, FLOAT farDist)
+	{
+		m_orthoSize = size;
+        m_aspectRatio = aspectRatio;
+        m_near = nearDist;
+        m_far = farDist;
+		m_projectionCacheValid = false;
+		m_projectionType = ORTHOGRAPHIC;
+	}
 
 	void Camera::setOrthographicSize(FLOAT size)
 	{

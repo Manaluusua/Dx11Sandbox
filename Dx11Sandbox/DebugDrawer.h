@@ -7,7 +7,7 @@ namespace Dx11Sandbox
 	class DebugDrawer
 	{
 	public:
-		virtual void Draw(RenderContext* state) = 0;
+		virtual void draw(RenderContext* state) = 0;
 		virtual ~DebugDrawer(void);
 	};
 }

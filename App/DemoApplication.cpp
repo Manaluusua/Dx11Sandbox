@@ -7,6 +7,8 @@
 #include "MeshManager.h"
 #include "TerrainBinHandler.h"
 #include "CullableGeometry.h"
+#include "DebugDrawTextureToScreen.h"
+#include "Texture.h"
 
 DemoApplication::DemoApplication()
     :m_leftDown(false),
@@ -20,7 +22,8 @@ DemoApplication::DemoApplication()
     m_mouseDelta(0,0),
 	m_mouseSensitivity(0.01f),
     m_time(0),
-    m_waterPlane(0)
+    m_waterPlane(0),
+	m_debugDrawerTexture(0)
 {
 
 }
@@ -79,6 +82,9 @@ void DemoApplication::windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pS
 {
 
 }
+
+
+
 void DemoApplication::createWorld(SceneManager* mngr)
 {
     
@@ -108,8 +114,10 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	ro->setRenderQueue(RENDERQUEUE_SKYBOX);
 	ro->setRenderMask(RENDERLAYER_SKYBOX);
 
-    mat->setTexture("cubemap", "skyboxCube.dds");
-    TextureManager::singleton()->createTexture(device, "skyboxCube.dds", "skyboxCube.dds");
+	Texture* tex = TextureManager::singleton()->createTexture(device, "skyboxCube.dds", "skyboxCube.dds");
+
+    mat->setTexture("cubemap", tex->getName());
+    
      
     //terrain
     mat = MaterialManager::singleton()->getOrCreateMaterial(device, "terrain.fx", "terrain1",MeshInputLayouts::POS3NORM3TEX2);
@@ -119,21 +127,23 @@ void DemoApplication::createWorld(SceneManager* mngr)
     //mat->setTexture("texture1", L"roughRock.png");
     //TextureManager::getSingleton()->createTexture(device, L"roughRock.png", L"roughRock.png");
 
-
-    mat->setTexture("texture2", "grass.jpg");
-    TextureManager::singleton()->createTexture(device, "grass.jpg", "grass.jpg");
+	tex = TextureManager::singleton()->createTexture(device, "grass.jpg", "grass.jpg");
+    mat->setTexture("texture2", tex->getName());
+    
 
  
     //mat->setTexture("textureWeights", L"terrainweights.png");
     //TextureManager::getSingleton()->createTexture(device, L"terrainweights.png", L"terrainweights.png");
+    
 
-    
-    
+
     //waterplane
     Dx11Sandbox::string name("waterPlane1");
     m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-60,340,340,200,200, 512);
     
-    
+	m_debugDrawerTexture = new DebugDrawTextureToScreen(device, 100.f, 100.f);
+	m_mngr->addDebugDrawer(m_debugDrawerTexture);
+	m_debugDrawerTexture->addDebugTexture(tex, 0.f, -40.f, 20.f, 20.f);
    
 	sun = m_mngr->createLight();
 	sun->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
@@ -233,6 +243,8 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 
 void DemoApplication::shutDown(SceneManager* mngr)
 {
+	SAFE_DELETE(m_debugDrawerTexture);
+	m_waterPlane = 0;
 }
 
 

@@ -46,10 +46,11 @@ namespace Dx11Sandbox
 
     private:
         bool m_initialized;
+
         Texture* m_textures[2];
 
-         std::map<string, CompositorEffect*> m_loadedEffects;
-         std::vector<CompositorEffect*> m_effectChain;
+        std::map<string, CompositorEffect*> m_loadedEffects;
+        std::vector<CompositorEffect*> m_effectChain;
     };
 
 

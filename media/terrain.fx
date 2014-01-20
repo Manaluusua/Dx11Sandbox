@@ -7,7 +7,6 @@ SamplerState samLinear
 };
 
 
-
 //shader impl and uniforms
 
 static const float3 ambient   = float3( 0.1f, 0.1f, 0.1f );  

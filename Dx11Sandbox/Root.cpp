@@ -153,7 +153,9 @@ namespace Dx11Sandbox
         if(m_application)
         {
             m_application->shutDown(m_sceneMngr);
+			SAFE_DELETE(m_application);
         }
+
         SAFE_DELETE(m_sceneMngr);
     }
 	const string& Root::GetMediaPath()

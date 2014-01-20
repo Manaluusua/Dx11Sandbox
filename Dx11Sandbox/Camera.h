@@ -20,7 +20,8 @@ namespace Dx11Sandbox
         Camera(void);
         virtual ~Camera(void);
 
-        void setProjection(FLOAT fovY, FLOAT aspectRatio, FLOAT nearDist, FLOAT farDist);
+        void setProjectionPerspective(FLOAT fovY, FLOAT aspectRatio, FLOAT nearDist, FLOAT farDist);
+		void setProjectionOrthographic(FLOAT size, FLOAT aspectRatio, FLOAT nearDist, FLOAT farDist);
 
         const D3DXMATRIX* getProjectionMatrix();
         const D3DXMATRIX* getViewMatrix();

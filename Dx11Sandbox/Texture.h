@@ -25,18 +25,20 @@ namespace Dx11Sandbox
 
         PixelBox* readPixelBoxFromTexture(UINT arrayIndex=0, UINT mipSlice=0, UINT mips=1);
 
+		ResourceID getName() const;
+
     private:
         DISABLE_COPY(Texture)
 
-        static Texture* CreateTexture2D(ID3D11Device* device, const string& texname, UINT texWidth, UINT texHeight,
+        static Texture* CreateTexture2D(ID3D11Device* device, ResourceID texname, UINT texWidth, UINT texHeight,
             UINT arraySize, UINT bindFlags, DXGI_FORMAT format , UINT cpuAccess,
             D3D11_USAGE usage );
 
-        static Texture* CreateTextureFromFile(ID3D11Device* device, const string& filename,const string& texname,
+        static Texture* CreateTextureFromFile(ID3D11Device* device, const string& filename,ResourceID texname,
             UINT cpuAccess , D3D11_USAGE usageT, UINT filter );
 
-        Texture(const string texname);
-        string m_name;
+        Texture(ResourceID texname);
+        ResourceID m_name;
         ID3D11ShaderResourceView* m_shaderView;
         ID3D11RenderTargetView* m_rtView;
 		ID3D11DepthStencilView* m_dsView;

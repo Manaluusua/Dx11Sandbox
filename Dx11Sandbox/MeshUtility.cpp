@@ -72,6 +72,21 @@ namespace Dx11Sandbox
     }
 
 
+	Mesh* MeshUtility::createQuad(ID3D11Device *device, const D3DXVECTOR3* corners)
+	{
+		Mesh *mesh = MeshManager::singleton()->createMeshUnmanaged();
+        if(!mesh) return 0;
+
+		FLOAT UV[8] = { 0.f,0.f, 1.f,0.f ,0.f,1.f ,1.f,1.f };
+		UINT16 indices[6] = { 0, 2, 1, 1, 2, 3 };
+
+		BYTE* ptr[2];
+		ptr[0] = (BYTE*)corners;
+		ptr[1] = (BYTE*)UV;
+		mesh->createMeshFromBuffers(device, ptr, (BYTE*)indices, 4,6,DXGI_FORMAT_R16_UINT,MeshInputLayouts::POS3TEX2);
+		return mesh;
+	}
+
     Mesh* MeshUtility::createSkyBoxMesh(ID3D11Device *device, const string& name)
     {
         Mesh *mesh = MeshManager::singleton()->createMesh(name);
@@ -327,8 +342,7 @@ namespace Dx11Sandbox
 
     void MeshUtility::createTerrainFromHeightMap(ID3D11Device *device, SceneManager* mngr, const string& heightmapName,Material* mat, float scaleX, float scaleZ,float scaleY, unsigned int pagesX, unsigned int pagesZ, unsigned int tesselationFactor)
     {
-        TextureManager::singleton()->createTexture(device, heightmapName, heightmapName, D3D11_CPU_ACCESS_READ, D3D11_USAGE_STAGING);
-        Texture *tex = TextureManager::singleton()->getTexture(heightmapName);
+        Texture *tex = TextureManager::singleton()->createTexture(device, heightmapName, heightmapName, D3D11_CPU_ACCESS_READ, D3D11_USAGE_STAGING);
 
         
         float pageSizeX = scaleX/pagesX;
@@ -479,7 +493,7 @@ namespace Dx11Sandbox
         
 
         MeshManager::singleton()->destroyMesh( tempMeshName );
-        TextureManager::singleton()->releaseTexture(heightmapName);
+		TextureManager::singleton()->releaseTexture(tex->getName());
 
     }
 

@@ -6,10 +6,6 @@ SamplerState samLinear
     AddressV = WRAP;
 };
 
-RasterizerState rasterState
-{ 
-	FillMode = WireFrame; 
-};
 
 //shader impl and uniforms
 static const float3 waterColor = float3(0.3f,0.6f,0.6f);
@@ -194,7 +190,6 @@ technique11 WaterPlane
 	
     pass P0
     {
-		//SetRasterizerState( rasterState );
         SetVertexShader( CompileShader( vs_4_0, VS() ) );
         SetGeometryShader( NULL );
         SetPixelShader( CompileShader( ps_4_0, PS() ) );

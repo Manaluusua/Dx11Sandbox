@@ -4,22 +4,38 @@
 #include "DebugDrawer.h"
 #include "RCObjectPtr.h"
 #include "CommonTypes.h"
+#include "Camera.h"
+#include <vector>
+
 namespace Dx11Sandbox
 {
 	class Mesh;
-
+	class Texture;
+	class RenderData;
+	class Material;
+	class Renderer;
 
 	class DebugDrawTextureToScreen : public DebugDrawer
 	{
 	public:
-		DebugDrawTextureToScreen(void);
+		DebugDrawTextureToScreen(ID3D11Device *device, float width, float height);
 		virtual ~DebugDrawTextureToScreen(void);
 
-		virtual void Draw(RenderContext* state);
+		virtual void draw(RenderContext* state);
+
+		void addDebugTexture(Texture* tex, float x, float y, float width, float height);  
 
 
-	protected:
+	private:
+
+		Mesh* createQuad(float x, float y, float w, float h);
+
+		static const string debugMaterialName;
+		Camera m_cam;
+		std::vector<RenderData*> m_debugData;
+		RCObjectPtr<Renderer> m_renderer;
 		
+		ID3D11Device* m_device;
 
 	};
 };

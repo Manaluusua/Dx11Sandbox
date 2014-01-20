@@ -10,7 +10,10 @@
 namespace Dx11Sandbox
 {
     class Texture;
-    typedef std::map<string, Texture*>::iterator TextureMapIterator;
+	
+    typedef std::map<ResourceID, Texture*>::iterator TextureMapIterator;
+	
+
     class TextureManager : public Singleton<TextureManager>
     {
 		SINGLETON(TextureManager)
@@ -33,14 +36,15 @@ namespace Dx11Sandbox
         Texture* getOrCreateTexture(ID3D11Device* device, const string& filename,const string& texname, UINT cpuAccess = 0,
             D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT filter =  D3DX11_FILTER_POINT | D3DX11_FILTER_SRGB_IN);
 
-        Texture* getTexture(const string& texname);
-        bool releaseTexture(const string& texname);
-
+        Texture* getTexture(ResourceID id);
+        bool releaseTexture(ResourceID id);
     private:
+
+
         DISABLE_COPY(TextureManager)
         TextureManager();
 
-        std::map<string, Texture*> m_loadedTextures;
+        std::map<ResourceID, Texture*> m_loadedTextures;
     };
 }
 #endif

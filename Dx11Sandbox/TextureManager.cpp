@@ -1,6 +1,8 @@
 #include "TextureManager.h"
 #include "Texture.h"
 
+
+
 namespace Dx11Sandbox
 {
 
@@ -21,20 +23,23 @@ namespace Dx11Sandbox
             
     }
 
+
     Texture* TextureManager::createTexture2D(ID3D11Device* device, const string& texname, UINT texWidth, UINT texHeight,
         UINT arraySize, UINT bindFlags, DXGI_FORMAT format, UINT cpuAccess, D3D11_USAGE usage)
     {
+		ResourceID id = stringToID(texname);
+
         //names must be UNIQUE
-        assert(m_loadedTextures.find(texname)==m_loadedTextures.end());
-        if (m_loadedTextures.find(texname)!=m_loadedTextures.end())
+		assert(m_loadedTextures.find(id)==m_loadedTextures.end());
+        if (m_loadedTextures.find(id)!=m_loadedTextures.end())
         {
-            return 0;
+			return 0;
         }
 
-        Texture* tex = Texture::CreateTexture2D(device,texname, texWidth, texHeight, arraySize, bindFlags,format,cpuAccess, usage);
+        Texture* tex = Texture::CreateTexture2D(device,id, texWidth, texHeight, arraySize, bindFlags,format,cpuAccess, usage);
         if(tex)
         {
-            m_loadedTextures[texname] = tex;
+            m_loadedTextures[id] = tex;
             return tex;
         }
         return 0;
@@ -43,17 +48,20 @@ namespace Dx11Sandbox
     Texture* TextureManager::createTexture(ID3D11Device* device, const string& filename,const string& texname,
         UINT cpuAccess, D3D11_USAGE usage, UINT filter)
     {
+		ResourceID id = stringToID(texname);
+
         //names must be UNIQUE
-        assert(m_loadedTextures.find(texname)==m_loadedTextures.end());
-        if (m_loadedTextures.find(texname)!=m_loadedTextures.end())
+		assert(m_loadedTextures.find(id)==m_loadedTextures.end());
+        if (m_loadedTextures.find(id)!=m_loadedTextures.end())
         {
-            return 0;
+			return 0;
         }
 
-        Texture* tex = Texture::CreateTextureFromFile(device, filename,texname,cpuAccess, usage, filter);
+        Texture* tex = Texture::CreateTextureFromFile(device, filename,id,cpuAccess, usage, filter);
         if(tex)
         {
-            m_loadedTextures[texname] = tex;
+
+            m_loadedTextures[id] = tex;
             return tex;
         }
         return 0;
@@ -63,39 +71,37 @@ namespace Dx11Sandbox
         UINT arraySize, UINT bindFlags, DXGI_FORMAT format, UINT cpuAccess, D3D11_USAGE usage )
     {
         
-        Texture* tex = getTexture(texname);
-        if(!tex)
-        {
-            if(createTexture2D(device,texname, texWidth, texHeight, arraySize, bindFlags,format, cpuAccess, usage))
-            {
-                tex = getTexture(texname);
-            }
-        }
+		ResourceID id = stringToID(texname);
+
+		Texture* tex = getTexture(id);
+		if(!tex)
+		{
+			tex = createTexture2D(device,texname, texWidth, texHeight, arraySize, bindFlags,format, cpuAccess, usage);
+		}
+   
         return tex;
     }
     Texture* TextureManager::getOrCreateTexture(ID3D11Device* device, const string& filename,const string& texname,
         UINT cpuAccess, D3D11_USAGE usage, UINT filter)
     {
         
-        Texture* tex = getTexture(texname);
-        if(!tex)
-        {
-            if(createTexture(device,filename, texname, cpuAccess,usage, filter))
-            {
-                tex = getTexture(texname);
-            }
+		ResourceID id = stringToID(texname);
+		Texture* tex = getTexture(id);
+		if(!tex)
+		{
+            tex = createTexture(device,filename, texname, cpuAccess,usage, filter);
         }
         return tex;
     }
 
 
-    bool TextureManager::releaseTexture(const string& texname)
+    bool TextureManager::releaseTexture(ResourceID id)
     {
-        Texture* tex = getTexture(texname);
+        Texture* tex = getTexture(id);
         if(tex)
         {
             SAFE_DELETE(tex);
-            m_loadedTextures.erase(texname);
+            m_loadedTextures.erase(id);
             return true;
         }else
         {
@@ -103,10 +109,10 @@ namespace Dx11Sandbox
         }
     }
 
-    Texture* TextureManager::getTexture(const string& texname)
+    Texture* TextureManager::getTexture(ResourceID id)
     {
-        if(m_loadedTextures.find(texname)!=m_loadedTextures.end())
-            return m_loadedTextures.at(texname);
+        if(m_loadedTextures.find(id)!=m_loadedTextures.end())
+            return m_loadedTextures.at(id);
         else
             return 0;
     }

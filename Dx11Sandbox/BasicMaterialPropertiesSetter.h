@@ -7,7 +7,7 @@
 namespace Dx11Sandbox
 {
 	class Light;
-	class RenderCamera;
+	class Camera;
 
 	class BasicMaterialPropertiesSetter : public MaterialPropertiesSetter
 	{
@@ -15,7 +15,7 @@ namespace Dx11Sandbox
 		BasicMaterialPropertiesSetter();
 		virtual ~BasicMaterialPropertiesSetter(void);
 
-		virtual void setCurrentCamera(RenderCamera* cam);
+		virtual void setCurrentCamera(Camera* cam);
 		virtual void setLights(std::vector<Light*>* lights);
 
 		virtual void setShaderProperties(Material* mat);
@@ -25,7 +25,7 @@ namespace Dx11Sandbox
 
 		Light& getLight();
 
-		RenderCamera* m_cam;
+		Camera* m_cam;
 		Material* m_previousMaterial;
 		std::vector<Light*>* m_lights;
 	};

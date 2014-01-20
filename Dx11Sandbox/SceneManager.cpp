@@ -103,7 +103,7 @@ namespace Dx11Sandbox
 
 	void SceneManager::drawDebug()
 	{
-		std::for_each(m_debugDrawList.begin(), m_debugDrawList.end(), [this](DebugDrawer* d) {d->Draw(&m_renderContext);});
+		std::for_each(m_debugDrawList.begin(), m_debugDrawList.end(), [this](DebugDrawer* d) {d->draw(&m_renderContext);});
 	}
 
 	RenderCamera* SceneManager::getMainCamera()
@@ -154,7 +154,7 @@ namespace Dx11Sandbox
          // Setup the camera's projection parameters
         float aspectRatio = pBackBufferSurfaceDesc->Width / ( FLOAT )pBackBufferSurfaceDesc->Height;
 
-        m_mainCamera->setProjection(D3DX_PI / 4, aspectRatio, 0.1f, 800.0f);
+        m_mainCamera->setProjectionPerspective(D3DX_PI / 4, aspectRatio, 0.1f, 800.0f);
 
 		EnvironmentInfo::m_screenWidth = pBackBufferSurfaceDesc->Width;
         EnvironmentInfo::m_screenHeight = pBackBufferSurfaceDesc->Height;
@@ -248,7 +248,9 @@ namespace Dx11Sandbox
 				
 		}
 
-
+#if defined( DEBUG ) || defined( _DEBUG )
+		drawDebug();
+#endif
     }
 
 

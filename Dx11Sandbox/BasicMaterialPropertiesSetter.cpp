@@ -18,7 +18,7 @@ namespace Dx11Sandbox
 	{
 	}
 
-	void BasicMaterialPropertiesSetter::setCurrentCamera(RenderCamera* cam)
+	void BasicMaterialPropertiesSetter::setCurrentCamera(Camera* cam)
 	{
 		m_cam = cam;
 		m_previousMaterial = 0;

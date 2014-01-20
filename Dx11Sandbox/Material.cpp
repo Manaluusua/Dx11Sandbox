@@ -17,6 +17,23 @@ namespace Dx11Sandbox
     }
 
 
+	Material::Material(const Material& other)
+		:m_effect(other.m_effect),
+		m_layout(other.m_layout),
+		m_textureRefs(other.m_textureRefs)
+	{
+	}
+	
+	Material& Material::operator=(const Material& other)
+	{
+		if(&other == this) return *this;
+		m_effect = other.m_effect;
+		m_layout = other.m_layout;
+		m_textureRefs = other.m_textureRefs;
+		
+		return *this;
+	}
+
     bool Material::loadAndInitializeMaterial(const string& effectName, ID3D11Device* pd3dDevice, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type)
     {
         bool succesfull = true;
@@ -56,6 +73,7 @@ namespace Dx11Sandbox
                 succesfull = false;
             }
 			m_effect = effect;
+			effect->Release();
 
             SAFE_RELEASE( effectBuffer );
         }
@@ -75,7 +93,7 @@ namespace Dx11Sandbox
             showErrorDialog("Failed to create input layout");
 
 		m_layout = layout;
-
+		layout->Release();
 
         return succesfull;
     }
@@ -87,9 +105,9 @@ namespace Dx11Sandbox
         
     }
 
-    void Material::setTexture(const string shaderVariable, const string textureName)
+    void Material::setTexture(const string& shaderVariable, ResourceID textureID)
     {
-        m_textureRefs[shaderVariable] = textureName;
+        m_textureRefs[shaderVariable] = textureID;
     }
 
     bool Material::bind(RenderContext* context)
@@ -115,7 +133,7 @@ namespace Dx11Sandbox
         context->getImmediateContext()->IASetInputLayout( m_layout );
 
   
-        for(std::map<string, string>::iterator iter = m_textureRefs.begin(); iter!=m_textureRefs.end(); ++iter)
+        for(std::map<string, ResourceID>::iterator iter = m_textureRefs.begin(); iter!=m_textureRefs.end(); ++iter)
         {
            
             ID3DX11EffectVariable* var = m_effect->GetVariableByName(iter->first.c_str());

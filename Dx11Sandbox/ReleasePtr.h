@@ -3,7 +3,7 @@
 
 namespace Dx11Sandbox
 {
-    /* this ptr will only release resources, not increment the ref, used usually for automatic release of some DXResources. */
+    
     template< class T >
     class ReleasePtr
     {
@@ -11,7 +11,7 @@ namespace Dx11Sandbox
 
         ReleasePtr();
 
-        ReleasePtr( T* raw  );
+        ReleasePtr( T* raw, bool increaseRef = true  );
         
         ReleasePtr( const ReleasePtr<T>& other );
 
@@ -30,38 +30,43 @@ namespace Dx11Sandbox
         ~ReleasePtr();
 
     private:
-        mutable bool m_release;
+
         T* m_rawPtr;
     };
 
 
     template< class T >
     inline ReleasePtr<T>::ReleasePtr()
-        :m_release( true ),
-        m_rawPtr( 0 )
+        :m_rawPtr( 0 )
     {
 
     }
 
     template< class T >
-    inline ReleasePtr<T>::ReleasePtr( T* raw  )
-        :m_release( true ),
-        m_rawPtr( raw )
+    inline ReleasePtr<T>::ReleasePtr( T* raw , bool increaseRef )
+        :m_rawPtr( raw )
     {
+		if(m_rawPtr && increaseRef)
+		{
+			m_rawPtr->AddRef();
+		}
+		
     }
 
     template< class T >
     inline ReleasePtr<T>::ReleasePtr( const ReleasePtr<T>& other )
-        :m_release( true ),
-        m_rawPtr( other.m_rawPtr )
+        :m_rawPtr( other.m_rawPtr )
     {
-        other.m_release = false;
+        if(m_rawPtr)
+		{
+			m_rawPtr->AddRef();
+		}
     }
 
     template< class T >
     inline ReleasePtr<T>::~ReleasePtr()
     {
-        if(m_rawPtr && m_release)
+        if(m_rawPtr)
         {
             m_rawPtr->Release();
         }
@@ -72,14 +77,16 @@ namespace Dx11Sandbox
     {
         if( m_rawPtr != other.m_rawPtr )
         {
-            if( m_rawPtr && m_release )
+            if( m_rawPtr)
             {
                 m_rawPtr->Release();
             }
             m_rawPtr = other.m_rawPtr;
-            m_release = true;
             
-            other.m_release = false;
+			if(m_rawPtr)
+			{
+				m_rawPtr->AddRef();
+			}
         }
 
         return *this;

@@ -27,8 +27,9 @@ namespace Dx11Sandbox
     Compositor::~Compositor()
     {
         TextureManager *mngr = TextureManager::singleton();
-        mngr->releaseTexture("CompositorTex1");
-        mngr->releaseTexture("CompositorTex2");
+		if(!m_initialized) return;
+		mngr->releaseTexture(m_textures[0]->getName());
+        mngr->releaseTexture(m_textures[1]->getName());
     }
 
     void Compositor::renderFullscreenQuad(Effect* effect)

@@ -4,7 +4,7 @@
 #include <memory>
 namespace Dx11Sandbox
 {
-    Texture::Texture(const string texname)
+    Texture::Texture(ResourceID texname)
         :m_name(texname),
         m_shaderView(0),
         m_rtView(0),
@@ -29,7 +29,7 @@ namespace Dx11Sandbox
 		SAFE_RELEASE(m_dsView);
     }
 
-    Texture* Texture::CreateTexture2D(ID3D11Device* device, const string& texname, UINT texWidth, UINT texHeight,
+    Texture* Texture::CreateTexture2D(ID3D11Device* device, ResourceID texname, UINT texWidth, UINT texHeight,
         UINT arraySize, UINT bindFlags, DXGI_FORMAT format, UINT cpuAccess, D3D11_USAGE usage)
     {
         Texture* tex = new Texture(texname);
@@ -101,7 +101,7 @@ namespace Dx11Sandbox
         return tex;
         
     }
-    Texture* Texture::CreateTextureFromFile(ID3D11Device* device,const string& filename, const string& texname,
+    Texture* Texture::CreateTextureFromFile(ID3D11Device* device,const string& filename, ResourceID texname,
         UINT cpuAccess, D3D11_USAGE usage, UINT filter)
     {
         Texture* tex = new Texture(texname);
@@ -171,6 +171,10 @@ namespace Dx11Sandbox
         return tex;
     }
 
+	ResourceID Texture::getName() const
+	{
+		return m_name;
+	}
 
 	ID3D11ShaderResourceView* Texture::GetShaderResourceView() 
 	{ 

@@ -1,6 +1,7 @@
 #include "CommonUtilities.h"
 #include "DXUT.h"
 #include <sstream>
+#include <functional>
 #include <cstdlib>
 namespace Dx11Sandbox
 {
@@ -64,6 +65,13 @@ namespace Dx11Sandbox
        ++i;
        return i;
     }
+
+	ResourceID stringToID(const string& id)
+	{
+		return id;
+		//return std::hash<std::string>()(id);
+	}
+
     string numberToString(int number)
     {
         std::ostringstream stream;

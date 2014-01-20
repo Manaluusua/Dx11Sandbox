@@ -23,6 +23,7 @@ namespace Dx11Sandbox
         Mesh* createMesh(const string& meshname);
         void destroyMesh(const string& meshname);
         Mesh* getOrCreateMesh(const string& meshname);
+		Mesh* createMeshUnmanaged();
         ~MeshManager();
     private:
         MeshManager();

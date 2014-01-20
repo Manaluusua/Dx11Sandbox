@@ -47,6 +47,8 @@ namespace Dx11Sandbox
     void showErrorDialog(const WCHAR* msg);
     void showErrorDialog(const char* msg);
 
+	ResourceID stringToID(const string& id);
+
     GIDTYPE generateID();
 
     string numberToString(int number);
