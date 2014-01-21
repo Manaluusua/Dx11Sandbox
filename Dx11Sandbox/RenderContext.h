@@ -36,13 +36,17 @@ namespace Dx11Sandbox
         void bindMesh(Mesh* mesh);
         void bindMaterial(Material* mat);
 
+		
 
         void setCustomClipPlane(D3DXVECTOR4& plane){m_customClipPlane = plane;}
         const D3DXVECTOR4& getCustomClipPlane(){return m_customClipPlane;}
 
-        void pushRenderTargets(UINT num, ID3D11RenderTargetView *const *renderTargetViews, ID3D11DepthStencilView *depthStencilView);
+		void pushRenderTargets(UINT num, ID3D11RenderTargetView *const *renderTargetViews, ID3D11DepthStencilView *depthStencilView);
 		void popRenderTargets();
         
+		void setDefaultViewport(D3D11_VIEWPORT* viewport);
+		void pushViewports(UINT viewportCount, D3D11_VIEWPORT* viewports);
+		void popViewports();
 
         void clearState();
         
@@ -58,10 +62,19 @@ namespace Dx11Sandbox
 			ID3D11DepthStencilView* depthStencil;
 		};
 
-		void bindCurrentState();
+		struct ViewportState{
+			D3D11_VIEWPORT* viewports;
+			UINT viewportCount;
+		};
+
+		void bindCurrentRenderTargetState();
+		void bindCurrentViewports();
         D3DXVECTOR4 m_customClipPlane;
 
 		std::vector<RenderTargetsState> m_boundStates;
+		std::vector<ViewportState> m_viewPortStates;
+		
+		D3D11_VIEWPORT m_defaultViewport;
 
         Mesh* m_boundMesh;
         Material *m_boundMaterial;

@@ -156,6 +156,17 @@ namespace Dx11Sandbox
 
         m_mainCamera->setProjectionPerspective(D3DX_PI / 4, aspectRatio, 0.1f, 800.0f);
 
+		//setup new viewport
+		D3D11_VIEWPORT vp;
+		vp.MinDepth = 0.f;
+		vp.MaxDepth = 1.f;
+		vp.Width = pBackBufferSurfaceDesc->Width;
+		vp.Height = pBackBufferSurfaceDesc->Height;
+		vp.TopLeftX = 0;
+		vp.TopLeftY = 0;
+
+		m_renderContext.setDefaultViewport(&vp);
+
 		EnvironmentInfo::m_screenWidth = pBackBufferSurfaceDesc->Width;
         EnvironmentInfo::m_screenHeight = pBackBufferSurfaceDesc->Height;
         

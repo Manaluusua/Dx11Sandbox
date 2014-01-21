@@ -40,6 +40,9 @@ public:
 	virtual void cameraPreCull(Dx11Sandbox::RenderCamera& camera);
 	virtual void cameraEndedRendering(Dx11Sandbox::RenderCamera& camera, Dx11Sandbox::RenderBin& renderbin, Dx11Sandbox::RenderContext* state);
 
+	Dx11Sandbox::Texture* getReflectionTexture();
+	Dx11Sandbox::Texture* getRefractionTexture();
+
 private:
     void setupWaves();
 
@@ -62,6 +65,8 @@ private:
     Dx11Sandbox::Texture* m_refraction;
 	Dx11Sandbox::Texture* m_depthStencil;
     Dx11Sandbox::Texture* m_normalMap;
+
+	D3D11_VIEWPORT waterplaneViewport;
 
 	Dx11Sandbox::SceneManager* m_mngr;
 

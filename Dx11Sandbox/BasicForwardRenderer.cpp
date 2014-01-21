@@ -45,7 +45,7 @@ namespace Dx11Sandbox
 
         for( unsigned int i = 0; i < objectCount; ++i )
         {
-			RenderData* object = *objects;
+			RenderData* object = objects[i];
 
 			Mesh* mesh = object->getMesh();
 			Material* mat = object->getMaterial();

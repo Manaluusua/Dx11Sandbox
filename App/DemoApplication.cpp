@@ -143,8 +143,9 @@ void DemoApplication::createWorld(SceneManager* mngr)
     
 	m_debugDrawerTexture = new DebugDrawTextureToScreen(device, 100.f, 100.f);
 	m_mngr->addDebugDrawer(m_debugDrawerTexture);
-	m_debugDrawerTexture->addDebugTexture(tex, 0.f, -40.f, 20.f, 20.f);
-   
+	m_debugDrawerTexture->addDebugTexture(m_waterPlane->getRefractionTexture(), -15.f, -40.f, 20.f, 20.f);
+	m_debugDrawerTexture->addDebugTexture(m_waterPlane->getReflectionTexture(), 15.f, -40.f, 20.f, 20.f);
+
 	sun = m_mngr->createLight();
 	sun->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
 	sun->setColor(D3DXVECTOR4(1.0f,1.f,1.f,0));

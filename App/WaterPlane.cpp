@@ -92,6 +92,13 @@ void WaterPlane::initializeRenderTargets(ID3D11Device *device, Dx11Sandbox::RCOb
 	int texWidth = resolution;
 	int texHeight = ( 1.f / Dx11Sandbox::EnvironmentInfo::getScreenAspectRatio() ) * texWidth;
 
+	waterplaneViewport.MaxDepth = 1.f;
+	waterplaneViewport.MinDepth = 0.f;
+	waterplaneViewport.Height = texHeight;
+	waterplaneViewport.Width = texWidth;
+	waterplaneViewport.TopLeftY = 0;
+	waterplaneViewport.TopLeftX = 0;
+
 
 	Dx11Sandbox::string reflTexName = "waterReflection";
 	reflTexName += name;
@@ -185,6 +192,17 @@ void WaterPlane::update(double fTime, float fElapsedTime)
 
 }
 
+
+Dx11Sandbox::Texture* WaterPlane::getReflectionTexture()
+{
+	return m_reflection;
+}
+
+Dx11Sandbox::Texture* WaterPlane::getRefractionTexture()
+{
+	return m_refraction;
+}
+
 void WaterPlane::setupReflectionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sandbox::RenderContext* state)
 {
 	state->clearState();
@@ -208,6 +226,7 @@ void WaterPlane::setupReflectionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sa
     
     ID3D11RasterizerState *originalRS, *newRS;
     
+	state->pushViewports(1, &waterplaneViewport);
 
     D3D11_RASTERIZER_DESC rdesc;
     ID3D11DeviceContext* ic = state->getImmediateContext();
@@ -251,6 +270,7 @@ void WaterPlane::cleanupReflectionCamera(Dx11Sandbox::RenderCamera& camera, Dx11
 
     Dx11Sandbox::ReleasePtr<ID3D11RasterizerState> original( originalRS, false), ccw( newRS, false );
     ic->RSSetState(ccw);
+	state->popViewports();
 }
 
 
@@ -266,7 +286,7 @@ void WaterPlane::setupRefractionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sa
 
     
 
-
+	state->pushViewports(1, &waterplaneViewport);
     //reflection
     ID3D11RenderTargetView * views[1];
     views[0] = m_refraction->GetRenderTargetView();
@@ -290,5 +310,5 @@ void WaterPlane::cleanupRefractionCamera(Dx11Sandbox::RenderCamera& camera, Dx11
 {
 	//cleanup
 	state->popRenderTargets();
-
+	state->popViewports();
 }

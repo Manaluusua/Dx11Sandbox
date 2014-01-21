@@ -2,6 +2,7 @@
 //
 #include "Mesh.h"
 #include "Material.h"
+#include "EnvironmentInfo.h"
 
 namespace Dx11Sandbox
 {
@@ -12,6 +13,7 @@ namespace Dx11Sandbox
         m_customClipPlane(0,0,0,0)
 
     {
+		memset(&m_defaultViewport, 0, sizeof(D3D11_VIEWPORT));
     }
 
 
@@ -50,6 +52,7 @@ namespace Dx11Sandbox
 
 		currentState.numberOfBoundTargets = num;
 		currentState.depthStencil = depthStencilView;
+	
 
 		for(int i = 0; i < num; ++i)
 		{
@@ -58,27 +61,70 @@ namespace Dx11Sandbox
 		
 		m_boundStates.push_back(currentState);
 
-        bindCurrentState();
+        bindCurrentRenderTargetState();
     }
 
 	void RenderContext::popRenderTargets()
 	{
 		m_boundStates.pop_back();
-		bindCurrentState();
+		bindCurrentRenderTargetState();
 	}
 
-    void RenderContext::bindCurrentState()
+	void RenderContext::pushViewports(UINT viewportCount, D3D11_VIEWPORT* viewports)
 	{
+		ViewportState state;
+
+		state.viewports = viewports;
+		state.viewportCount = viewportCount;
+		m_viewPortStates.push_back(state);
+		bindCurrentViewports();
+	}
+	void RenderContext::popViewports()
+	{
+		if(m_viewPortStates.size() == 0) return;
+		m_viewPortStates.pop_back();
+		bindCurrentViewports();
+	}
+
+	void RenderContext::bindCurrentViewports()
+	{
+		if(m_viewPortStates.size() == 0u)
+		{
+			
+			m_imContext->RSSetViewports(1, &m_defaultViewport);
+		}else{
+			ViewportState& vpDef =  m_viewPortStates.back();
+			m_imContext->RSSetViewports(vpDef.viewportCount, vpDef.viewports);
+
+		}	
+	}
+
+	void RenderContext::setDefaultViewport(D3D11_VIEWPORT* viewport)
+	{
+		m_defaultViewport.Height = viewport->Height;
+		m_defaultViewport.MaxDepth = viewport->MaxDepth;
+		m_defaultViewport.MinDepth = viewport->MinDepth;
+		m_defaultViewport.TopLeftX = viewport->TopLeftX;
+		m_defaultViewport.TopLeftY = viewport->TopLeftY;
+		m_defaultViewport.Width = viewport->Width;
+	}
+
+    void RenderContext::bindCurrentRenderTargetState()
+	{
+		
 		if(m_boundStates.size() == 0u)
 		{
 			ID3D11RenderTargetView * backBuffer[1];
 			backBuffer[0] = DXUTGetD3D11RenderTargetView();
+			
 			m_imContext->OMSetRenderTargets(1, backBuffer, DXUTGetD3D11DepthStencilView());
+
+
 		}else{
 			const RenderTargetsState& currentState = m_boundStates.back();
 			m_imContext->OMSetRenderTargets(currentState.numberOfBoundTargets, currentState.renderTargets, currentState.depthStencil);
-		}
 
+		}
 		
 	}
 

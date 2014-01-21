@@ -34,10 +34,12 @@ namespace Dx11Sandbox
 
 	void Camera::copyCameraViewAndProjectionParameters(const Camera& other)
 	{
+		m_up = other.m_up;
 		setTranslation(other.m_translation);
 		setOrientation(other.m_orientation);
 		m_fovy = other.m_fovy;
 		m_aspectRatio = other.m_aspectRatio;
+		m_orthoSize = other.m_orthoSize;
 		m_near = other.m_near;
 		m_far = other.m_far;
 		m_projectionCacheValid = false;
