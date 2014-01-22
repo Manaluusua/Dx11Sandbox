@@ -38,11 +38,17 @@ namespace Dx11Sandbox
 
         Texture* getTexture(ResourceID id);
         bool releaseTexture(ResourceID id);
+
+		void setAssetPath(const string& path);
+	
+
     private:
 
 
         DISABLE_COPY(TextureManager)
         TextureManager();
+
+		string m_assetPath;
 
         std::map<ResourceID, Texture*> m_loadedTextures;
     };

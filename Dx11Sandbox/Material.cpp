@@ -154,12 +154,10 @@ namespace Dx11Sandbox
 
 
     //Copied from the directX SDK examples
-    HRESULT Material::CompileShaderFromFile( WCHAR* szFileName, DWORD flags, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut )
+    HRESULT Material::CompileShaderFromFile( WCHAR* pathToShader, DWORD flags, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut )
     {
         HRESULT hr = S_OK;
 
-        // find the file
-        WCHAR str[MAX_PATH];
         WCHAR workingPath[MAX_PATH], filePath[MAX_PATH];
         WCHAR *strLastSlash = NULL;
         bool  resetCurrentDir = false;
@@ -172,11 +170,9 @@ namespace Dx11Sandbox
           return E_FAIL;
         }
 
-        // Check we can find the file first
-        V_RETURN( DXUTFindDXSDKMediaFileCch( str, MAX_PATH, szFileName ) );
 
         // Check if the file is in the current working directory
-        wcscpy_s( filePath, MAX_PATH, str );
+        wcscpy_s( filePath, MAX_PATH, pathToShader );
 
         strLastSlash = wcsrchr( filePath, TEXT( '\\' ) );
         if( strLastSlash )
@@ -189,7 +185,7 @@ namespace Dx11Sandbox
         }
 
         // open the file
-        HANDLE hFile = CreateFile( str, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
+        HANDLE hFile = CreateFile( pathToShader, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
                                    FILE_FLAG_SEQUENTIAL_SCAN, NULL );
         if( INVALID_HANDLE_VALUE == hFile )
             return E_FAIL;

@@ -28,7 +28,9 @@ namespace Dx11Sandbox
 
         Material* mat = new Material();
 
-        if(mat->loadAndInitializeMaterial(filename,device,type))
+		string path = m_assetPath + filename;
+
+        if(mat->loadAndInitializeMaterial(path,device,type))
         {
             m_loadedMaterials[matname] = mat;
             return true;
@@ -39,6 +41,10 @@ namespace Dx11Sandbox
         }
     }
 
+	void MaterialManager::setAssetPath(const string& path)
+	{
+		m_assetPath = path;
+	}
 
     Material* MaterialManager::getOrCreateMaterial(ID3D11Device* device, const string& filename,const string& matname, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type)
     {

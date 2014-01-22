@@ -57,7 +57,9 @@ namespace Dx11Sandbox
 			return 0;
         }
 
-        Texture* tex = Texture::CreateTextureFromFile(device, filename,id,cpuAccess, usage, filter);
+		string fullPath = m_assetPath + filename;
+
+        Texture* tex = Texture::CreateTextureFromFile(device, fullPath,id,cpuAccess, usage, filter);
         if(tex)
         {
 
@@ -89,11 +91,15 @@ namespace Dx11Sandbox
 		Texture* tex = getTexture(id);
 		if(!tex)
 		{
+			
             tex = createTexture(device,filename, texname, cpuAccess,usage, filter);
         }
         return tex;
     }
-
+	void TextureManager::setAssetPath(const string& path)
+	{
+		m_assetPath = path;
+	}
 
     bool TextureManager::releaseTexture(ResourceID id)
     {

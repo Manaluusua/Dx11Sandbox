@@ -19,7 +19,7 @@ namespace Dx11Sandbox
 
         virtual ~MaterialManager();
 
-  
+		void setAssetPath(const string& path);
 
         Material* getMaterial(const string& matname);
         bool releaseMaterial(const string& matname);
@@ -32,6 +32,7 @@ namespace Dx11Sandbox
         MaterialManager();
         DISABLE_COPY(MaterialManager)
 
+		string m_assetPath;
         std::map<string, RCObjectPtr<Material> > m_loadedMaterials;
     };
 }

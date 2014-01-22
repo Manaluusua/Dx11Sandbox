@@ -101,7 +101,7 @@ namespace Dx11Sandbox
         return tex;
         
     }
-    Texture* Texture::CreateTextureFromFile(ID3D11Device* device,const string& filename, ResourceID texname,
+    Texture* Texture::CreateTextureFromFile(ID3D11Device* device,const string& filepath, ResourceID texname,
         UINT cpuAccess, D3D11_USAGE usage, UINT filter)
     {
         Texture* tex = new Texture(texname);
@@ -113,31 +113,26 @@ namespace Dx11Sandbox
         tex->m_usage = usage;
 
 
-		std::unique_ptr<WCHAR> fileNameWide( MultibyteStringToWide(filename) );
+		std::unique_ptr<WCHAR> filePathWide( MultibyteStringToWide(filepath) );
 
-        WCHAR wstr[MAX_PATH];
-
-        if FAILED( DXUTFindDXSDKMediaFileCch( wstr, MAX_PATH, fileNameWide.get()))
-        {
-            showErrorDialog("Tex not found!");
-            return 0;
-        }
 
         if(usage!=D3D11_USAGE_STAGING)
         {
 
-            if ( FAILED( D3DX11CreateShaderResourceViewFromFile(  device, wstr, &info, NULL, &tex->m_shaderView, NULL ) ) )
+			if ( FAILED( D3DX11CreateShaderResourceViewFromFile(  device, filePathWide.get(), &info, NULL, &tex->m_shaderView, NULL ) ) )
             {
-                showErrorDialog("Failed to create resource view!");
+				std::string err = std::string("Failed to create resource: ") + filepath;
+				showErrorDialog(err.c_str());
                 return 0;
             }
             tex->m_shaderView->GetResource(&tex->m_texture);
         }else
         {
             info.BindFlags = 0;
-            if(FAILED(D3DX11CreateTextureFromFile(device, wstr, &info, 0,&tex->m_texture, 0)))
+            if(FAILED(D3DX11CreateTextureFromFile(device, filePathWide.get(), &info, 0,&tex->m_texture, 0)))
             {
-                showErrorDialog("Failed to create resource texture!");
+                std::string err = std::string("Failed to create resource from file: ") + filepath;
+				showErrorDialog(err.c_str());
                 return 0;
             }
         }

@@ -28,7 +28,8 @@ namespace Dx11Sandbox
 		EnvironmentInfo::m_accumulatedTime = 0;
 		EnvironmentInfo::m_deltaTime = 0;
 
-
+		TextureManager::singleton()->setAssetPath(root->GetMediaPath());
+		MaterialManager::singleton()->setAssetPath(root->GetMediaPath());
 
 		m_defaultRenderer = new BasicForwardRenderer();
 		m_mainCamera = createCamera();
@@ -40,6 +41,7 @@ namespace Dx11Sandbox
     SceneManager* SceneManager::createSceneManager(Root* root)
     {
         SceneManager* mngr = new SceneManager(root);
+
 
         return mngr;
     }
