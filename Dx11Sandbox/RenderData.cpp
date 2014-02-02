@@ -9,12 +9,26 @@ namespace Dx11Sandbox
 		:m_mesh(0),
 		m_material(0)
 	{
+		D3DXMatrixIdentity(&m_worldMatrix);
 	}
 
 
 	RenderData::~RenderData(void)
 	{
 	}
+
+
+	void RenderData::setWorldMatrix(const D3DXMATRIX& matrix)
+	{
+		m_worldMatrix = matrix;
+	}
+
+	const D3DXMATRIX& RenderData::getWorldMatrix() const
+	{
+		return m_worldMatrix;
+	}
+
+
 	void RenderData::setMesh(Mesh* m)
 	{
 		m_mesh = m;

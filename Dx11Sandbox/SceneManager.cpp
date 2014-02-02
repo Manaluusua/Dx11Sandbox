@@ -156,7 +156,7 @@ namespace Dx11Sandbox
          // Setup the camera's projection parameters
         float aspectRatio = pBackBufferSurfaceDesc->Width / ( FLOAT )pBackBufferSurfaceDesc->Height;
 
-        m_mainCamera->setProjectionPerspective(D3DX_PI / 4, aspectRatio, 0.1f, 800.0f);
+        m_mainCamera->setProjectionPerspective(D3DX_PI / 3, aspectRatio, 0.1f, 800.0f);
 
 		//setup new viewport
 		D3D11_VIEWPORT vp;
@@ -295,12 +295,11 @@ namespace Dx11Sandbox
 		RenderLayer camMask = cam->getRenderMask();
 		
 		
-
+		//cull all relevant pools
 		for(auto iter = pools.begin(); iter != pools.end(); ++iter)
 		{
 			if(!(iter->first & camMask)) continue;
 
-			m_cachedVisibleList.clear();
 			CullDataAllocator* cullDataPool = iter->second;
 
 			for( unsigned int i=0;i<cullDataPool->getNumberOfDynamicPoolVectors();++i)
@@ -310,9 +309,17 @@ namespace Dx11Sandbox
 				m_culler->cull(frust,objects,m_cachedVisibleList);
 			}
 
-			m_RenderBin.appendPrimitives( m_cachedVisibleList );
-		
 			
+
 		}
+
+
+		//construct renderbin
+		for( UINT i = 0; i < m_cachedVisibleList.size(); ++i)
+		{
+			m_cachedVisibleList[i]->passedCulling(&m_RenderBin);
+		}
+		
+		m_cachedVisibleList.clear();
 	}
 }

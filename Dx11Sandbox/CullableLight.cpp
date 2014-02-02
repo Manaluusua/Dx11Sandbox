@@ -1,7 +1,7 @@
 #include "CullableLight.h"
 
 #include "CullableObjectManager.h"
-
+#include "RenderPrimitiveGatherer.h"
 #include <climits>
 
 namespace Dx11Sandbox
@@ -20,9 +20,10 @@ namespace Dx11Sandbox
 		setVisible(false);
 	}
 
-	CullableType CullableLight::GetCullableType() const
+
+	void CullableLight::passedCulling(RenderPrimitiveGatherer *gatherer)
 	{
-		return CULLABLE_LIGHT;
+		gatherer->addLight(this);
 	}
 
 	void CullableLight::setVisible(bool value)

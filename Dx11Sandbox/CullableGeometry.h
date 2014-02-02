@@ -24,13 +24,14 @@ namespace Dx11Sandbox
 
 	public:
 
+		virtual void setWorldMatrix(const D3DXMATRIX& matrix);
+
 		void setBoundingSphere(const D3DXVECTOR4& bounds); 
         virtual void setRenderMask(RenderLayer mask);
 
 		void setVisible(bool value);
 
-		virtual CullableType GetCullableType() const;
-
+		virtual void passedCulling(RenderPrimitiveGatherer *gatherer);
 		
 
 		void destroy();

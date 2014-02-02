@@ -21,7 +21,6 @@ namespace Dx11Sandbox
 	{
 	}
 
-
 	
 
 	void Light::setColor( const D3DXVECTOR4& color )

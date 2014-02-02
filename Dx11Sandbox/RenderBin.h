@@ -1,6 +1,7 @@
-#ifndef DX11SANDBOX_RenderBin_H
-#define DX11SANDBOX_RenderBin_H
+#ifndef DX11SANDBOX_RENDERBIN_H
+#define DX11SANDBOX_RENDERBIN_H
 
+#include "RenderPrimitiveGatherer.h"
 #include "CommonUtilities.h"
 #include "GeometryBinHandler.h"
 #include "RCObjectPtr.h"
@@ -20,14 +21,15 @@ namespace Dx11Sandbox
 	class RenderData;
 	class CullableGeometry;
 	class Cullable;
-    class RenderBin
+    class RenderBin : public RenderPrimitiveGatherer
     {
     public:
 
         RenderBin(GeometryBinHandler* defaultGeometryBinHandler = 0);
         ~RenderBin();
 		
-		void appendPrimitives(std::vector<Cullable*> &primitives);
+		virtual void addGeometry(Geometry* geom);
+		virtual void addLight(Light* light);
         void clearBins();
 
         void setDefaultGeometryBinHandler( RCObjectPtr<GeometryBinHandler> GeometryBinHandler ); 

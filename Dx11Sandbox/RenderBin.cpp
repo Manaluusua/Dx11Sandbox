@@ -33,26 +33,18 @@ namespace Dx11Sandbox
             m_geometryBinHandlers[id] = handler;
         }
     }
-    void RenderBin::appendPrimitives(std::vector<Cullable*> &primitives)
-    {
-        for( unsigned int i = 0; i < primitives.size(); ++i )
-        {
-			Cullable* cullable = primitives[i];
+   
 
-			if(cullable->GetCullableType() == CULLABLE_GEOMETRY)
-			{
-				CullableGeometry* obj = static_cast<CullableGeometry*>(cullable);
-				RenderQueueID id = obj->getRenderQueue();
-				m_geometryBins[id].push_back( obj );
-			} else if(cullable->GetCullableType() == CULLABLE_LIGHT)
-			{
-				CullableLight* light = static_cast<CullableLight*>(cullable);
-				m_lights.push_back(light);
-			}
+	void RenderBin::addGeometry(Geometry* geom)
+	{
+		RenderQueueID id = geom->getRenderQueue();
+		m_geometryBins[id].push_back( geom );
+	}
 
-		}
-
-    }
+	void RenderBin::addLight(Light* light)
+	{
+		m_lights.push_back(light);
+	}
 
 	std::vector<Light*>& RenderBin::getLights()
 	{

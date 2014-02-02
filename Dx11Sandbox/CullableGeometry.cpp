@@ -1,4 +1,5 @@
 #include "CullableGeometry.h"
+#include "RenderPrimitiveGatherer.h"
 #include "CullData.h"
 #include "CullableObjectManager.h"
 
@@ -21,9 +22,11 @@ namespace Dx11Sandbox
 		setVisible(false);
 	}
 
-	CullableType CullableGeometry::GetCullableType() const
+
+
+	void CullableGeometry::passedCulling(RenderPrimitiveGatherer *gatherer)
 	{
-		return CULLABLE_GEOMETRY;
+		gatherer->addGeometry(this);
 	}
 
 	void CullableGeometry::setVisible(bool value){
@@ -33,6 +36,14 @@ namespace Dx11Sandbox
 		}else{
 			returnCullData();
 		}
+	}
+
+	void CullableGeometry::setWorldMatrix(const D3DXMATRIX& matrix)
+	{
+		RenderData::setWorldMatrix(matrix);
+
+		updateCullData();
+
 	}
 
 	void CullableGeometry::acquireCullData()

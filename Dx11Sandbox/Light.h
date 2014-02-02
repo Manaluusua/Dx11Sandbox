@@ -20,6 +20,8 @@ namespace Dx11Sandbox
 		Light(LightType type, const D3DXVECTOR4& color,const D3DXVECTOR4& params );
 		virtual ~Light(void);
 
+		
+
 		void setColor( const D3DXVECTOR4& color );
 		const D3DXVECTOR4& getColor() const;
 

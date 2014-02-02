@@ -21,7 +21,7 @@ namespace Dx11Sandbox
 		virtual void setLightType(LightType type);
 		virtual void setLightParameters(const D3DXVECTOR4& params); 
 
-		virtual CullableType GetCullableType() const;
+		virtual void passedCulling(RenderPrimitiveGatherer *gatherer);
 
 		void setVisible(bool value);
 

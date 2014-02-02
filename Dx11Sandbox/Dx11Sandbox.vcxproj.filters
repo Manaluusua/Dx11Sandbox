@@ -302,5 +302,8 @@
     <ClInclude Include="EnvironmentChangedListeners.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RenderPrimitiveGatherer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

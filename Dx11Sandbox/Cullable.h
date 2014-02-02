@@ -4,12 +4,8 @@
 namespace Dx11Sandbox
 {
 
-	enum CullableType
-	{
-		CULLABLE_GEOMETRY,
-		CULLABLE_LIGHT
 
-	};
+	class RenderPrimitiveGatherer;
 
 	class Cullable
 	{
@@ -18,7 +14,8 @@ namespace Dx11Sandbox
 		Cullable(void);
 		virtual ~Cullable(void);
 
-		virtual CullableType GetCullableType() const = 0;
+
+		virtual void passedCulling(RenderPrimitiveGatherer *gatherer) = 0;
 
 	};
 

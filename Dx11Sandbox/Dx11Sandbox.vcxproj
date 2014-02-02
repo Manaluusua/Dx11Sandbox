@@ -138,6 +138,7 @@
     <ClInclude Include="CommonUtilities.h" />
     <ClInclude Include="Compositor.h" />
     <ClInclude Include="Cullable.h" />
+    <ClInclude Include="RenderPrimitiveGatherer.h" />
     <ClInclude Include="Culler.h" />
     <ClInclude Include="CullDataAllocator.h" />
     <ClInclude Include="DebugDrawTextureToScreen.h" />
