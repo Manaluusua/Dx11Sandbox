@@ -18,7 +18,7 @@ namespace Dx11Sandbox
 		virtual void setCurrentCamera(Camera* cam);
 		virtual void setLights(std::vector<Light*>* lights);
 
-		virtual void setShaderProperties(Material* mat);
+		virtual void setShaderProperties(RenderData* object, Material* mat);
 
 
 	protected:

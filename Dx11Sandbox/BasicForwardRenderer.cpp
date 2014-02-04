@@ -53,7 +53,7 @@ namespace Dx11Sandbox
             if(!mesh || !mat )
                 return;
 			
-			m_materialPropertySetter.setShaderProperties(mat);
+			m_materialPropertySetter.setShaderProperties(object,mat);
 
             ID3DX11Effect* effect = mat->getEffect();
             ID3D11DeviceContext* context = m_state->getImmediateContext();

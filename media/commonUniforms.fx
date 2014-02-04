@@ -1,6 +1,6 @@
 cbuffer sceneInfo
 {
-	float4x4 viewProj;
+	float4x4 worldviewProj;
     float3	sunDirection;
 	float3	sunColor;
 	float3 camPos;

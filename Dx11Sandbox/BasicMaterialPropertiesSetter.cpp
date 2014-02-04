@@ -2,6 +2,7 @@
 #include "Material.h"
 #include "RenderCamera.h"
 #include "EnvironmentInfo.h"
+#include "RenderData.h"
 #include "Light.h"
 
 namespace Dx11Sandbox
@@ -43,7 +44,7 @@ namespace Dx11Sandbox
 
 	}
 
-	void BasicMaterialPropertiesSetter::setShaderProperties(Material* mat)
+	void BasicMaterialPropertiesSetter::setShaderProperties(RenderData* object, Material* mat)
 	{
 		if(m_previousMaterial != 0 && m_previousMaterial == mat)return;
 
@@ -53,7 +54,8 @@ namespace Dx11Sandbox
 
 		const D3DXMATRIX *view = m_cam->getViewMatrix();
 		const D3DXMATRIX *proj = m_cam->getProjectionMatrix();
-		D3DXMATRIX viewProj =  (*view) * (*proj);
+		const D3DXMATRIX& world = object->getWorldMatrix();
+		D3DXMATRIX worldviewProj =  world * (*view) * (*proj);
 
         //temp
 		Light& light = getLight();
@@ -69,8 +71,8 @@ namespace Dx11Sandbox
 		if(buffer->IsValid())
 		{
 			
-			ID3DX11EffectMatrixVariable* mat =  buffer->GetMemberByName("viewProj")->AsMatrix();
-			mat->SetMatrix((float*)&viewProj);
+			ID3DX11EffectMatrixVariable* mat =  buffer->GetMemberByName("worldviewProj")->AsMatrix();
+			mat->SetMatrix((float*)&worldviewProj);
 			buffer->GetMemberByName("sunDirection")->AsVector()->SetFloatVector((float*)&light.getLightParameters());
 			buffer->GetMemberByName("sunColor")->AsVector()->SetFloatVector((float*)&light.getColor());
 			buffer->GetMemberByName("camPos")->AsVector()->SetFloatVector((float*)&camPos);

@@ -32,7 +32,7 @@ PS_INPUT VS( VS_INPUT input )
 {
     PS_INPUT output;
     
-    output.position = mul( float4(input.position,1), viewProj );
+    output.position = mul( float4(input.position,1), worldviewProj );
 	
     output.uv = input.uv;
 

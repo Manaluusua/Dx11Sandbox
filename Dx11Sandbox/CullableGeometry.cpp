@@ -65,6 +65,10 @@ namespace Dx11Sandbox
 	void CullableGeometry::updateCullData()
 	{
 		if(m_cullingInformation == 0) return;
+
+		
+
+
 		(*m_cullingInformation)->boundingSphere = m_bounds;
 	}
 

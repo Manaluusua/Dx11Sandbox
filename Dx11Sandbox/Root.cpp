@@ -1,8 +1,7 @@
 
 #include "Root.h"
 #include "SceneManager.h"
-
-
+#include <memory>
 
 Dx11Sandbox::Root* g_root = 0;
 
@@ -290,7 +289,7 @@ namespace Dx11Sandbox
             return;
         }
         // Perform any application-level initialization here
-
+		
 		std::unique_ptr<WCHAR> windowNameWide( MultibyteStringToWide(windowName) );
 
         DXUTInit( true, true, NULL ); // Parse the command line, show msgboxes on error, no extra command line params

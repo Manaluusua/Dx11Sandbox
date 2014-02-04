@@ -115,7 +115,7 @@ PS_INPUT VS( VS_INPUT input )
 	
 	wavePosition.y += calculateHeightForPoint(wavePosition.xz,time);
 	
-    output.position = mul( float4(wavePosition,1), viewProj );
+    output.position = mul( float4(wavePosition,1), worldviewProj );
 	
 	
     output.uv = input.uv;

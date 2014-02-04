@@ -44,7 +44,7 @@ namespace Dx11Sandbox
 #if defined( DEBUG )           
                 if( ib->getFormat() != m_formatToUse )
                 {
-                    showErrorDialog( " Tried to use incorrect index format in Terrain GeometryBinHandler" );
+                    showErrorDialog( " Tried to use incorrect index format in TerrainGeometryBinHandler" );
                 }
 #endif
 
@@ -56,6 +56,7 @@ namespace Dx11Sandbox
 
     void TerrainBinHandler::reallocateIndexBuffer(RenderContext* state, unsigned int indexCount )
     {
+		
 		m_cachedRenderData.getMesh()->setIndexBuffer( new IndexBuffer( state->getDevice(), 0, m_formatToUse, indexCount, false,D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE ) );
         m_cachedShadowBuffer.resize( (m_formatToUse == DXGI_FORMAT_R16_UINT?2:4) * indexCount );
     }

@@ -4,7 +4,7 @@
 #include "TextureManager.h"
 #include "ShaderIncludeHandler.h"
 #include <iostream>
-
+#include <memory>
 
 namespace Dx11Sandbox
 {
