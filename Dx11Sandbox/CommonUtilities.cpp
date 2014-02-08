@@ -12,30 +12,30 @@ namespace Dx11Sandbox
     void showErrorDialog(const char* msg)
     {
         WCHAR wstr[MAX_ERROR_LEN];
-		MultibyteStringToWide(msg, wstr, MAX_ERROR_LEN);
+		multibyteStringToWide(msg, wstr, MAX_ERROR_LEN);
         showErrorDialog(wstr);
 
     }
 
 
-	char* WideStringToMultibyte(wstring src)
+	char* wideStringToMultibyte(wstring src)
 	{
 		int charCount = src.length() + 1;
 		char* result = new char[charCount];
 
-		WideStringToMultibyte(src.c_str(), result,charCount);
+		wideStringToMultibyte(src.c_str(), result,charCount);
 		return result;
 	}
 
-	WCHAR* MultibyteStringToWide(string src)
+	WCHAR* multibyteStringToWide(string src)
 	{
 		int charCount = src.length() + 1;
 		WCHAR* result = new WCHAR[charCount];
-		MultibyteStringToWide(src.c_str(),result, charCount);
+		multibyteStringToWide(src.c_str(),result, charCount);
 		return result;
 	}
 
-	size_t WideStringToMultibyte(const WCHAR* src, char* dest, int count, bool makeNullTerminated)
+	size_t wideStringToMultibyte(const WCHAR* src, char* dest, int count, bool makeNullTerminated)
 	{
 		int read = wcstombs(dest, src ,count);
 		if(makeNullTerminated)
@@ -46,7 +46,7 @@ namespace Dx11Sandbox
 		return read;
 	}
 
-	size_t MultibyteStringToWide(const char* src, WCHAR* dest, int count, bool makeNullTerminated)
+	size_t multibyteStringToWide(const char* src, WCHAR* dest, int count, bool makeNullTerminated)
 	{	
 		int read = mbstowcs(dest, src, count);
 
@@ -57,6 +57,26 @@ namespace Dx11Sandbox
 		}
 
 		return read;
+	}
+
+	void printDebug(const char* text){
+#if defined(DEBUG) | defined(_DEBUG)
+		OutputDebugStringA(text);
+#endif
+	}
+
+	void printDebug(const WCHAR* text){
+#if defined(DEBUG) | defined(_DEBUG)
+		OutputDebugStringW(text);
+#endif
+	}
+
+	void printDebug(string text)
+	{
+#if defined(DEBUG) | defined(_DEBUG)
+
+		OutputDebugStringA(text.c_str());
+#endif
 	}
 
     GIDTYPE generateID()

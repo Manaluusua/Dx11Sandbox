@@ -45,9 +45,11 @@ namespace Dx11Sandbox
 
 			if(objects.size() > 0)
 			{
+				count = 0;
 				queue = mapIter->first;
 				RCObjectPtr<GeometryBinHandler> handler = renderBin.getGeometryHandlerForBin(queue);
 				RenderData** renderData = handler->setupForRendering(objects.data(),objects.size(), &count, state);
+				if (renderData == 0 || count == 0) continue;
 				m_renderer->render(renderData, count);
 			}
 
@@ -64,9 +66,11 @@ namespace Dx11Sandbox
 
 			if(objects.size() > 0)
 			{
+				count = 0;
 				queue = mapIter->first;
 				RCObjectPtr<GeometryBinHandler> handler = renderBin.getGeometryHandlerForBin(queue);
 				RenderData** renderData = handler->setupForRendering(objects.data(),objects.size(), &count, state);
+				if (renderData == 0 || count == 0) continue;
 				m_renderer->render(renderData, count);
 			}
 

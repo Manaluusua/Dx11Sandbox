@@ -41,9 +41,15 @@ namespace Dx11Sandbox
         void createVertexBuffer(ID3D11Device* device,BYTE** vbuffers, UINT numVertices, 
             MeshInputLayouts::MESH_LAYOUT_TYPE type);
 
-         void createIndexBuffer(ID3D11Device* device, BYTE* ibuffer, UINT numIndices,
+        void createIndexBuffer(ID3D11Device* device, BYTE* ibuffer, UINT numIndices,
             DXGI_FORMAT indexFormat);
 
+
+		void setIndicesToDrawCount(int count);
+		void setIndicesToDrawOffest(UINT offset);
+
+		UINT getIndicesToDrawCount() const;
+		UINT getIndicesToDrawOffset() const;
 
         bool bind(RenderContext *context);
 
@@ -54,7 +60,8 @@ namespace Dx11Sandbox
         RCObjectPtr<IndexBuffer> m_indices;
         RCObjectPtr<VertexBuffer> m_vertices;
         D3D11_PRIMITIVE_TOPOLOGY m_primType;
-        
+		int m_indicesToDraw;
+		int m_indexOffset;
     };
 
 

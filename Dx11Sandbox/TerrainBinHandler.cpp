@@ -1,6 +1,6 @@
 #include "TerrainBinHandler.h"
 
-
+#include "CommonUtilities.h"
 #include "RenderContext.h"
 #include "Mesh.h"
 #include "VertexBuffer.h"
@@ -66,6 +66,7 @@ namespace Dx11Sandbox
 		 //early out
         if( objectCount == 0 )
         {
+			*objectsOutCount = 0;
             return 0;
         }
 
@@ -87,7 +88,7 @@ namespace Dx11Sandbox
         //copy indices to one buffer
         int indexOffset = 0;
         int indexSize = (m_formatToUse == DXGI_FORMAT_R16_UINT?2:4);
-        int indexesToDraw = 0;
+        int indicesToDraw = 0;
         for( unsigned int i = 0; i < objectCount; ++i )
         {
 			IndexBuffer* ib = objects[i]->getMesh()->getIndexBuffer();
@@ -95,9 +96,11 @@ namespace Dx11Sandbox
             {
                 memcpy( &m_cachedShadowBuffer[ indexOffset ], ib->getShadowBuffer(), ib->getShadowBufferSize() ); 
                 indexOffset += ib->getIndexCount() * indexSize;
-                indexesToDraw += ib->getIndexCount();
+				indicesToDraw += ib->getIndexCount();
             }
         }
+
+		m_cachedRenderData.getMesh()->setIndicesToDrawCount(indicesToDraw);
 
         //cpu -> gpu
         aggbuffer->setDataFromCPUBuffer( state->getImmediateContext(), &m_cachedShadowBuffer[0], indexOffset );

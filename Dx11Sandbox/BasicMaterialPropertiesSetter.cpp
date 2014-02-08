@@ -67,20 +67,31 @@ namespace Dx11Sandbox
 		const D3DXVECTOR4& clip = m_cam->getClipPlane();
 
 		ID3DX11Effect* effect =  mat->getEffect();
-		ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("sceneInfo");
+		ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("basicSceneInfo");
 		if(buffer->IsValid())
 		{
 			
 			ID3DX11EffectMatrixVariable* mat =  buffer->GetMemberByName("worldviewProj")->AsMatrix();
 			mat->SetMatrix((float*)&worldviewProj);
-			buffer->GetMemberByName("sunDirection")->AsVector()->SetFloatVector((float*)&light.getLightParameters());
-			buffer->GetMemberByName("sunColor")->AsVector()->SetFloatVector((float*)&light.getColor());
 			buffer->GetMemberByName("camPos")->AsVector()->SetFloatVector((float*)&camPos);
 			buffer->GetMemberByName("clipPlane")->AsVector()->SetFloatVector((float*)&clip);
 			buffer->GetMemberByName("time")->AsScalar()->SetFloat((float)EnvironmentInfo::getTime());
     
     
 		}
+
+		buffer = effect->GetConstantBufferByName("objectInfo");
+		if (buffer->IsValid())
+		{
+			buffer->GetMemberByName("sunDirection")->AsVector()->SetFloatVector((float*)&light.getLightParameters());
+			buffer->GetMemberByName("sunColor")->AsVector()->SetFloatVector((float*)&light.getColor());
+		}
+
+		
+
+		
+
+
 		m_previousMaterial = mat;
 	}
 }

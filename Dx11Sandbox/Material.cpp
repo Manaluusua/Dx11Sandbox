@@ -44,7 +44,7 @@ namespace Dx11Sandbox
 		ID3DX11Effect* effect;
         ID3D11InputLayout* layout;
 
-		std::unique_ptr<WCHAR> effectNameWide( MultibyteStringToWide(effectName) );
+		std::unique_ptr<WCHAR> effectNameWide( multibyteStringToWide(effectName) );
 
 #if defined( DEBUG ) || defined( _DEBUG )
         dwShaderFlags |= D3DCOMPILE_DEBUG;

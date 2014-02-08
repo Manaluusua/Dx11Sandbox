@@ -9,6 +9,7 @@ namespace Dx11Sandbox
         m_shaderView(0),
         m_rtView(0),
 		m_dsView(0),
+		m_uav(0),
         m_texture(0),
         m_texWidth(0),
         m_texHeight(0),
@@ -27,6 +28,7 @@ namespace Dx11Sandbox
         SAFE_RELEASE(m_shaderView);
         SAFE_RELEASE(m_rtView);
 		SAFE_RELEASE(m_dsView);
+		SAFE_RELEASE(m_uav);
     }
 
     Texture* Texture::CreateTexture2D(ID3D11Device* device, ResourceID texname, UINT texWidth, UINT texHeight,
@@ -83,7 +85,16 @@ namespace Dx11Sandbox
 
         }
 
+		if (tex->m_flags & D3D11_BIND_UNORDERED_ACCESS){
+			D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+			memset(&uavDesc, 0, sizeof(D3D11_UNORDERED_ACCESS_VIEW_DESC));
+			uavDesc.Format = desc.Format;
+			uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+			uavDesc.Texture2D.MipSlice = 0;
+			device->CreateUnorderedAccessView(tex->m_texture, &uavDesc, &tex->m_uav);
+		}
 
+		
         if(tex->m_flags & D3D11_BIND_SHADER_RESOURCE)
         {
             D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -113,7 +124,7 @@ namespace Dx11Sandbox
         tex->m_usage = usage;
 
 
-		std::unique_ptr<WCHAR> filePathWide( MultibyteStringToWide(filepath) );
+		std::unique_ptr<WCHAR> filePathWide( multibyteStringToWide(filepath) );
 
 
         if(usage!=D3D11_USAGE_STAGING)
@@ -185,7 +196,10 @@ namespace Dx11Sandbox
 	{
 		return m_dsView;
 	}
-
+	ID3D11UnorderedAccessView*  Texture::GetUnorderedAccessView()
+	{
+		return m_uav;
+	}
 
     PixelBox* Texture::readPixelBoxFromTexture(UINT arrayIndex, UINT mipSlice, UINT mips)
     {

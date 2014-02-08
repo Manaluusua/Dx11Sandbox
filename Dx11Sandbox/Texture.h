@@ -22,6 +22,7 @@ namespace Dx11Sandbox
         ID3D11ShaderResourceView* GetShaderResourceView();
         ID3D11RenderTargetView* GetRenderTargetView();
 		ID3D11DepthStencilView* GetDepthStencilView();
+		ID3D11UnorderedAccessView* GetUnorderedAccessView();
 
         PixelBox* readPixelBoxFromTexture(UINT arrayIndex=0, UINT mipSlice=0, UINT mips=1);
 
@@ -42,6 +43,7 @@ namespace Dx11Sandbox
         ID3D11ShaderResourceView* m_shaderView;
         ID3D11RenderTargetView* m_rtView;
 		ID3D11DepthStencilView* m_dsView;
+		ID3D11UnorderedAccessView* m_uav;
         ID3D11Resource *m_texture;
         DXGI_FORMAT m_format;
         UINT m_cpuAccess;

@@ -37,15 +37,21 @@ namespace Dx11Sandbox
     //
 
 
-    char* WideStringToMultibyte(const wstring src);
-	WCHAR* MultibyteStringToWide(const string src);
+    char* wideStringToMultibyte(const wstring src);
+	WCHAR* multibyteStringToWide(const string src);
 
-	size_t WideStringToMultibyte(const WCHAR* src, char* dest, int count, bool makeNullTerminated = true);
-	size_t MultibyteStringToWide(const char* src, WCHAR* dest, int count, bool makeNullTerminated = true);
+	size_t wideStringToMultibyte(const WCHAR* src, char* dest, int count, bool makeNullTerminated = true);
+	size_t multibyteStringToWide(const char* src, WCHAR* dest, int count, bool makeNullTerminated = true);
 
+
+	void printDebug(const char* text);
+	void printDebug(const WCHAR* text);
+	void printDebug(string text);
 
     void showErrorDialog(const WCHAR* msg);
     void showErrorDialog(const char* msg);
+
+	
 
 	ResourceID stringToID(const string& id);
 

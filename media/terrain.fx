@@ -51,17 +51,11 @@ PS_INPUT VS( VS_INPUT input )
     return output;
 }
 
-float4 PS( PS_INPUT input) : SV_Target
+float4 PS_Forward( PS_INPUT input) : SV_Target
 {
     
 	float4 output = float4(0,0,0,1);
 	
-	
-	//float4 weights = textureWeights.Sample( samLinear, input.uv );
-	
-	//weights.rgb /= weights.r + weights.b + weights.g; 
-	
-    //output += texture1.Sample( samLinear, input.uv )*weights.r;
 	output += texture2.Sample( samLinear, input.uv );
 	
 	
@@ -73,6 +67,18 @@ float4 PS( PS_INPUT input) : SV_Target
     return output;
 }
 
+PS_GBUFFER_OUTPUT PS_Deferred( PS_INPUT input) 
+{
+    
+	PS_GBUFFER_OUTPUT output;
+	
+	output.color = texture2.Sample( samLinear, input.uv );
+	output.normal = input.normal;
+	output.specular = float4(0.f, 0.f, 0.f, 0.f);
+	
+
+    return output;
+}
 
 
 
@@ -80,14 +86,23 @@ float4 PS( PS_INPUT input) : SV_Target
 //--------------------------------------------------------------------------------------
 // Techniques
 //--------------------------------------------------------------------------------------
-technique11 Terrain
+technique11 Forward
 {
 	
     pass P0
     {
-        SetVertexShader( CompileShader( vs_4_0, VS() ) );
+        SetVertexShader( CompileShader( vs_5_0, VS() ) );
         SetGeometryShader( NULL );
-        SetPixelShader( CompileShader( ps_4_0, PS() ) );
+        SetPixelShader( CompileShader( ps_5_0, PS_Forward() ) );
     }
 }
-
+technique11 Deferred
+{
+	
+    pass P0
+    {
+        SetVertexShader( CompileShader( vs_5_0, VS() ) );
+        SetGeometryShader( NULL );
+        SetPixelShader( CompileShader( ps_5_0, PS_Deferred() ) );
+    }
+}

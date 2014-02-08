@@ -36,17 +36,23 @@ struct VS_INPUT
     float2 uv       : TEXCOORD0;
 };
 
-
-struct PS_INPUT
+struct PS_INPUT_DEFERRED
 {
 	float4 position : SV_POSITION;
 	float3 normal : NORMAL;
     float2 uv   : TEXCOORD0;
 	float4 reflPos :TEXCOORD1;
 	float4 refrPos : TEXCOORD2;
-	float3 lightDir : TEXCOORD3;
 	float3 camDir : TEXCOORD4;
+}; 
+
+struct PS_INPUT_FORWARD : PS_INPUT_DEFERRED
+{
+	float3 lightDir : TEXCOORD3;
 };
+
+
+
 
 float3 fresnel(float3 normal, float3 viewDir, float exponent, float3 col1, float3 col2)
 {
@@ -99,12 +105,8 @@ float3 getNormalFromNormalMap( Texture2D normalmap, float2 uvs )
 	return normalize(normal);
 }
 
-
-
-PS_INPUT VS( VS_INPUT input )
+float3x3 calculatePixelShaderInputDeferred(VS_INPUT input, out PS_INPUT_DEFERRED output)
 {
-    PS_INPUT output;
-    
 	float3 wavePosition = input.position;
 	
 	float3 tangent = float3(0,0,0);
@@ -112,6 +114,10 @@ PS_INPUT VS( VS_INPUT input )
 	
 	calculateNormalTangentAndBitangentForPoint( wavePosition.xz,time, output.normal, tangent, bitangent );
 
+	float3x3 toTangentSpace = float3x3( tangent.x, output.normal.x, bitangent.x,
+										tangent.y, output.normal.y, bitangent.y,
+										tangent.z, output.normal.z, bitangent.z	);
+	
 	
 	wavePosition.y += calculateHeightForPoint(wavePosition.xz,time);
 	
@@ -123,20 +129,19 @@ PS_INPUT VS( VS_INPUT input )
 	output.reflPos = mul(float4(input.position,1), reflectionViewProj );
 	output.refrPos = mul( float4(input.position,1), refractionViewProj );
 	
-	float3x3 toTangentSpace = float3x3( tangent.x, output.normal.x, bitangent.x,
-										tangent.y, output.normal.y, bitangent.y,
-										tangent.z, output.normal.z, bitangent.z	);
+	
 	output.camDir = normalize( mul(camPos.xyz - wavePosition, toTangentSpace) ) ;
-	output.lightDir = normalize( mul(sunDirection.xyz, toTangentSpace) );
-	
-	
-	
-    return output;
+	return toTangentSpace;
 }
 
-float4 PS( PS_INPUT input) : SV_Target
+void calculatePixelShaderInputForward(VS_INPUT input, out PS_INPUT_FORWARD output)
 {
+	float3x3 toTangentSpace = calculatePixelShaderInputDeferred(input, (PS_INPUT_DEFERRED)output);
+	output.lightDir = normalize( mul(sunDirection.xyz, toTangentSpace) );
+}
 
+void calculateWaterColorAndNormal(PS_INPUT_DEFERRED input, out float3 color, out float3 normal)
+{
 	float offsetRefl = 0.05;
 	float offsetRefr = 0.0;
 	
@@ -145,7 +150,7 @@ float4 PS( PS_INPUT input) : SV_Target
 	movedUvs.x += time * 0.08; 
 	movedUvs.y += time * 0.08; 
 	
-	float3 normal = input.normal;
+	normal = input.normal;
 	float3 newnormal = getNormalFromNormalMap(normalmap, movedUvs.xy*6);
 
 	
@@ -165,12 +170,37 @@ float4 PS( PS_INPUT input) : SV_Target
 	float2 refrCoords = (input.refrPos.xy / input.refrPos.w) *0.5f+0.5f;
 	refrCoords.y = -refrCoords.y;
 	
-	float4 output = float4(0,0,0,1);
+	
 	
     float3 reflCol = reflection.Sample( samLinear, reflCoords + normal.xy*offsetRefl).rgb;
 	float3 refrCol = refraction.Sample( samLinear, refrCoords + normal.xy*offsetRefr).rgb;
 	
-	output.rgb += waterColor * fresnel(normal, input.camDir, 1.0f, refrCol , reflCol);
+	color = waterColor * fresnel(normal, input.camDir, 1.0f, refrCol , reflCol);
+	
+}
+
+
+
+
+
+//forward
+PS_INPUT_FORWARD VS_FORWARD( VS_INPUT input )
+{
+    PS_INPUT_FORWARD output;
+
+	calculatePixelShaderInputForward(input, output);
+
+    return output;
+}
+
+float4 PS_FORWARD( PS_INPUT_FORWARD input) : SV_Target
+{
+	float4 output = float4(0,0,0,1);
+	float3 normal;
+	float3 color;
+	
+	calculateWaterColorAndNormal((PS_INPUT_DEFERRED)input, color, normal);
+	output.rgb = color;
 
 	float3 halfVec = normalize(input.camDir + input.lightDir);
 	output.rgb += pow(saturate(dot(halfVec, normal)), specular.w) * specular.rgb;
@@ -178,21 +208,53 @@ float4 PS( PS_INPUT input) : SV_Target
     return output;
 }
 
+//deferred
+PS_INPUT_DEFERRED VS_DEFERRED( VS_INPUT input )
+{
+    PS_INPUT_DEFERRED output;
 
+	calculatePixelShaderInputDeferred(input, output);
+
+    return output;
+}
+
+PS_GBUFFER_OUTPUT PS_DEFERRED( PS_INPUT_DEFERRED input) 
+{
+
+	PS_GBUFFER_OUTPUT output;
+	float3 normal;
+	float3 color;
+	
+	calculateWaterColorAndNormal(input, color, normal);
+	output.color = float4(color, 1.f);
+	output.normal = normal;
+	output.specular = specular;
+	
+    return output;
+}
 
 
 
 //--------------------------------------------------------------------------------------
 // Techniques
 //--------------------------------------------------------------------------------------
-technique11 WaterPlane
+technique11 Forward
 {
 	
     pass P0
     {
-        SetVertexShader( CompileShader( vs_4_0, VS() ) );
+        SetVertexShader( CompileShader( vs_5_0, VS_FORWARD() ) );
         SetGeometryShader( NULL );
-        SetPixelShader( CompileShader( ps_4_0, PS() ) );
+        SetPixelShader( CompileShader( ps_5_0, PS_FORWARD() ) );
     }
 }
-
+technique11 Deferred
+{
+	
+    pass P0
+    {
+        SetVertexShader( CompileShader( vs_5_0, VS_DEFERRED() ) );
+        SetGeometryShader( NULL );
+        SetPixelShader( CompileShader( ps_5_0, PS_DEFERRED() ) );
+    }
+}

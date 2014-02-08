@@ -139,7 +139,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
 
     //waterplane
     Dx11Sandbox::string name("waterPlane1");
-    m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-60,340,340,200,200, 512);
+	m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-60,340,340,200,200, 512);
     
 	m_debugDrawerTexture = new DebugDrawTextureToScreen(device, 100.f, 100.f);
 	m_mngr->addDebugDrawer(m_debugDrawerTexture);

@@ -118,7 +118,7 @@ void WaterPlane::initializeRenderTargets(ID3D11Device *device, Dx11Sandbox::RCOb
     mat->setTexture("reflection",reflTexId);
 
     
-	m_refraction = Dx11Sandbox::TextureManager::singleton()->createTexture2D(device,refrTexName, texWidth, texHeight ,1,D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE ,DXGI_FORMAT_R32G32B32A32_FLOAT,0,D3D11_USAGE_DEFAULT);
+	m_refraction = Dx11Sandbox::TextureManager::singleton()->createTexture2D(device,refrTexName, texWidth, texHeight ,1,D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS,DXGI_FORMAT_R32G32B32A32_FLOAT,0,D3D11_USAGE_DEFAULT);
 	mat->setTexture("refraction",refrTexId);
 
 	

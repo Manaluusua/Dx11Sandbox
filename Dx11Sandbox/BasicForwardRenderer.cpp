@@ -65,11 +65,10 @@ namespace Dx11Sandbox
         
             effect->GetDesc(&effectDesc);
         
-            //for now use first tech
-            ID3DX11EffectTechnique* tech = effect->GetTechniqueByIndex(0);
+            
+            ID3DX11EffectTechnique* tech = effect->GetTechniqueByIndex(Renderer::FORWARD_RENDERER);
             tech->GetDesc(&techDesc);
 
-            tech->GetPassByIndex(0)->GetDesc(&passDesc);
         
 
 
@@ -86,7 +85,7 @@ namespace Dx11Sandbox
                 tech->GetPassByIndex(passInd)->Apply(0, context );
                 if(mesh->getIndexBuffer()->getIndexCount() > 0)
                 {
-                    context->DrawIndexed(mesh->getIndexBuffer()->getIndexCount(), 0, 0);
+                    context->DrawIndexed(mesh->getIndicesToDrawCount(), mesh->getIndicesToDrawOffset(), 0);
                 }else
                 {
                     context->Draw(mesh->getVertexBuffer()->getVertexCount(),0);

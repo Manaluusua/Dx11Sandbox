@@ -20,7 +20,7 @@ namespace Dx11Sandbox
         operator T*();
 
         //explicit
-        T* rawPtr();
+        T* rawPtr() const;
 
         T& operator*() const;
 
@@ -90,7 +90,7 @@ namespace Dx11Sandbox
     
 
     template< class T >
-    inline T* RCObjectPtr<T>::rawPtr()
+    inline T* RCObjectPtr<T>::rawPtr() const
     {
         return m_rawPtr;
     }

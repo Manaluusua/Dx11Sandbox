@@ -290,7 +290,7 @@ namespace Dx11Sandbox
         }
         // Perform any application-level initialization here
 		
-		std::unique_ptr<WCHAR> windowNameWide( MultibyteStringToWide(windowName) );
+		std::unique_ptr<WCHAR> windowNameWide( multibyteStringToWide(windowName) );
 
         DXUTInit( true, true, NULL ); // Parse the command line, show msgboxes on error, no extra command line params
         DXUTSetCursorSettings( false, false ); // Show the cursor and clip it when in full screen

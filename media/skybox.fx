@@ -61,15 +61,15 @@ float4 PS( PS_INPUT input) : SV_Target
 //--------------------------------------------------------------------------------------
 // Techniques
 //--------------------------------------------------------------------------------------
-technique11 SkyBox
+technique11 Forward
 {
 	
     pass P0
     {
 
-        SetVertexShader( CompileShader( vs_4_0, VS() ) );
+        SetVertexShader( CompileShader( vs_5_0, VS() ) );
         SetGeometryShader( NULL );
-        SetPixelShader( CompileShader( ps_4_0, PS() ) );
+        SetPixelShader( CompileShader( ps_5_0, PS() ) );
     }
 }
 

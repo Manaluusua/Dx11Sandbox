@@ -9,7 +9,9 @@
 namespace Dx11Sandbox
 {
     Mesh::Mesh()
-        :m_primType(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+        :m_primType(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
+		m_indicesToDraw(-1),
+		m_indexOffset(0)
     {
         
     }
@@ -19,6 +21,27 @@ namespace Dx11Sandbox
     {
 
     }
+
+	void Mesh::setIndicesToDrawCount(int count)
+	{
+		m_indicesToDraw = count;
+	}
+	void Mesh::setIndicesToDrawOffest(UINT offset)
+	{
+		m_indexOffset = offset;
+	}
+
+	UINT Mesh::getIndicesToDrawCount() const
+	{
+		if (!m_indices.rawPtr()) return 0;
+
+		return m_indicesToDraw < 0 ? m_indices->getIndexCount() : m_indicesToDraw;
+	}
+	UINT Mesh::getIndicesToDrawOffset() const
+	{
+
+		return m_indexOffset;
+	}
 
     VertexBuffer* Mesh::getVertexBuffer()
     {
