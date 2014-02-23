@@ -16,7 +16,7 @@ namespace Dx11Sandbox
     {
         friend class TextureManager;
     public:
-        virtual ~Texture(void);
+        
        
         
         ID3D11ShaderResourceView* GetShaderResourceView();
@@ -28,9 +28,12 @@ namespace Dx11Sandbox
 
 		ResourceID getName() const;
 
+	protected:
+		virtual ~Texture(void);
+
     private:
         DISABLE_COPY(Texture)
-
+		
         static Texture* CreateTexture2D(ID3D11Device* device, ResourceID texname, UINT texWidth, UINT texHeight,
             UINT arraySize, UINT bindFlags, DXGI_FORMAT format , UINT cpuAccess,
             D3D11_USAGE usage );

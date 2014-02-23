@@ -45,9 +45,9 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 
 	initializeRenderTargets(device, mat, name,  textureResolution);
 
-	Dx11Sandbox::ResourceID normalTexName = Dx11Sandbox::stringToID("waterplanenormalmap");
-    m_normalMap = Dx11Sandbox::TextureManager::singleton()->getOrCreateTexture(device, "waternormal.png", normalTexName, 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_POINT );
-    mat->setTexture("normalmap",normalTexName);
+	Dx11Sandbox::string normalTexName = "waterplanenormalmap";
+	m_normalMap = Dx11Sandbox::TextureManager::singleton()->getOrCreateTexture(device, "waternormal.png", normalTexName, 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_POINT);
+	mat->setTexture("normalmap", m_normalMap->getName());
     
     m_normal = normal;
     m_d = d;

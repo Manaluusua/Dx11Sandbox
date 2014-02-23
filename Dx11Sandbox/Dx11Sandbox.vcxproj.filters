@@ -93,9 +93,6 @@
     <ClCompile Include="RenderBin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Batcher.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RenderCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -139,6 +136,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EnvironmentChangedListeners.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DeferredRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -233,9 +239,6 @@
     <ClInclude Include="Singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Batcher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CommonTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -303,6 +306,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RenderPrimitiveGatherer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeferredRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

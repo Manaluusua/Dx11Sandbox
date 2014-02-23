@@ -37,6 +37,11 @@ namespace Dx11Sandbox
 		m_state =  0;
 	}
 
+	void BasicForwardRenderer::renderingQueue(RenderQueueID id)
+	{
+
+	}
+
 	void BasicForwardRenderer::render(RenderData** objects, unsigned int objectCount)
 	{
         D3DX11_EFFECT_DESC effectDesc;

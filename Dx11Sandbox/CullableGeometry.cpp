@@ -66,10 +66,37 @@ namespace Dx11Sandbox
 	{
 		if(m_cullingInformation == 0) return;
 
+		//calculate world space bounds
+		D3DXVECTOR3 center = m_bounds;
+		D3DXVECTOR4 boundsWorld;
+		D3DXVec3Transform(&boundsWorld, &center, &m_worldMatrix);
+		boundsWorld.w = calculateWorldSpaceRadius(m_bounds.w);
+
+		(*m_cullingInformation)->boundingSphere = boundsWorld;
+	}
+
+
+	float CullableGeometry::calculateWorldSpaceRadius(float localRadius)
+	{
+		if (localRadius <= 0.f) return localRadius;
+		float lenSqr = 0.f;
+		D3DXVECTOR3 local;
+		D3DXVECTOR3 world;
+
+		for (int i = 0; i < 3; ++i){
+			local.x = i == 0 ? localRadius : 0.f;
+			local.y = i == 1 ? localRadius : 0.f;
+			local.z = i == 2 ? localRadius : 0.f;
+
+			D3DXVec3TransformNormal(&world, &local, &m_worldMatrix);
+
+			float lqsr = D3DXVec3LengthSq(&world);
+			if (lqsr <= lenSqr) continue;
+			lenSqr = lqsr;
+
+		}
+		return sqrtf(lenSqr);
 		
-
-
-		(*m_cullingInformation)->boundingSphere = m_bounds;
 	}
 
 	void CullableGeometry::destroy()

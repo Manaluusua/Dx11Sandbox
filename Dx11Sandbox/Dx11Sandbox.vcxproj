@@ -90,7 +90,6 @@
     <ClCompile Include="BasicBinHandler.cpp" />
     <ClCompile Include="BasicForwardRenderer.cpp" />
     <ClCompile Include="BasicMaterialPropertiesSetter.cpp" />
-    <ClCompile Include="Batcher.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CommonUtilities.cpp" />
     <ClCompile Include="Compositor.cpp" />
@@ -98,9 +97,11 @@
     <ClCompile Include="CullData.cpp" />
     <ClCompile Include="DebugDrawer.cpp" />
     <ClCompile Include="DebugDrawTextureToScreen.cpp" />
+    <ClCompile Include="DeferredRenderer.cpp" />
     <ClCompile Include="EnvironmentChangedListeners.cpp" />
     <ClCompile Include="EnvironmentInfo.cpp" />
     <ClCompile Include="Frustrum.cpp" />
+    <ClCompile Include="GBuffer.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
     <ClCompile Include="ILDescriptions.cpp" />
@@ -128,18 +129,20 @@
     <ClCompile Include="TerrainBinHandler.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicBinHandler.h" />
     <ClInclude Include="BasicForwardRenderer.h" />
     <ClInclude Include="BasicMaterialPropertiesSetter.h" />
-    <ClInclude Include="Batcher.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="CommonUtilities.h" />
     <ClInclude Include="Compositor.h" />
     <ClInclude Include="Cullable.h" />
+    <ClInclude Include="DeferredRenderer.h" />
+    <ClInclude Include="GBuffer.h" />
     <ClInclude Include="RenderPrimitiveGatherer.h" />
     <ClInclude Include="Culler.h" />
     <ClInclude Include="CullDataAllocator.h" />
@@ -184,6 +187,7 @@
     <ClInclude Include="TerrainBinHandler.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="VertexBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -17,6 +17,7 @@ namespace Dx11Sandbox
 		virtual void renderBegin(Camera* cam, std::vector<Light*>* lights, RenderContext* state) ;
 		virtual void renderEnd();
 		virtual void render(RenderData** objects, unsigned int objectCount);
+		virtual void renderingQueue(RenderQueueID id);
 
 	protected:
 		BasicMaterialPropertiesSetter m_materialPropertySetter;

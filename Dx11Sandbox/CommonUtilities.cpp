@@ -1,7 +1,7 @@
 #include "CommonUtilities.h"
 #include "DXUT.h"
 #include <sstream>
-#include <functional>
+#include <map>
 #include <cstdlib>
 namespace Dx11Sandbox
 {
@@ -88,7 +88,16 @@ namespace Dx11Sandbox
 
 	ResourceID stringToID(const string& id)
 	{
-		return id;
+		//for now just map strings to random ids. 
+		static std::map<string, ResourceID> strToIdMap;
+		if (strToIdMap.find(id) == strToIdMap.end()){
+			strToIdMap[id] = generateID();
+		}
+		
+		return strToIdMap[id];
+		
+
+
 		//return std::hash<std::string>()(id);
 	}
 

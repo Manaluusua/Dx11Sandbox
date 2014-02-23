@@ -40,42 +40,22 @@ namespace Dx11Sandbox
 		m_renderer->renderBegin(this, &renderBin.getLights(), state);
 
 		//before CullableLight pass
-		while(mapIter != renderObjects.end() && queue < Dx11Sandbox::RENDERQUEUE_AFTERLIGHTPASS){
-			std::vector<RenderData*>& objects = mapIter->second;
-
-			if(objects.size() > 0)
-			{
-				count = 0;
-				queue = mapIter->first;
-				RCObjectPtr<GeometryBinHandler> handler = renderBin.getGeometryHandlerForBin(queue);
-				RenderData** renderData = handler->setupForRendering(objects.data(),objects.size(), &count, state);
-				if (renderData == 0 || count == 0) continue;
-				m_renderer->render(renderData, count);
-			}
-
-			++mapIter;
-			
-		}
-
-
-		//lightpass
-
-		//rest
 		while(mapIter != renderObjects.end()){
 			std::vector<RenderData*>& objects = mapIter->second;
-
+			queue = mapIter->first;
+			m_renderer->renderingQueue(queue);
 			if(objects.size() > 0)
 			{
 				count = 0;
-				queue = mapIter->first;
+				
 				RCObjectPtr<GeometryBinHandler> handler = renderBin.getGeometryHandlerForBin(queue);
 				RenderData** renderData = handler->setupForRendering(objects.data(),objects.size(), &count, state);
 				if (renderData == 0 || count == 0) continue;
 				m_renderer->render(renderData, count);
 			}
 
-			
 			++mapIter;
+			
 		}
 
 		m_renderer->renderEnd();

@@ -45,6 +45,8 @@ namespace Dx11Sandbox
 		void returnCullData();
 		void updateCullData();
 
+		float calculateWorldSpaceRadius(float localRadius);
+
 		DISABLE_COPY(CullableGeometry);
 
 		D3DXVECTOR4 m_bounds;

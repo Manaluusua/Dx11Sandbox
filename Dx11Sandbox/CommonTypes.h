@@ -9,7 +9,7 @@ namespace Dx11Sandbox
 	typedef std::basic_string<WCHAR> wstring;
     typedef std::string string;
 	typedef unsigned int GIDTYPE;
-	typedef string ResourceID;
+	typedef unsigned int ResourceID;
 
 	
 	//RenderQueueID
