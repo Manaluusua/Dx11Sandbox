@@ -46,7 +46,7 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 	initializeRenderTargets(device, mat, name,  textureResolution);
 
 	Dx11Sandbox::string normalTexName = "waterplanenormalmap";
-	m_normalMap = Dx11Sandbox::TextureManager::singleton()->getOrCreateTexture(device, "waternormal.png", normalTexName, 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_POINT);
+	m_normalMap = Dx11Sandbox::TextureManager::singleton()->getOrCreateTextureFromFile(device, "waternormal.png", normalTexName, 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_POINT);
 	mat->setTexture("normalmap", m_normalMap->getName());
     
     m_normal = normal;
@@ -114,15 +114,18 @@ void WaterPlane::initializeRenderTargets(ID3D11Device *device, Dx11Sandbox::RCOb
 	Dx11Sandbox::TextureManager::singleton()->releaseTexture(refrTexId);
 	Dx11Sandbox::TextureManager::singleton()->releaseTexture(Dx11Sandbox::stringToID(dsTexName));
 
-	m_reflection = Dx11Sandbox::TextureManager::singleton()->createTexture2D(device,reflTexName, texWidth, texHeight,1,D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE,DXGI_FORMAT_R32G32B32A32_FLOAT ,0,D3D11_USAGE_DEFAULT);
+	m_reflection = Dx11Sandbox::TextureManager::singleton()->createTexture(reflTexName);
+	m_reflection->createResource(device, texWidth, texHeight, true, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
     mat->setTexture("reflection",reflTexId);
 
-    
-	m_refraction = Dx11Sandbox::TextureManager::singleton()->createTexture2D(device,refrTexName, texWidth, texHeight ,1,D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS,DXGI_FORMAT_R32G32B32A32_FLOAT,0,D3D11_USAGE_DEFAULT);
+
+	m_refraction = Dx11Sandbox::TextureManager::singleton()->createTexture(refrTexName);
+	m_refraction->createResource(device, texWidth, texHeight, true, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
 	mat->setTexture("refraction",refrTexId);
 
 	
-	m_depthStencil = Dx11Sandbox::TextureManager::singleton()->createTexture2D(device,dsTexName, texWidth, texHeight ,1,D3D11_BIND_DEPTH_STENCIL, DXGI_FORMAT_D32_FLOAT ,0,D3D11_USAGE_DEFAULT);
+	m_depthStencil = Dx11Sandbox::TextureManager::singleton()->createTexture(dsTexName);
+	m_depthStencil->createResource(device, texWidth, texHeight, true, D3D11_BIND_DEPTH_STENCIL, DXGI_FORMAT_D32_FLOAT);
 
 }
 
@@ -219,10 +222,10 @@ void WaterPlane::setupReflectionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sa
 
     //reflection
     ID3D11RenderTargetView * views[1];
-    views[0] = m_reflection->GetRenderTargetView();
-	state->pushRenderTargets(1, views, m_depthStencil->GetDepthStencilView());
+    views[0] = m_reflection->getRenderTargetView();
+	state->pushRenderTargets(1, views, m_depthStencil->getDepthStencilView());
     
-	state->getImmediateContext()->ClearDepthStencilView(m_depthStencil->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0);
+	state->getImmediateContext()->ClearDepthStencilView(m_depthStencil->getDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0);
     
     ID3D11RasterizerState *originalRS, *newRS;
     
@@ -289,9 +292,9 @@ void WaterPlane::setupRefractionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sa
 	state->pushViewports(1, &waterplaneViewport);
     //reflection
     ID3D11RenderTargetView * views[1];
-    views[0] = m_refraction->GetRenderTargetView();
-	state->pushRenderTargets(1, views, m_depthStencil->GetDepthStencilView());
-    state->getImmediateContext()->ClearDepthStencilView(m_depthStencil->GetDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0);
+    views[0] = m_refraction->getRenderTargetView();
+	state->pushRenderTargets(1, views, m_depthStencil->getDepthStencilView());
+    state->getImmediateContext()->ClearDepthStencilView(m_depthStencil->getDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0);
   
     const D3DXMATRIX *viewRefr = camera.getViewMatrix();
     const D3DXMATRIX *proj = camera.getProjectionMatrix();

@@ -116,7 +116,6 @@ namespace Dx11Sandbox
 		{
 			ID3D11RenderTargetView * backBuffer[1];
 			backBuffer[0] = DXUTGetD3D11RenderTargetView();
-			
 			m_imContext->OMSetRenderTargets(1, backBuffer, DXUTGetD3D11DepthStencilView());
 
 

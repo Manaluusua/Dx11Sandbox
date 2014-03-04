@@ -50,9 +50,6 @@ namespace Dx11Sandbox
 
         void clearState();
         
-        UINT32 generateUniqueRenderPassID();
-        void setCurrentRenderPassID(UINT32 id);
-        UINT32 getCurrentRenderPassID();
     private:
 
 		struct RenderTargetsState

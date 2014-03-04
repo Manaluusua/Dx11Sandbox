@@ -143,7 +143,7 @@ namespace Dx11Sandbox
                 Texture* tex = TextureManager::singleton()->getTexture(iter->second);
                 if(tex)
                 {
-                    texResource->SetResource(tex->GetShaderResourceView());
+                    texResource->SetResource(tex->getShaderResourceView());
                 }
             }
         }

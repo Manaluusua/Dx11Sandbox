@@ -6,7 +6,7 @@ namespace Dx11Sandbox
 {
     Texture::Texture(ResourceID texname)
         :m_name(texname),
-        m_shaderView(0),
+		m_shaderResourceView(0),
         m_rtView(0),
 		m_dsView(0),
 		m_uav(0),
@@ -24,104 +24,151 @@ namespace Dx11Sandbox
 
     Texture::~Texture(void)
     {
-        SAFE_RELEASE(m_texture);
-        SAFE_RELEASE(m_shaderView);
-        SAFE_RELEASE(m_rtView);
+		destroyResourcesAndViews();
+    }
+
+	void Texture::destroyResourcesAndViews()
+	{
+		SAFE_RELEASE(m_texture);
+		SAFE_RELEASE(m_shaderResourceView);
+		SAFE_RELEASE(m_rtView);
 		SAFE_RELEASE(m_dsView);
 		SAFE_RELEASE(m_uav);
-    }
 
-    Texture* Texture::CreateTexture2D(ID3D11Device* device, ResourceID texname, UINT texWidth, UINT texHeight,
-        UINT arraySize, UINT bindFlags, DXGI_FORMAT format, UINT cpuAccess, D3D11_USAGE usage)
-    {
-        Texture* tex = new Texture(texname);
-        tex->m_texArraySize = arraySize;
-        tex->m_texWidth = texWidth;
-        tex->m_texHeight = texHeight;
-        tex->m_flags = bindFlags;
-        tex->m_format = format;
-        tex->m_cpuAccess = cpuAccess;
-        tex->m_usage = usage;
+	}
+	void Texture::createResource(ID3D11Device* device, UINT texWidth, UINT texHeight, bool createViews,
+		UINT bindFlags, DXGI_FORMAT format,D3D11_USAGE usage, UINT arraySize, UINT cpuAccess)
+	{
 
-        D3D11_TEXTURE2D_DESC desc;
-        memset(&desc,0,sizeof(D3D11_TEXTURE2D_DESC));
-        desc.Width = texWidth;
-        desc.Height = texHeight;
-        desc.MipLevels = 1;
-        desc.ArraySize = arraySize;
-        desc.Format = format;
-        desc.SampleDesc.Count = 1;
-        desc.CPUAccessFlags = cpuAccess;
-        desc.Usage = usage;
-        desc.BindFlags = bindFlags;
-        desc.MiscFlags = 0x0;
+		destroyResourcesAndViews();
 
-        ID3D11Texture2D *pEmptyTex = NULL;
-        if(FAILED( device->CreateTexture2D( &desc, NULL, &pEmptyTex ) ) )
-        {
-            SAFE_DELETE(tex);
-            return 0;
-        }
+		m_texArraySize = arraySize;
+		m_texWidth = texWidth;
+		m_texHeight = texHeight;
+		m_flags = bindFlags;
+		m_format = format;
+		m_cpuAccess = cpuAccess;
+		m_usage = usage;
 
-        tex->m_texture = pEmptyTex;
+		D3D11_TEXTURE2D_DESC desc;
+		memset(&desc, 0, sizeof(D3D11_TEXTURE2D_DESC));
+		desc.Width = texWidth;
+		desc.Height = texHeight;
+		desc.MipLevels = 1;
+		desc.ArraySize = arraySize;
+		desc.Format = format;
+		desc.SampleDesc.Count = 1;
+		desc.CPUAccessFlags = cpuAccess;
+		desc.Usage = usage;
+		desc.BindFlags = bindFlags;
+		desc.MiscFlags = 0x0;
 
-        if(tex->m_flags & D3D11_BIND_RENDER_TARGET)
-        {
-            D3D11_RENDER_TARGET_VIEW_DESC rtDesc;
-			memset(&rtDesc,0,sizeof(D3D11_RENDER_TARGET_VIEW_DESC));
-            rtDesc.Format = desc.Format;
-            rtDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-            rtDesc.Texture2D.MipSlice = 0;
-
-            device->CreateRenderTargetView( tex->m_texture, &rtDesc, &tex->m_rtView );
-        } else if(tex->m_flags & D3D11_BIND_DEPTH_STENCIL)
-        {
-			D3D11_DEPTH_STENCIL_VIEW_DESC dsDesc;
-			memset(&dsDesc,0,sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
-			dsDesc.Format = desc.Format;
-			dsDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-			dsDesc.Texture2D.MipSlice = 0;
-			device->CreateDepthStencilView(tex->m_texture, &dsDesc, &tex->m_dsView );
-
-        }
-
-		if (tex->m_flags & D3D11_BIND_UNORDERED_ACCESS){
-			D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
-			memset(&uavDesc, 0, sizeof(D3D11_UNORDERED_ACCESS_VIEW_DESC));
-			uavDesc.Format = desc.Format;
-			uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
-			uavDesc.Texture2D.MipSlice = 0;
-			device->CreateUnorderedAccessView(tex->m_texture, &uavDesc, &tex->m_uav);
+		ID3D11Texture2D *pEmptyTex = NULL;
+		if (FAILED(device->CreateTexture2D(&desc, NULL, &pEmptyTex)))
+		{
+			return;
 		}
 
-		
-        if(tex->m_flags & D3D11_BIND_SHADER_RESOURCE)
-        {
-            D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-			memset(&srvDesc,0,sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-            srvDesc.Format = desc.Format;
-            srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-            srvDesc.Texture2D.MipLevels = desc.MipLevels;
-            srvDesc.Texture2D.MostDetailedMip = desc.MipLevels -1;
-            
+		m_texture = pEmptyTex;
 
-            device->CreateShaderResourceView( tex->m_texture, &srvDesc, &tex->m_shaderView );
-        }
-		
+		if (!createViews) return;
 
-        return tex;
-        
-    }
-    Texture* Texture::CreateTextureFromFile(ID3D11Device* device,const string& filepath, ResourceID texname,
-        UINT cpuAccess, D3D11_USAGE usage, UINT filter)
+		if (m_flags & D3D11_BIND_RENDER_TARGET)
+		{
+			createRenderTargetView(device);
+		}
+		else if (m_flags & D3D11_BIND_DEPTH_STENCIL)
+		{
+			createDepthStencilView(device);
+
+		}
+
+		if (m_flags & D3D11_BIND_UNORDERED_ACCESS){
+			createUnorderedAccessView(device);
+		}
+
+
+		if (m_flags & D3D11_BIND_SHADER_RESOURCE)
+		{
+			createShaderResourceView(device);
+		}
+
+	}
+
+
+	void Texture::createShaderResourceView(ID3D11Device* device, DXGI_FORMAT format, int mipLevels)
+	{
+		if (!(m_flags & D3D11_BIND_SHADER_RESOURCE) || !m_texture) return;
+		
+		SAFE_RELEASE(m_shaderResourceView);
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+		memset(&srvDesc, 0, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
+		srvDesc.Format = format == DXGI_FORMAT_UNKNOWN ? m_format : format;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = mipLevels;
+		srvDesc.Texture2D.MostDetailedMip = mipLevels - 1;
+
+
+		device->CreateShaderResourceView(m_texture, &srvDesc, &m_shaderResourceView);
+		
+	}
+
+	void Texture::createRenderTargetView(ID3D11Device* device, DXGI_FORMAT format)
+	{
+		if (!(m_flags & D3D11_BIND_RENDER_TARGET) || !m_texture) return;
+		
+		SAFE_RELEASE(m_rtView);
+
+		D3D11_RENDER_TARGET_VIEW_DESC rtDesc;
+		memset(&rtDesc, 0, sizeof(D3D11_RENDER_TARGET_VIEW_DESC));
+		rtDesc.Format = format == DXGI_FORMAT_UNKNOWN ? m_format : format;
+		rtDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+		rtDesc.Texture2D.MipSlice = 0;
+
+		device->CreateRenderTargetView(m_texture, &rtDesc, &m_rtView);
+		
+	}
+	void Texture::createDepthStencilView(ID3D11Device* device, DXGI_FORMAT format)
+	{
+		if (!(m_flags & D3D11_BIND_DEPTH_STENCIL) || !m_texture) return;
+
+		SAFE_RELEASE(m_dsView);
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC dsDesc;
+		memset(&dsDesc, 0, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+		dsDesc.Format = format == DXGI_FORMAT_UNKNOWN ? m_format : format;
+		dsDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		dsDesc.Texture2D.MipSlice = 0;
+		device->CreateDepthStencilView(m_texture, &dsDesc, &m_dsView);
+
+		
+	}
+	void Texture::createUnorderedAccessView(ID3D11Device* device, DXGI_FORMAT format)
+	{
+		if (!(m_flags & D3D11_BIND_UNORDERED_ACCESS) || !m_texture ) return;
+		
+		SAFE_RELEASE(m_uav);
+
+		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+		memset(&uavDesc, 0, sizeof(D3D11_UNORDERED_ACCESS_VIEW_DESC));
+		uavDesc.Format = format == DXGI_FORMAT_UNKNOWN ? m_format : format;
+		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+		uavDesc.Texture2D.MipSlice = 0;
+		device->CreateUnorderedAccessView(m_texture, &uavDesc, &m_uav);
+	
+	}
+
+    
+	void Texture::createResourceFromFile(ID3D11Device* device, const string& filepath, UINT cpuAccess, D3D11_USAGE usage, UINT filter)
     {
-        Texture* tex = new Texture(texname);
+		destroyResourcesAndViews();
         D3DX11_IMAGE_LOAD_INFO info;
         info.CpuAccessFlags = cpuAccess;
         info.Usage = usage;
         info.Filter = filter ;
-        tex->m_cpuAccess = cpuAccess;
-        tex->m_usage = usage;
+        m_cpuAccess = cpuAccess;
+        m_usage = usage;
 
 
 		std::unique_ptr<WCHAR> filePathWide( multibyteStringToWide(filepath) );
@@ -130,51 +177,49 @@ namespace Dx11Sandbox
         if(usage!=D3D11_USAGE_STAGING)
         {
 
-			if ( FAILED( D3DX11CreateShaderResourceViewFromFile(  device, filePathWide.get(), &info, NULL, &tex->m_shaderView, NULL ) ) )
+			if (FAILED(D3DX11CreateShaderResourceViewFromFile(device, filePathWide.get(), &info, NULL, &m_shaderResourceView, NULL)))
             {
 				std::string err = std::string("Failed to create resource: ") + filepath;
 				showErrorDialog(err.c_str());
-                return 0;
+                return;
             }
-            tex->m_shaderView->GetResource(&tex->m_texture);
+			m_shaderResourceView->GetResource(&m_texture);
         }else
         {
             info.BindFlags = 0;
-            if(FAILED(D3DX11CreateTextureFromFile(device, filePathWide.get(), &info, 0,&tex->m_texture, 0)))
+            if(FAILED(D3DX11CreateTextureFromFile(device, filePathWide.get(), &info, 0,&m_texture, 0)))
             {
                 std::string err = std::string("Failed to create resource from file: ") + filepath;
 				showErrorDialog(err.c_str());
-                return 0;
+                return;
             }
         }
         
         
 
         D3D11_RESOURCE_DIMENSION type;
-        tex->m_texture->GetType(&type);
+        m_texture->GetType(&type);
         switch( type )
         {
             
             case D3D11_RESOURCE_DIMENSION_TEXTURE2D:
             {
                 D3D11_TEXTURE2D_DESC desc;
-                ID3D11Texture2D *pTexture2D = (ID3D11Texture2D*)tex->m_texture;
+                ID3D11Texture2D *pTexture2D = (ID3D11Texture2D*)m_texture;
                 pTexture2D->GetDesc( &desc );
-                tex->m_texWidth = desc.Width;
-                tex->m_texHeight = desc.Height;
-                tex->m_texArraySize = desc.ArraySize;
-                tex->m_flags = desc.BindFlags;
-                tex->m_format = desc.Format;
+                m_texWidth = desc.Width;
+                m_texHeight = desc.Height;
+                m_texArraySize = desc.ArraySize;
+                m_flags = desc.BindFlags;
+                m_format = desc.Format;
             }
             break;
             
             default:
             // we do not atm support other types of textures
             showErrorDialog("Tried to create a texture from file containing unsupported texture type");
-            SAFE_DELETE(tex);
             break;
         }
-        return tex;
     }
 
 	ResourceID Texture::getName() const
@@ -182,21 +227,21 @@ namespace Dx11Sandbox
 		return m_name;
 	}
 
-	ID3D11ShaderResourceView* Texture::GetShaderResourceView() 
+	ID3D11ShaderResourceView* Texture::getShaderResourceView() 
 	{ 
-		return m_shaderView; 
+		return m_shaderResourceView;
 	}
 
-	ID3D11RenderTargetView* Texture::GetRenderTargetView() 
+	ID3D11RenderTargetView* Texture::getRenderTargetView() 
 	{ 
 		return m_rtView; 
 	}
 
-	ID3D11DepthStencilView* Texture::GetDepthStencilView()
+	ID3D11DepthStencilView* Texture::getDepthStencilView()
 	{
 		return m_dsView;
 	}
-	ID3D11UnorderedAccessView*  Texture::GetUnorderedAccessView()
+	ID3D11UnorderedAccessView*  Texture::getUnorderedAccessView()
 	{
 		return m_uav;
 	}

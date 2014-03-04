@@ -24,8 +24,8 @@ namespace Dx11Sandbox
     }
 
 
-    Texture* TextureManager::createTexture2D(ID3D11Device* device, const string& texname, UINT texWidth, UINT texHeight,
-        UINT arraySize, UINT bindFlags, DXGI_FORMAT format, UINT cpuAccess, D3D11_USAGE usage)
+   
+    Texture* TextureManager::createTexture(const string& texname)
     {
 		ResourceID id = stringToID(texname);
 
@@ -36,41 +36,31 @@ namespace Dx11Sandbox
 			return 0;
         }
 
-        Texture* tex = Texture::CreateTexture2D(device,id, texWidth, texHeight, arraySize, bindFlags,format,cpuAccess, usage);
+
+        Texture* tex = new Texture(id);
         if(tex)
         {
+
             m_loadedTextures[id] = tex;
             return tex;
         }
         return 0;
     }
 
-    Texture* TextureManager::createTexture(ID3D11Device* device, const string& filename,const string& texname,
-        UINT cpuAccess, D3D11_USAGE usage, UINT filter)
-    {
+	Texture* TextureManager::getOrCreateTextureFromFile(ID3D11Device* device, const string& filename, const string& texname, UINT cpuAccess,
+		D3D11_USAGE usage, UINT filter)
+	{
 		ResourceID id = stringToID(texname);
+		Texture* tex = getTexture(id);
+		if (!tex)
+		{
+			tex = createTexture(texname);
+			tex->createResourceFromFile(device, getAssetPath() + filename, cpuAccess, usage, filter);
+		}
+		return tex;
+	}
 
-        //names must be UNIQUE
-		assert(m_loadedTextures.find(id)==m_loadedTextures.end());
-        if (m_loadedTextures.find(id)!=m_loadedTextures.end())
-        {
-			return 0;
-        }
-
-		string fullPath = m_assetPath + filename;
-
-        Texture* tex = Texture::CreateTextureFromFile(device, fullPath,id,cpuAccess, usage, filter);
-        if(tex)
-        {
-
-            m_loadedTextures[id] = tex;
-            return tex;
-        }
-        return 0;
-    }
-
-    Texture* TextureManager::getOrCreateTexture(ID3D11Device* device, const string& texname, UINT texWidth , UINT texHeight,
-        UINT arraySize, UINT bindFlags, DXGI_FORMAT format, UINT cpuAccess, D3D11_USAGE usage )
+    Texture* TextureManager::getOrCreateTexture( const string& texname )
     {
         
 		ResourceID id = stringToID(texname);
@@ -78,27 +68,20 @@ namespace Dx11Sandbox
 		Texture* tex = getTexture(id);
 		if(!tex)
 		{
-			tex = createTexture2D(device,texname, texWidth, texHeight, arraySize, bindFlags,format, cpuAccess, usage);
+			tex = createTexture(texname);
 		}
    
         return tex;
     }
-    Texture* TextureManager::getOrCreateTexture(ID3D11Device* device, const string& filename,const string& texname,
-        UINT cpuAccess, D3D11_USAGE usage, UINT filter)
-    {
-        
-		ResourceID id = stringToID(texname);
-		Texture* tex = getTexture(id);
-		if(!tex)
-		{
-			
-            tex = createTexture(device,filename, texname, cpuAccess,usage, filter);
-        }
-        return tex;
-    }
+    
 	void TextureManager::setAssetPath(const string& path)
 	{
 		m_assetPath = path;
+	}
+
+	const string& TextureManager::getAssetPath() const
+	{
+		return m_assetPath;
 	}
 
     bool TextureManager::releaseTexture(ResourceID id)

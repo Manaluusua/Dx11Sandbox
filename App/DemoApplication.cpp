@@ -114,7 +114,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	ro->setRenderQueue(RENDERQUEUE_SKYBOX);
 	ro->setRenderMask(RENDERLAYER_SKYBOX);
 
-	Texture* tex = TextureManager::singleton()->createTexture(device, "skyboxCube.dds", "skyboxCube.dds");
+	Texture* tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "skyboxCube.dds", "skyboxCube.dds");
 
     mat->setTexture("cubemap", tex->getName());
     
@@ -127,7 +127,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
     //mat->setTexture("texture1", L"roughRock.png");
     //TextureManager::getSingleton()->createTexture(device, L"roughRock.png", L"roughRock.png");
 
-	tex = TextureManager::singleton()->createTexture(device, "grass.jpg", "grass.jpg");
+	tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "grass.jpg", "grass.jpg");
     mat->setTexture("texture2", tex->getName());
     
 

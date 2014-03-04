@@ -17,12 +17,21 @@ namespace Dx11Sandbox
         friend class TextureManager;
     public:
         
-       
-        
-        ID3D11ShaderResourceView* GetShaderResourceView();
-        ID3D11RenderTargetView* GetRenderTargetView();
-		ID3D11DepthStencilView* GetDepthStencilView();
-		ID3D11UnorderedAccessView* GetUnorderedAccessView();
+		void createResource(ID3D11Device* device, UINT texWidth, UINT texHeight, bool createViews = true,
+			UINT bindFlags = D3D11_BIND_SHADER_RESOURCE, DXGI_FORMAT format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+			D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT arraySize = 1, UINT cpuAccess = 0);
+
+		void createResourceFromFile(ID3D11Device* device, const string& filename, UINT cpuAccess = 0, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT filter = D3DX11_FILTER_POINT | D3DX11_FILTER_SRGB_IN);
+
+		void createShaderResourceView(ID3D11Device* device, DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN, int mipLevels = 1);
+		void createRenderTargetView(ID3D11Device* device, DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN);
+		void createDepthStencilView(ID3D11Device* device, DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN);
+		void createUnorderedAccessView(ID3D11Device* device, DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN);
+
+        ID3D11ShaderResourceView* getShaderResourceView();
+        ID3D11RenderTargetView* getRenderTargetView();
+		ID3D11DepthStencilView* getDepthStencilView();
+		ID3D11UnorderedAccessView* getUnorderedAccessView();
 
         PixelBox* readPixelBoxFromTexture(UINT arrayIndex=0, UINT mipSlice=0, UINT mips=1);
 
@@ -32,18 +41,12 @@ namespace Dx11Sandbox
 		virtual ~Texture(void);
 
     private:
-        DISABLE_COPY(Texture)
-		
-        static Texture* CreateTexture2D(ID3D11Device* device, ResourceID texname, UINT texWidth, UINT texHeight,
-            UINT arraySize, UINT bindFlags, DXGI_FORMAT format , UINT cpuAccess,
-            D3D11_USAGE usage );
+		DISABLE_COPY(Texture)
+		Texture(ResourceID texname);
+		void destroyResourcesAndViews();
 
-        static Texture* CreateTextureFromFile(ID3D11Device* device, const string& filename,ResourceID texname,
-            UINT cpuAccess , D3D11_USAGE usageT, UINT filter );
-
-        Texture(ResourceID texname);
         ResourceID m_name;
-        ID3D11ShaderResourceView* m_shaderView;
+        ID3D11ShaderResourceView* m_shaderResourceView;
         ID3D11RenderTargetView* m_rtView;
 		ID3D11DepthStencilView* m_dsView;
 		ID3D11UnorderedAccessView* m_uav;

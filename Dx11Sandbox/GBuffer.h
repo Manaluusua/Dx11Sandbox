@@ -1,9 +1,11 @@
 #ifndef DX11SANDBOX_GBUFFER_H
 #define DX11SANDBOX_GBUFFER_H
 
+
+struct ID3D11RenderTargetView;
+
 namespace Dx11Sandbox
 {
-
 	class Texture;
 	class RenderContext;
 	class GBuffer
@@ -20,6 +22,7 @@ namespace Dx11Sandbox
 		~GBuffer();
 		void allocateBuffer(unsigned int w, unsigned int h);
 
+		void setAsRenderTargets();
 		
 
 	private:
@@ -27,12 +30,13 @@ namespace Dx11Sandbox
 		void allocate();
 		void deallocate();
 
-		const unsigned int GBUFFER_TEXTURE_COUNT = 4;
+		static const unsigned int GBUFFER_TEXTURE_COUNT;
 		
 		unsigned int m_bufferWidth;
 		unsigned int m_bufferHeight;
 		RenderContext* m_context;
 		Texture** m_textures;
+		ID3D11RenderTargetView** m_renderTargets;
 		bool m_isAllocated;
 		
 		
