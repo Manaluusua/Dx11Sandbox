@@ -2,6 +2,7 @@
 #include "RenderBin.h"
 #include "RenderContext.h"
 #include "Renderer.h"
+#include "Texture.h"
 #include "DXUT.h"
 #include <algorithm>
 
@@ -29,7 +30,7 @@ namespace Dx11Sandbox
 			std::for_each(m_renderListeners.begin(), m_renderListeners.end(), [this,&renderBin, state](RenderCameraListener* listener) { listener->cameraStartedRendering(*this,renderBin,state);  });
 		}
 
-		state->getImmediateContext()->ClearDepthStencilView( DXUTGetD3D11DepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0 );
+		state->getImmediateContext()->ClearDepthStencilView( state->getDefaultDepthStencilTexture()->getDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0 );
 
 		std::map<RenderQueueID, std::vector<RenderData*> >& renderObjects = renderBin.getGeometryBins();
 

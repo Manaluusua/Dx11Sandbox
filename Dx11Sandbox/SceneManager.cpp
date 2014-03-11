@@ -32,10 +32,7 @@ namespace Dx11Sandbox
 		TextureManager::singleton()->setAssetPath(root->GetMediaPath());
 		MaterialManager::singleton()->setAssetPath(root->GetMediaPath());
 
-		m_defaultRenderer = new BasicForwardRenderer;
-		m_mainCamera = createCamera();
-		m_mainCamera->setRenderer(new DeferredRenderer(&m_renderContext));
-		m_mainCamera->setRenderMask(0xFFFF);
+		
 		
 
     }
@@ -188,7 +185,15 @@ namespace Dx11Sandbox
     {
         EnvironmentInfo::m_screenWidth = pBackBufferSurfaceDesc->Width;
         EnvironmentInfo::m_screenHeight = pBackBufferSurfaceDesc->Height;
+
+		
+
         m_renderContext.setDevice(pd3dDevice);
+
+		m_defaultRenderer = new BasicForwardRenderer;
+		m_mainCamera = createCamera();
+		m_mainCamera->setRenderer(new DeferredRenderer(&m_renderContext));
+		m_mainCamera->setRenderMask(0xFFFF);
     }
 
     void SceneManager::destroyWorld()

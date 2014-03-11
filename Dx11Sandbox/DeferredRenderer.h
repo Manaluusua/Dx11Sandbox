@@ -3,11 +3,12 @@
 
 #include "Renderer.h"
 #include "RCObjectPtr.h"
-
+#include "BasicMaterialPropertiesSetter.h"
 namespace Dx11Sandbox
 {
 	class GBuffer;
 	class BasicForwardRenderer;
+	class Shader;
 	class DeferredRenderer: public Renderer
 	{
 	public:
@@ -26,12 +27,13 @@ namespace Dx11Sandbox
 		void doLightPass();
 		
 
-
+		BasicMaterialPropertiesSetter m_materialPropertySetter;
 		RCObjectPtr<BasicForwardRenderer> m_forwardRenderer;
 		RenderContext* m_state;
 		std::vector<Light*>* m_lights;
 		Camera* m_cam;
-		GBuffer* m_gbuffer;
+		RCObjectPtr<GBuffer> m_gbuffer;
+		RCObjectPtr<Shader> m_accumulateLightsCS;
 		bool m_gbufferBound;
 		bool m_deferredPathActive;
 	};

@@ -13,6 +13,10 @@ namespace Dx11Sandbox
         m_loadedMaterials.clear();
             
     }
+	const string& MaterialManager::getAssetPath() const
+	{
+		return m_assetPath;
+	}
 
     bool MaterialManager::createMaterial(ID3D11Device* device, const string& filename,const string& matname, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type)
     {

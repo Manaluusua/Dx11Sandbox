@@ -24,13 +24,14 @@ namespace Dx11Sandbox
 		virtual void draw(RenderContext* state);
 
 		void addDebugTexture(Texture* tex, float x, float y, float width, float height);  
-
+		void addDebugTexture(ResourceID textureId, float x, float y, float width, float height);
+		void addDebugTexture(const string& textureName, float x, float y, float width, float height);
 
 	private:
 
 		Mesh* createQuad(float x, float y, float w, float h);
 
-		static const string debugMaterialName;
+		static const string s_debugMaterialName;
 		Camera m_cam;
 		std::vector<RenderData*> m_debugData;
 		RCObjectPtr<Renderer> m_renderer;

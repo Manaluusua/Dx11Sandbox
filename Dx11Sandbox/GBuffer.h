@@ -1,6 +1,7 @@
 #ifndef DX11SANDBOX_GBUFFER_H
 #define DX11SANDBOX_GBUFFER_H
 
+#include "RCObject.h"
 
 struct ID3D11RenderTargetView;
 
@@ -8,22 +9,21 @@ namespace Dx11Sandbox
 {
 	class Texture;
 	class RenderContext;
-	class GBuffer
+	class GBuffer : public RCObject
 	{
 	public:
 		
 		enum GBufferTexture{
 			ALBEDO = 0,
 			NORMAL = 1,
-			SPECULAR = 2,
-			DEPTH = 3
+			SPECULAR = 2
 		};
 		GBuffer(RenderContext* context);
-		~GBuffer();
+		virtual ~GBuffer();
 		void allocateBuffer(unsigned int w, unsigned int h);
 
 		void setAsRenderTargets();
-		
+		void clear();
 
 	private:
 

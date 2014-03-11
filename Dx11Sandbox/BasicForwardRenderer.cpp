@@ -4,6 +4,7 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "Material.h"
+#include "Shader.h"
 #include "RenderData.h"
 #include "RenderCamera.h"
 #include "d3dx11effect.h"
@@ -58,9 +59,9 @@ namespace Dx11Sandbox
             if(!mesh || !mat )
                 return;
 			
-			m_materialPropertySetter.setShaderProperties(object,mat);
+			m_materialPropertySetter.setShaderUniforms(object,mat);
 
-            ID3DX11Effect* effect = mat->getEffect();
+            ID3DX11Effect* effect = mat->getShader()->getEffect();
             ID3D11DeviceContext* context = m_state->getImmediateContext();
 
 

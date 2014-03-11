@@ -15,7 +15,6 @@ static const float3 heightLevels = float3(60.f,0,0);
 #include "commonUniforms.fx"
 
 Texture2D texture1;  
-Texture2D texture2;
 
 //Texture2D textureWeights;
 
@@ -56,7 +55,7 @@ float4 PS_Forward( PS_INPUT input) : SV_Target
     
 	float4 output = float4(0,0,0,1);
 	
-	output += texture2.Sample( samLinear, input.uv );
+	output += texture1.Sample( samLinear, input.uv );
 	
 	
 	
@@ -72,10 +71,9 @@ PS_GBUFFER_OUTPUT PS_Deferred( PS_INPUT input)
     
 	PS_GBUFFER_OUTPUT output;
 	
-	output.color = texture2.Sample( samLinear, input.uv );
-	output.normal = input.normal;
-	output.specular = float4(0.f, 0.f, 0.f, 0.f);
-	
+	output.color = texture1.Sample( samLinear, input.uv );
+	output.normal.rgb = input.normal;
+	output.specular = float4(output.color.g, output.color.g,output.color.g,output.color.g);
 
     return output;
 }

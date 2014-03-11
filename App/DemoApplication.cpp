@@ -4,11 +4,13 @@
 #include "TextureManager.h"
 #include "MaterialManager.h"
 #include "Material.h"
+#include "Shader.h"
 #include "MeshManager.h"
 #include "TerrainBinHandler.h"
 #include "CullableGeometry.h"
 #include "DebugDrawTextureToScreen.h"
 #include "Texture.h"
+#include "d3dx11effect.h"
 
 DemoApplication::DemoApplication()
     :m_leftDown(false),
@@ -128,7 +130,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
     //TextureManager::getSingleton()->createTexture(device, L"roughRock.png", L"roughRock.png");
 
 	tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "grass.jpg", "grass.jpg");
-    mat->setTexture("texture2", tex->getName());
+    mat->setTexture("texture1", tex->getName());
     
 
  
@@ -143,8 +145,14 @@ void DemoApplication::createWorld(SceneManager* mngr)
     
 	m_debugDrawerTexture = new DebugDrawTextureToScreen(device, 100.f, 100.f);
 	m_mngr->addDebugDrawer(m_debugDrawerTexture);
-	m_debugDrawerTexture->addDebugTexture(m_waterPlane->getRefractionTexture(), -15.f, -40.f, 20.f, 20.f);
-	m_debugDrawerTexture->addDebugTexture(m_waterPlane->getReflectionTexture(), 15.f, -40.f, 20.f, 20.f);
+	m_debugDrawerTexture->addDebugTexture(m_waterPlane->getRefractionTexture(), 40.f, 40.f, 20.f, 20.f);
+	m_debugDrawerTexture->addDebugTexture(m_waterPlane->getReflectionTexture(), 40.f, 20.f, 20.f, 20.f);
+
+	m_debugDrawerTexture->addDebugTexture("DepthStencil", -40.f, -20.f, 20.f, 20.f);
+	m_debugDrawerTexture->addDebugTexture("GBUFFER_ALBEDO",-40.f, 40.f, 20.f, 20.f);
+	m_debugDrawerTexture->addDebugTexture("GBUFFER_NORMAL", -40.f, 20.f, 20.f, 20.f);
+	m_debugDrawerTexture->addDebugTexture("GBUFFER_SPECULAR", -40.f, 0.f, 20.f, 20.f);
+	
 
 	sun = m_mngr->createLight();
 	sun->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
@@ -272,7 +280,7 @@ void DemoApplication::objectBeingRendered(CullableGeometry* obj)
     D3DXVECTOR3 transl = -(m_mngr->getMainCamera()->getTranslation());
     D3DXVECTOR4 camPos(transl.x, transl.y, transl.z, 1);
 
-    ID3DX11Effect* effect =  mat->getEffect();
+    ID3DX11Effect* effect =  mat->getShader()->getEffect();
     ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("sceneInfo");
     if(buffer->IsValid())
     {

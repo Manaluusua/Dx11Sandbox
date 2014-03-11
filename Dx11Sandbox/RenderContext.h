@@ -16,6 +16,7 @@ namespace Dx11Sandbox
 {
     class Mesh;
     class Material;
+	class Texture;
     class RenderContext
     {
     public:
@@ -24,23 +25,24 @@ namespace Dx11Sandbox
         ~RenderContext(void);
 
 
-        ID3D11Device* getDevice(){return m_device;}
-        void setDevice(ID3D11Device* device){m_device = device;}
+		ID3D11Device* getDevice();
+		void setDevice(ID3D11Device* device);
 
-        ID3D11DeviceContext* getImmediateContext(){return m_imContext;}
-        void setImmediateContext(ID3D11DeviceContext* imContext){m_imContext = imContext;}
+		ID3D11DeviceContext* getImmediateContext();
+		void setImmediateContext(ID3D11DeviceContext* imContext);
 
-        Mesh* getBoundMesh(){return m_boundMesh;}
-        Material* getBoundMaterial(){return m_boundMaterial;}
+		Mesh* getBoundMesh();
+		Material* getBoundMaterial();
 
         void bindMesh(Mesh* mesh);
         void bindMaterial(Material* mat);
 
-		
+		Texture* getDefaultDepthStencilTexture();
 
-        void setCustomClipPlane(D3DXVECTOR4& plane){m_customClipPlane = plane;}
-        const D3DXVECTOR4& getCustomClipPlane(){return m_customClipPlane;}
+		void setCustomClipPlane(D3DXVECTOR4& plane);
+		const D3DXVECTOR4& getCustomClipPlane();
 
+		void disableDepthStencil(bool val);
 		void pushRenderTargets(UINT num, ID3D11RenderTargetView *const *renderTargetViews, ID3D11DepthStencilView *depthStencilView);
 		void popRenderTargets();
         
@@ -51,6 +53,8 @@ namespace Dx11Sandbox
         void clearState();
         
     private:
+
+		void createDepthStencil(int w, int h);
 
 		struct RenderTargetsState
 		{
@@ -64,7 +68,7 @@ namespace Dx11Sandbox
 			UINT viewportCount;
 		};
 
-		void bindCurrentRenderTargetState();
+		void bindCurrentRenderTargetState(bool bindDepthStencil = true);
 		void bindCurrentViewports();
         D3DXVECTOR4 m_customClipPlane;
 
@@ -72,13 +76,12 @@ namespace Dx11Sandbox
 		std::vector<ViewportState> m_viewPortStates;
 		
 		D3D11_VIEWPORT m_defaultViewport;
-
-        Mesh* m_boundMesh;
-        Material *m_boundMaterial;
-
-        ID3D11Device* m_device;
-        ID3D11DeviceContext* m_imContext;
-       
+		
+		Mesh* m_boundMesh;
+		Material *m_boundMaterial;
+		Texture* m_defaultDepthStencil;
+		ID3D11Device* m_device;
+		ID3D11DeviceContext* m_imContext;
 
     };
 

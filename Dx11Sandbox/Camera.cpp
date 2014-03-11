@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Frustrum.h"
 
 namespace Dx11Sandbox
 {
@@ -351,45 +352,10 @@ namespace Dx11Sandbox
         m_reflected = val;
     }
 
-    void Camera::calculateFrustrum(Dx11Sandbox::Frustrum* frustrum)
+    void Camera::calculateFrustrum(Frustrum* frustrum)
     {
         D3DXMATRIX viewProj((*getViewMatrix()) * (*getProjectionMatrix()));
         
-        frustrum->rightPlane.a = viewProj._14 - viewProj._11;
-        frustrum->rightPlane.b = viewProj._24 - viewProj._21;
-        frustrum->rightPlane.c = viewProj._34 - viewProj._31;
-        frustrum->rightPlane.d = viewProj._44 - viewProj._41;
-
-        frustrum->leftPlane.a = viewProj._14 + viewProj._11;
-        frustrum->leftPlane.b = viewProj._24 + viewProj._21;
-        frustrum->leftPlane.c = viewProj._34 + viewProj._31;
-        frustrum->leftPlane.d = viewProj._44 + viewProj._41;
- 
-        frustrum->topPlane.a = viewProj._14 - viewProj._12;
-        frustrum->topPlane.b = viewProj._24 - viewProj._22;
-        frustrum->topPlane.c = viewProj._34 - viewProj._32;
-        frustrum->topPlane.d = viewProj._44 - viewProj._42;
- 
-        frustrum->bottomPlane.a = viewProj._14 + viewProj._12;
-        frustrum->bottomPlane.b = viewProj._24 + viewProj._22;
-        frustrum->bottomPlane.c = viewProj._34 + viewProj._32;
-        frustrum->bottomPlane.d = viewProj._44 + viewProj._42;
- 
-        frustrum->nearPlane.a = viewProj._13;
-        frustrum->nearPlane.b = viewProj._23;
-        frustrum->nearPlane.c = viewProj._33;
-        frustrum->nearPlane.d = viewProj._43;
- 
-        frustrum->farPlane.a = viewProj._14 - viewProj._13;
-        frustrum->farPlane.b = viewProj._24 - viewProj._23;
-        frustrum->farPlane.c = viewProj._34 - viewProj._33;
-        frustrum->farPlane.d = viewProj._44 - viewProj._43;
- 
-        D3DXPlaneNormalize( &frustrum->leftPlane, &frustrum->leftPlane );
-        D3DXPlaneNormalize( &frustrum->rightPlane, &frustrum->rightPlane );
-        D3DXPlaneNormalize( &frustrum->topPlane, &frustrum->topPlane );
-        D3DXPlaneNormalize( &frustrum->bottomPlane, &frustrum->bottomPlane );
-        D3DXPlaneNormalize( &frustrum->nearPlane, &frustrum->nearPlane );
-        D3DXPlaneNormalize( &frustrum->farPlane, &frustrum->farPlane );
+		Frustrum::calculateFrustrumFromMatrix(viewProj, *frustrum);
     }
 }

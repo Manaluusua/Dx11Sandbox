@@ -72,12 +72,18 @@ namespace Dx11Sandbox
     }
 
 
-	Mesh* MeshUtility::createQuad(ID3D11Device *device, const D3DXVECTOR3* corners)
+	Mesh* MeshUtility::createQuad(ID3D11Device *device, const D3DXVECTOR3* corners, bool flipTextureCoordinatesX, bool flipTextureCoordinatesY)
 	{
 		Mesh *mesh = MeshManager::singleton()->createMeshUnmanaged();
         if(!mesh) return 0;
 
-		FLOAT UV[8] = { 0.f,0.f, 1.f,0.f ,0.f,1.f ,1.f,1.f };
+		float minuvx = flipTextureCoordinatesX ? 1.f : 0.f;
+		float maxuvx = flipTextureCoordinatesX ? 0.f : 1.f;
+
+		float minuvy = flipTextureCoordinatesY ? 1.f : 0.f;
+		float maxuvy = flipTextureCoordinatesY ? 0.f : 1.f;
+
+		FLOAT UV[8] = { minuvx, minuvy, maxuvx, minuvy, minuvx, maxuvy, maxuvx, maxuvy };
 		UINT16 indices[6] = { 0, 2, 1, 1, 2, 3 };
 
 		BYTE* ptr[2];

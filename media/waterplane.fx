@@ -227,9 +227,8 @@ PS_GBUFFER_OUTPUT PS_DEFERRED( PS_INPUT_DEFERRED input)
 	
 	calculateWaterColorAndNormal(input, color, normal);
 	output.color = float4(color, 1.f);
-	output.normal = normal;
+	output.normal.rgb = normal;
 	output.specular = specular;
-	
     return output;
 }
 

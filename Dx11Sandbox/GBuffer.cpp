@@ -8,14 +8,14 @@
 namespace Dx11Sandbox
 {
 
-	const unsigned int GBuffer::GBUFFER_TEXTURE_COUNT = 4;
+	const unsigned int GBuffer::GBUFFER_TEXTURE_COUNT = 3;
 
 	GBuffer::GBuffer(RenderContext* context)
 		:m_bufferWidth(0),
 		m_bufferHeight(0),
 		m_context(context),
 		m_textures(new Texture*[GBUFFER_TEXTURE_COUNT]),
-		m_renderTargets(new ID3D11RenderTargetView*[GBUFFER_TEXTURE_COUNT - 1]),
+		m_renderTargets(new ID3D11RenderTargetView*[GBUFFER_TEXTURE_COUNT]),
 		m_isAllocated(false)
 		
 	{
@@ -32,10 +32,21 @@ namespace Dx11Sandbox
 	void GBuffer::setAsRenderTargets()
 	{
 		if (!m_isAllocated) return;
-		m_context->pushRenderTargets(GBUFFER_TEXTURE_COUNT - 1, m_renderTargets, m_textures[DEPTH]->getDepthStencilView());
+		
+		m_context->pushRenderTargets(GBUFFER_TEXTURE_COUNT, m_renderTargets, m_context->getDefaultDepthStencilTexture()->getDepthStencilView());
 		
 	}
 
+	void GBuffer::clear()
+	{
+		if (!m_isAllocated) return;
+		float clearColor[4] = { 0.f, 0.f, 0.f, 0.0f };
+		
+		m_context->getImmediateContext()->ClearRenderTargetView(m_textures[ALBEDO]->getRenderTargetView(), clearColor);
+		m_context->getImmediateContext()->ClearRenderTargetView(m_textures[NORMAL]->getRenderTargetView(), clearColor);
+		m_context->getImmediateContext()->ClearRenderTargetView(m_textures[SPECULAR]->getRenderTargetView(), clearColor);
+		m_context->getImmediateContext()->ClearDepthStencilView(m_context->getDefaultDepthStencilTexture()->getDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0);
+	}
 
 	void GBuffer::allocateBuffer(unsigned int w, unsigned int h)
 	{
@@ -62,15 +73,11 @@ namespace Dx11Sandbox
 		Texture* specular = TextureManager::singleton()->createTexture("GBUFFER_SPECULAR");
 		specular->createResource(m_context->getDevice(), m_bufferWidth, m_bufferHeight, true, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE, DXGI_FORMAT_R32G32B32A32_FLOAT);
 
-		Texture* depth = TextureManager::singleton()->createTexture("GBUFFER_DEPTH");
-		depth->createResource(m_context->getDevice(), m_bufferWidth, m_bufferHeight, false, D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE, DXGI_FORMAT_R32_TYPELESS);
-		depth->createDepthStencilView(m_context->getDevice(), DXGI_FORMAT_D32_FLOAT);
-		depth->createShaderResourceView(m_context->getDevice(), DXGI_FORMAT_R32_FLOAT);
+	
 
 		m_textures[ALBEDO] = albedo;
 		m_textures[NORMAL] = normal;
 		m_textures[SPECULAR] = specular;
-		m_textures[DEPTH] = depth;
 
 		m_renderTargets[ALBEDO] = albedo->getRenderTargetView();
 		m_renderTargets[NORMAL] = normal->getRenderTargetView();

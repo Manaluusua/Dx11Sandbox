@@ -1,12 +1,13 @@
 #ifndef DX11SANDBOX_CAMERA_H
 #define DX11SANDBOX_CAMERA_H
-#include <D3D11.h>
 #include "MathUtil.h"
-#include "Frustrum.h"
 #include "RCObject.h"
+#include <D3D11.h>
+
 
 namespace Dx11Sandbox
 {
+	class Frustrum;
     class Camera 
     {
     public:
@@ -69,7 +70,7 @@ namespace Dx11Sandbox
 		
 		ProjectionType getProjectionType() const;
 
-        void calculateFrustrum(Dx11Sandbox::Frustrum* frustrum);
+        void calculateFrustrum(Frustrum* frustrum);
 
     protected:
 

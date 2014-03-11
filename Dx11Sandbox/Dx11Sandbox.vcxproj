@@ -123,6 +123,7 @@
     <ClCompile Include="CullableGeometry.cpp" />
     <ClCompile Include="Root.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderIncludeHandler.cpp" />
     <ClCompile Include="ShadowCPUBuffer.cpp" />
     <ClCompile Include="SIMDCuller.cpp" />
@@ -159,7 +160,6 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialManager.h" />
-    <ClInclude Include="MaterialPropertiesSetter.h" />
     <ClInclude Include="MathUtil.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshManager.h" />
@@ -175,6 +175,7 @@
     <ClInclude Include="CullableGeometry.h" />
     <ClInclude Include="CullableObjectManager.h" />
     <ClInclude Include="EnvironmentInfo.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderIncludeHandler.h" />
     <ClInclude Include="ShadowCPUBuffer.h" />
     <ClInclude Include="SIMDCuller.h" />

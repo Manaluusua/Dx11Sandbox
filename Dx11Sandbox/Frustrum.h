@@ -21,13 +21,15 @@ namespace Dx11Sandbox
             __m128 d5d6d5d6;
         };
 
-    public:
-		inline static UINT32 cullSpheresSSE(Frustrum::SIMDFrustrum& frust,  const D3DXVECTOR4& sphere1, const D3DXVECTOR4& sphere2 );
+		static UINT32 cullSpheresSSE(Frustrum::SIMDFrustrum& frust,  const D3DXVECTOR4& sphere1, const D3DXVECTOR4& sphere2 );
+		static void calculateFrustrumFromMatrix(const D3DXMATRIX &matrix, Frustrum& outfrust);
+		static void calculateMatrixFromFrustrum(const Frustrum& frust, D3DXMATRIX &matrix);
+
 
         Frustrum();
         ~Frustrum();
 
-		inline void convertToSimdFrustrum(Frustrum::SIMDFrustrum& out) const;
+		void convertToSimdFrustrum(Frustrum::SIMDFrustrum& out) const;
         D3DXPLANE leftPlane;
         D3DXPLANE rightPlane;
         D3DXPLANE topPlane;
@@ -42,72 +44,9 @@ namespace Dx11Sandbox
         
     };
 
-    //inlines
-
-    void Frustrum::convertToSimdFrustrum(Frustrum::SIMDFrustrum& out) const
-    {
     
-        __declspec(align(16)) float line[4];
 
-        line[0] = leftPlane.a;
-        line[1] = rightPlane.a;
-        line[2] = topPlane.a;
-        line[3] = bottomPlane.a;
-
-        out.x1x2x3x4 = _mm_load_ps(line);
-
-        line[0] = leftPlane.b;
-        line[1] = rightPlane.b;
-        line[2] = topPlane.b;
-        line[3] = bottomPlane.b;
-
-        out.y1y2y3y4 = _mm_load_ps(line);
-
-        line[0] = leftPlane.c;
-        line[1] = rightPlane.c;
-        line[2] = topPlane.c;
-        line[3] = bottomPlane.c;
-
-        out.z1z2z3z4 = _mm_load_ps(line);
-
-        line[0] = leftPlane.d;
-        line[1] = rightPlane.d;
-        line[2] = topPlane.d;
-        line[3] = bottomPlane.d;
-
-        out.d1d2d3d4 = _mm_load_ps(line);
-
-        line[0] = farPlane.a;
-        line[1] = nearPlane.a;
-        line[2] = farPlane.a;
-        line[3] = nearPlane.a;
-
-        out.x5x6x5x6 = _mm_load_ps(line);
-
-        line[0] = farPlane.b;
-        line[1] = nearPlane.b;
-        line[2] = farPlane.b;
-        line[3] = nearPlane.b;
-
-        out.y5y6y5y6 = _mm_load_ps(line);
-
-        line[0] = farPlane.c;
-        line[1] = nearPlane.c;
-        line[2] = farPlane.c;
-        line[3] = nearPlane.c;
-
-        out.z5z6z5z6 = _mm_load_ps(line);
-
-        line[0] = farPlane.d;
-        line[1] = nearPlane.d;
-        line[2] = farPlane.d;
-        line[3] = nearPlane.d;
-
-        out.d5d6d5d6 = _mm_load_ps(line);
-
-    }
-
-	UINT32 Frustrum::cullSpheresSSE(Frustrum::SIMDFrustrum& frust,  const D3DXVECTOR4& sphere1, const D3DXVECTOR4& sphere2 )
+	inline UINT32 Frustrum::cullSpheresSSE(Frustrum::SIMDFrustrum& frust,  const D3DXVECTOR4& sphere1, const D3DXVECTOR4& sphere2 )
 	{
 		UINT32 cullmask = 0x0;
 

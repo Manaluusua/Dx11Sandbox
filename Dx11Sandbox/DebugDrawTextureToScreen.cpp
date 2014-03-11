@@ -10,13 +10,13 @@
 namespace Dx11Sandbox
 {
 
-	const string DebugDrawTextureToScreen::debugMaterialName = "unlitTexture";
+	const string DebugDrawTextureToScreen::s_debugMaterialName = "unlitTexture";
 
 	DebugDrawTextureToScreen::DebugDrawTextureToScreen(ID3D11Device *device, float width, float height)
 		:m_device(device)
 	{
 		m_cam.setProjectionOrthographic(width, width/height, 0.1f, 100.f);
-		MaterialManager::singleton()->getOrCreateMaterial(device, "unlitTexture.fx", debugMaterialName, MeshInputLayouts::POS3TEX2);
+		MaterialManager::singleton()->getOrCreateMaterial(device, "unlitTexture.fx", s_debugMaterialName, MeshInputLayouts::POS3TEX2);
 		m_renderer = new BasicForwardRenderer;
 	}
 
@@ -32,10 +32,14 @@ namespace Dx11Sandbox
 
 	void DebugDrawTextureToScreen::draw(RenderContext* state)
 	{
-		
+		state->disableDepthStencil(true);
 		m_renderer->renderBegin(&m_cam, 0, state);
 		m_renderer->render(m_debugData.data(), m_debugData.size());
 		m_renderer->renderEnd();
+
+
+
+		state->disableDepthStencil(false);
 	}
 
 	Mesh* DebugDrawTextureToScreen::createQuad(float x, float y, float w, float h)
@@ -52,19 +56,30 @@ namespace Dx11Sandbox
 		{
 			corners[i] = D3DXVECTOR3( x - hw + (i%2) * w, y - hh + (i/2) * h, depth);
 		}
-		return MeshUtility::createQuad(m_device, corners);
+		return MeshUtility::createQuad(m_device, corners, false, true);
 
 	}
 
-	void DebugDrawTextureToScreen::addDebugTexture(Texture* tex, float x, float y, float width, float height)
+	void DebugDrawTextureToScreen::addDebugTexture(ResourceID textureId, float x, float y, float width, float height)
 	{
 		Mesh* mesh = createQuad(x, y, width, height);
-		RCObjectPtr<Material> mat = new Material( *MaterialManager::singleton()->getMaterial(debugMaterialName) );
-		mat->setTexture("tex", tex->getName());
+		RCObjectPtr<Material> mat = new Material(*MaterialManager::singleton()->getMaterial(s_debugMaterialName));
+		mat->setTexture("tex", textureId);
 		RenderData* data = new RenderData;
 		data->setMesh(mesh);
 		data->setMaterial(mat);
 
 		m_debugData.push_back(data);
+	}
+
+	void DebugDrawTextureToScreen::addDebugTexture(Texture* tex, float x, float y, float width, float height)
+	{
+		addDebugTexture(tex->getName(), x, y, width, height);
+	}
+
+	void DebugDrawTextureToScreen::addDebugTexture(const string& textureName, float x, float y, float width, float height)
+	{
+		addDebugTexture(stringToID(textureName), x, y, width, height);
+
 	}
 }

@@ -1,10 +1,11 @@
 #include "BasicMaterialPropertiesSetter.h"
 #include "Material.h"
+#include "Shader.h"
 #include "RenderCamera.h"
 #include "EnvironmentInfo.h"
 #include "RenderData.h"
 #include "Light.h"
-
+#include "d3dx11effect.h"
 namespace Dx11Sandbox
 {
 	BasicMaterialPropertiesSetter::BasicMaterialPropertiesSetter(void)
@@ -44,53 +45,66 @@ namespace Dx11Sandbox
 
 	}
 
-	void BasicMaterialPropertiesSetter::setShaderProperties(RenderData* object, Material* mat)
+	void BasicMaterialPropertiesSetter::setSceneInfoUniforms(RenderData* object, Material* mat)
 	{
-		if(m_previousMaterial != 0 && m_previousMaterial == mat)return;
-
-		//if no camera is set, return
-		if(m_cam == 0) return;
-
-
 		const D3DXMATRIX *view = m_cam->getViewMatrix();
 		const D3DXMATRIX *proj = m_cam->getProjectionMatrix();
 		const D3DXMATRIX& world = object->getWorldMatrix();
-		D3DXMATRIX worldviewProj =  world * (*view) * (*proj);
+		D3DXMATRIX worldviewProj = world * (*view) * (*proj);
 
-        //temp
-		Light& light = getLight();
-
-
-		
 		D3DXVECTOR3 transl = -(m_cam->getTranslation());
 		D3DXVECTOR4 camPos(transl.x, transl.y, transl.z, 1);
 		const D3DXVECTOR4& clip = m_cam->getClipPlane();
 
-		ID3DX11Effect* effect =  mat->getEffect();
+		ID3DX11Effect* effect = mat->getShader()->getEffect();
 		ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("basicSceneInfo");
-		if(buffer->IsValid())
+		if (buffer->IsValid())
 		{
-			
-			ID3DX11EffectMatrixVariable* mat =  buffer->GetMemberByName("worldviewProj")->AsMatrix();
+
+			ID3DX11EffectMatrixVariable* mat = buffer->GetMemberByName("worldviewProj")->AsMatrix();
 			mat->SetMatrix((float*)&worldviewProj);
 			buffer->GetMemberByName("camPos")->AsVector()->SetFloatVector((float*)&camPos);
 			buffer->GetMemberByName("clipPlane")->AsVector()->SetFloatVector((float*)&clip);
 			buffer->GetMemberByName("time")->AsScalar()->SetFloat((float)EnvironmentInfo::getTime());
-    
-    
-		}
 
-		buffer = effect->GetConstantBufferByName("objectInfo");
+
+		}
+	}
+	void BasicMaterialPropertiesSetter::setLightUniforms(Material* mat)
+	{
+		//temp
+		Light& light = getLight();
+
+
+
+
+		ID3DX11Effect* effect = mat->getShader()->getEffect();
+		ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("objectInfo");
 		if (buffer->IsValid())
 		{
 			buffer->GetMemberByName("sunDirection")->AsVector()->SetFloatVector((float*)&light.getLightParameters());
 			buffer->GetMemberByName("sunColor")->AsVector()->SetFloatVector((float*)&light.getColor());
 		}
 
-		
+	}
 
-		
+	void BasicMaterialPropertiesSetter::setShaderUniforms(RenderData* object, Material* mat, bool updateSceneUniforms, bool updateLightUniforms)
+	{
 
+		if (!updateSceneUniforms && !updateLightUniforms) return;
+
+		if(m_previousMaterial != 0 && m_previousMaterial == mat)return;
+
+		//if no camera is set, return
+		if(m_cam == 0) return;
+
+		if (updateSceneUniforms){
+			setSceneInfoUniforms(object, mat);
+		}
+
+		if (updateLightUniforms){
+			setLightUniforms(mat);
+		}
 
 		m_previousMaterial = mat;
 	}

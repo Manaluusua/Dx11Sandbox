@@ -3,6 +3,7 @@
 #include "MeshUtility.h"
 #include "MaterialManager.h"
 #include "Material.h"
+#include "Shader.h"
 #include "TextureManager.h"
 #include "Texture.h"
 #include "CullableGeometry.h"
@@ -10,7 +11,7 @@
 #include "ReleasePtr.h"
 #include "MathUtil.h"
 #include "EnvironmentInfo.h"
-
+#include "d3dx11effect.h"
 WaterPlane::WaveDefinition::WaveDefinition()
     :direction(0,0),
     amplitude(0),
@@ -131,7 +132,7 @@ void WaterPlane::initializeRenderTargets(ID3D11Device *device, Dx11Sandbox::RCOb
 
 void WaterPlane::setupWaves()
 {
-	ID3DX11Effect* effect =  m_renderObject->getMaterial()->getEffect();
+	ID3DX11Effect* effect =  m_renderObject->getMaterial()->getShader()->getEffect();
     ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("waveDefinitions");
     D3DXMATRIX matrix;
     matrix._11 = m_waves[0].direction.x;
@@ -211,7 +212,7 @@ void WaterPlane::setupReflectionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sa
 	state->clearState();
 
     //unbind reflection and refraction textures
-	ID3DX11Effect* effect =  m_renderObject->getMaterial()->getEffect();
+	ID3DX11Effect* effect =  m_renderObject->getMaterial()->getShader()->getEffect();
 
     //make sure the rendertargets are not bound to pipeline
     effect->GetVariableByName("reflection")->AsShaderResource()->SetResource(0);
@@ -282,7 +283,7 @@ void WaterPlane::setupRefractionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sa
 	state->clearState();
 	Dx11Sandbox::RenderCamera* cam = m_mngr->getMainCamera();
 
-	ID3DX11Effect* effect =  m_renderObject->getMaterial()->getEffect();
+	ID3DX11Effect* effect =  m_renderObject->getMaterial()->getShader()->getEffect();
 
     effect->GetVariableByName("refraction")->AsShaderResource()->SetResource(0);
     effect->GetTechniqueByIndex(0)->GetPassByIndex(0)->Apply(0, state->getImmediateContext());

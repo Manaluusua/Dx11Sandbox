@@ -3,17 +3,17 @@
 
 
 #include "CommonUtilities.h"
-#include "DXUT.h"
-#include "SDKmisc.h"
 #include "RCObject.h"
 #include "ReleasePtr.h"
 #include "ILDescriptions.h"
+#include "RCObjectPtr.h"
 #include <map>
-#include <d3dx11effect.h>
+
 
 namespace Dx11Sandbox
 {
     class RenderContext;
+	class Shader;
     class Material : public RCObject
     {
     public:
@@ -30,12 +30,12 @@ namespace Dx11Sandbox
             Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type =  Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
 
         void setTexture(const string& shaderVariable, ResourceID textureName);
-        ID3DX11Effect* getEffect(){return m_effect;}
-        ID3D11InputLayout* getInputLayout(){return m_layout;}
+		Shader* getShader();
+		ID3D11InputLayout* getInputLayout();
 
         bool bind(RenderContext* context);
 
-        std::map<string, ResourceID>& getTextureReferences(){return m_textureRefs;}
+		std::map<string, ResourceID>& getTextureReferences();
 
     private:
 
@@ -45,7 +45,7 @@ namespace Dx11Sandbox
         //key: name of the samplervariable, value: id of the referenced tex to be bind in to the samplervariable
         std::map<string, ResourceID> m_textureRefs;
 
-        ReleasePtr<ID3DX11Effect> m_effect;
+        RCObjectPtr<Shader> m_shader;
         ReleasePtr<ID3D11InputLayout> m_layout;
     };
 

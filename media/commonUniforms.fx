@@ -16,6 +16,6 @@ cbuffer objectInfo
 struct PS_GBUFFER_OUTPUT
 {
     float4 color: SV_Target0;
-    float3 normal: SV_Target1;
+    float4 normal: SV_Target1;
 	float4 specular: SV_Target2;
 };

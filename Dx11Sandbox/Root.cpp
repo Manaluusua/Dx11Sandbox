@@ -120,7 +120,7 @@ namespace Dx11Sandbox
         DXUTSetCallbackDeviceRemoved( OnDeviceRemoved );
 
 
-        // Set the D3D11 DXUT callbacks. Remove these sets if the app doesn't need to support D3D11
+
         DXUTSetCallbackD3D11DeviceAcceptable( IsD3D11DeviceAcceptable );
         DXUTSetCallbackD3D11DeviceCreated( OnD3D11CreateDevice );
         DXUTSetCallbackD3D11SwapChainResized( OnD3D11ResizedSwapChain );
@@ -176,6 +176,8 @@ namespace Dx11Sandbox
     //--------------------------------------------------------------------------------------
     bool Root::ModifyDeviceSettings( DXUTDeviceSettings* pDeviceSettings, void* pUserContext )
     {
+		//don't create depth stencil
+		pDeviceSettings->d3d11.AutoCreateDepthStencil = false;
         return true;
     }
 

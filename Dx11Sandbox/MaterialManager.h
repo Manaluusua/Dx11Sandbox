@@ -20,6 +20,7 @@ namespace Dx11Sandbox
         virtual ~MaterialManager();
 
 		void setAssetPath(const string& path);
+		const string& getAssetPath() const;
 
         Material* getMaterial(const string& matname);
         bool releaseMaterial(const string& matname);

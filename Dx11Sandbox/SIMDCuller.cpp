@@ -1,5 +1,6 @@
 #include "SIMDCuller.h"
 #include "SceneManager.h"
+#include "Frustrum.h"
 namespace Dx11Sandbox
 {
     

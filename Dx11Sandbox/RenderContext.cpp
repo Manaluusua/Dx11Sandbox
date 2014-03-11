@@ -2,15 +2,18 @@
 //
 #include "Mesh.h"
 #include "Material.h"
+#include "DXUT.h"
 #include "EnvironmentInfo.h"
-
+#include "TextureManager.h"
+#include "Texture.h"
 namespace Dx11Sandbox
 {
 
     RenderContext::RenderContext(void)
-        :m_boundMesh(0),
+		:m_customClipPlane(0, 0, 0, 0),
+		m_boundMesh(0),
         m_boundMaterial(0),
-        m_customClipPlane(0,0,0,0)
+		m_defaultDepthStencil(0)
 
     {
 		memset(&m_defaultViewport, 0, sizeof(D3D11_VIEWPORT));
@@ -43,6 +46,37 @@ namespace Dx11Sandbox
     }
 
 
+	void RenderContext::createDepthStencil(int w, int h)
+	{
+		TextureManager* texMngr = TextureManager::singleton();
+		if (m_defaultDepthStencil){
+			texMngr->releaseTexture(m_defaultDepthStencil->getName());
+		}
+
+		m_defaultDepthStencil = TextureManager::singleton()->createTexture("DepthStencil");
+		m_defaultDepthStencil->createResource(getDevice(), w, h, false, D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE, DXGI_FORMAT_R32_TYPELESS);
+		m_defaultDepthStencil->createDepthStencilView(getDevice(), DXGI_FORMAT_D32_FLOAT);
+		m_defaultDepthStencil->createShaderResourceView(getDevice(), DXGI_FORMAT_R32_FLOAT);
+
+	}
+
+	ID3D11Device* RenderContext::getDevice(){ return m_device; }
+	void RenderContext::setDevice(ID3D11Device* device){ m_device = device; }
+
+	ID3D11DeviceContext* RenderContext::getImmediateContext(){ return m_imContext; }
+	void RenderContext::setImmediateContext(ID3D11DeviceContext* imContext){ m_imContext = imContext; }
+
+	Mesh* RenderContext::getBoundMesh(){ return m_boundMesh; }
+	Material* RenderContext::getBoundMaterial(){ return m_boundMaterial; }
+
+
+	void RenderContext::setCustomClipPlane(D3DXVECTOR4& plane){ m_customClipPlane = plane; }
+	const D3DXVECTOR4& RenderContext::getCustomClipPlane(){ return m_customClipPlane; }
+
+	Texture* RenderContext::getDefaultDepthStencilTexture()
+	{
+		return m_defaultDepthStencil;
+	}
 
     void RenderContext::pushRenderTargets(UINT num, ID3D11RenderTargetView *const *renderTargetViews, ID3D11DepthStencilView *depthStencilView)
     {
@@ -107,21 +141,29 @@ namespace Dx11Sandbox
 		m_defaultViewport.TopLeftX = viewport->TopLeftX;
 		m_defaultViewport.TopLeftY = viewport->TopLeftY;
 		m_defaultViewport.Width = viewport->Width;
+
+		createDepthStencil(m_defaultViewport.Width, m_defaultViewport.Height);
+
 	}
 
-    void RenderContext::bindCurrentRenderTargetState()
+	void RenderContext::disableDepthStencil(bool val)
+	{
+		bindCurrentRenderTargetState(!val);
+	}
+
+	void RenderContext::bindCurrentRenderTargetState(bool bindDepthStencil)
 	{
 		
 		if(m_boundStates.size() == 0u)
 		{
 			ID3D11RenderTargetView * backBuffer[1];
 			backBuffer[0] = DXUTGetD3D11RenderTargetView();
-			m_imContext->OMSetRenderTargets(1, backBuffer, DXUTGetD3D11DepthStencilView());
+			m_imContext->OMSetRenderTargets(1, backBuffer, bindDepthStencil ? m_defaultDepthStencil->getDepthStencilView() : 0);
 
 
 		}else{
 			const RenderTargetsState& currentState = m_boundStates.back();
-			m_imContext->OMSetRenderTargets(currentState.numberOfBoundTargets, currentState.renderTargets, currentState.depthStencil);
+			m_imContext->OMSetRenderTargets(currentState.numberOfBoundTargets, currentState.renderTargets, bindDepthStencil ? currentState.depthStencil : 0);
 
 		}
 		
