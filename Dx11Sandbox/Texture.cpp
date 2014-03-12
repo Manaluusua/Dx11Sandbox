@@ -222,6 +222,15 @@ namespace Dx11Sandbox
         }
     }
 
+	UINT Texture::getWidth() const
+	{
+		return m_texWidth;
+	}
+	UINT Texture::getHeight() const
+	{
+		return m_texHeight;
+	}
+
 	ResourceID Texture::getName() const
 	{
 		return m_name;

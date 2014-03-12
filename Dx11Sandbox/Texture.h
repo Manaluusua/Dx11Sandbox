@@ -37,6 +37,9 @@ namespace Dx11Sandbox
 
 		ResourceID getName() const;
 
+		UINT getWidth() const;
+		UINT getHeight() const;
+
 	protected:
 		virtual ~Texture(void);
 

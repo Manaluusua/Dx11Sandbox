@@ -94,13 +94,9 @@ namespace Dx11Sandbox
         {
             return false;
         }
-        D3DX11_EFFECT_DESC effectDesc;
-        D3DX11_TECHNIQUE_DESC techDesc;
-        D3DX11_PASS_DESC passDesc;
         
 		ID3DX11Effect* effect = m_shader->getEffect();
 
-        m_shader->getEffect()->GetDesc(&effectDesc);
         
         
         context->getImmediateContext()->IASetInputLayout( m_layout );

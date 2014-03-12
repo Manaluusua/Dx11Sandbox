@@ -9,6 +9,7 @@ namespace Dx11Sandbox
 	class GBuffer;
 	class BasicForwardRenderer;
 	class Shader;
+	class Texture;
 	class DeferredRenderer: public Renderer
 	{
 	public:
@@ -25,7 +26,13 @@ namespace Dx11Sandbox
 		void unbindGBuffer();
 		void renderToGBuffer(RenderData** objects, unsigned int objectCount);
 		void doLightPass();
+		void copyLightPassOutputToRenderTarget();
 		
+		void createOutputTex(unsigned int w, unsigned int h);
+
+		static const unsigned int s_threadsPerGroupX;
+		static const unsigned int s_threadsPerGroupY;
+		static const string s_copyMaterialName;
 
 		BasicMaterialPropertiesSetter m_materialPropertySetter;
 		RCObjectPtr<BasicForwardRenderer> m_forwardRenderer;
@@ -34,6 +41,8 @@ namespace Dx11Sandbox
 		Camera* m_cam;
 		RCObjectPtr<GBuffer> m_gbuffer;
 		RCObjectPtr<Shader> m_accumulateLightsCS;
+		RenderData* m_copyData;
+		Texture* m_lightingOutput;
 		bool m_gbufferBound;
 		bool m_deferredPathActive;
 	};

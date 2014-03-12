@@ -45,7 +45,6 @@ namespace Dx11Sandbox
 
 	void BasicForwardRenderer::render(RenderData** objects, unsigned int objectCount)
 	{
-        D3DX11_EFFECT_DESC effectDesc;
         D3DX11_TECHNIQUE_DESC techDesc;
         D3DX11_PASS_DESC passDesc;
 
@@ -64,12 +63,6 @@ namespace Dx11Sandbox
             ID3DX11Effect* effect = mat->getShader()->getEffect();
             ID3D11DeviceContext* context = m_state->getImmediateContext();
 
-
-        
-
-        
-        
-            effect->GetDesc(&effectDesc);
         
             
             ID3DX11EffectTechnique* tech = effect->GetTechniqueByIndex(Renderer::FORWARD_RENDERER);

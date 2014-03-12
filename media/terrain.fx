@@ -41,7 +41,7 @@ PS_INPUT VS( VS_INPUT input )
     PS_INPUT output;
     
     output.position = mul( float4(input.position,1), worldviewProj );
-	output.normal = input.normal;
+	output.normal = mul( float4(input.normal,0), world);
 	
     output.uv = input.uv;
 

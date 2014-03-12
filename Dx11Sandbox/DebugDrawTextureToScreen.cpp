@@ -42,27 +42,11 @@ namespace Dx11Sandbox
 		state->disableDepthStencil(false);
 	}
 
-	Mesh* DebugDrawTextureToScreen::createQuad(float x, float y, float w, float h)
-	{
-		
-		
-		D3DXVECTOR3 corners[4];
-		float depth = 0.2f;
 
-		float hw = w*0.5f;
-		float hh = h*0.5f;
-
-		for(int i = 0; i < 4; ++i)
-		{
-			corners[i] = D3DXVECTOR3( x - hw + (i%2) * w, y - hh + (i/2) * h, depth);
-		}
-		return MeshUtility::createQuad(m_device, corners, false, true);
-
-	}
 
 	void DebugDrawTextureToScreen::addDebugTexture(ResourceID textureId, float x, float y, float width, float height)
 	{
-		Mesh* mesh = createQuad(x, y, width, height);
+		Mesh* mesh = MeshUtility::createQuad(m_device,x, y, width, height, false, true);
 		RCObjectPtr<Material> mat = new Material(*MaterialManager::singleton()->getMaterial(s_debugMaterialName));
 		mat->setTexture("tex", textureId);
 		RenderData* data = new RenderData;

@@ -1,6 +1,7 @@
 cbuffer basicSceneInfo
 {
 	float4x4 worldviewProj;
+	float4x4 world;
 	float3 camPos;
 	float4 clipPlane;
 	float time;

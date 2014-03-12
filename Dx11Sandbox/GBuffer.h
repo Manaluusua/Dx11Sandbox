@@ -22,6 +22,12 @@ namespace Dx11Sandbox
 		virtual ~GBuffer();
 		void allocateBuffer(unsigned int w, unsigned int h);
 
+		Texture* getBufferTexture(GBufferTexture texType);
+
+		unsigned int getWidth() const;
+		unsigned int getHeight() const;
+
+
 		void setAsRenderTargets();
 		void clear();
 

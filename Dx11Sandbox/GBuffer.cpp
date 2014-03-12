@@ -62,7 +62,6 @@ namespace Dx11Sandbox
 		deallocate(); 
 
 		
-
 		
 		Texture* albedo = TextureManager::singleton()->createTexture("GBUFFER_ALBEDO");
 		albedo->createResource(m_context->getDevice(), m_bufferWidth, m_bufferHeight, true, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE, DXGI_FORMAT_R32G32B32A32_FLOAT);
@@ -86,6 +85,23 @@ namespace Dx11Sandbox
 
 		m_isAllocated = true;
 	}
+
+	unsigned int GBuffer::getWidth() const
+	{
+		return m_bufferWidth;
+
+	}
+	unsigned int GBuffer::getHeight() const
+	{
+		return m_bufferHeight;
+	}
+
+	Texture* GBuffer::getBufferTexture(GBufferTexture texType)
+	{
+		return m_textures[texType];
+
+	}
+
 	void GBuffer::deallocate()
 	{
 		if (!m_isAllocated) return;

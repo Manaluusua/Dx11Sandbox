@@ -93,6 +93,24 @@ namespace Dx11Sandbox
 		return mesh;
 	}
 
+	Mesh* MeshUtility::createQuad(ID3D11Device *device, float x, float y, float w, float h, bool flipTextureCoordinatesX, bool flipTextureCoordinatesY)
+	{
+
+
+		D3DXVECTOR3 corners[4];
+		float depth = 0.2f;
+
+		float hw = w*0.5f;
+		float hh = h*0.5f;
+
+		for (int i = 0; i < 4; ++i)
+		{
+			corners[i] = D3DXVECTOR3(x - hw + (i % 2) * w, y - hh + (i / 2) * h, depth);
+		}
+		return createQuad(device, corners, flipTextureCoordinatesX, flipTextureCoordinatesY);
+
+	}
+
     Mesh* MeshUtility::createSkyBoxMesh(ID3D11Device *device, const string& name)
     {
         Mesh *mesh = MeshManager::singleton()->createMesh(name);

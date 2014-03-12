@@ -63,6 +63,8 @@ namespace Dx11Sandbox
 
 			ID3DX11EffectMatrixVariable* mat = buffer->GetMemberByName("worldviewProj")->AsMatrix();
 			mat->SetMatrix((float*)&worldviewProj);
+			mat = buffer->GetMemberByName("world")->AsMatrix();
+			mat->SetMatrix((float*)&world);
 			buffer->GetMemberByName("camPos")->AsVector()->SetFloatVector((float*)&camPos);
 			buffer->GetMemberByName("clipPlane")->AsVector()->SetFloatVector((float*)&clip);
 			buffer->GetMemberByName("time")->AsScalar()->SetFloat((float)EnvironmentInfo::getTime());

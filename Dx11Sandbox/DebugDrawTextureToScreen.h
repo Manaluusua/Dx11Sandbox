@@ -29,7 +29,6 @@ namespace Dx11Sandbox
 
 	private:
 
-		Mesh* createQuad(float x, float y, float w, float h);
 
 		static const string s_debugMaterialName;
 		Camera m_cam;
