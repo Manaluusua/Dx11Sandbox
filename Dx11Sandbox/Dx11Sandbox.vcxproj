@@ -108,6 +108,7 @@
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="CullableLight.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightListToStructuredData.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
     <ClCompile Include="MathUtil.cpp" />
@@ -144,6 +145,7 @@
     <ClInclude Include="Cullable.h" />
     <ClInclude Include="DeferredRenderer.h" />
     <ClInclude Include="GBuffer.h" />
+    <ClInclude Include="LightListToStructuredData.h" />
     <ClInclude Include="RenderPrimitiveGatherer.h" />
     <ClInclude Include="Culler.h" />
     <ClInclude Include="CullDataAllocator.h" />

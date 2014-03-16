@@ -64,7 +64,14 @@ namespace Dx11Sandbox
         m_indices = indices;
     }
 
-
+	void Mesh::setPrimType(D3D11_PRIMITIVE_TOPOLOGY type)
+	{ 
+		m_primType = type; 
+	}
+	D3D11_PRIMITIVE_TOPOLOGY Mesh::getPrimType()
+	{ 
+		return m_primType; 
+	}
 
     void Mesh::createMeshFromBuffers(ID3D11Device* device,BYTE** vbuffers, BYTE* ibuffer, UINT numVertices, UINT numIndices,
             DXGI_FORMAT indexFormat,MeshInputLayouts::MESH_LAYOUT_TYPE type)

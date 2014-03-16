@@ -34,52 +34,18 @@ namespace Dx11Sandbox
     bool VertexBuffer::allocate(ID3D11Device* device, void* vertices, UINT stride, UINT numVertices,D3D11_USAGE usage, UINT cpuAccess ,
             bool createSOBuffer)
     {
-        if( m_buffer )
-        {
-            SAFE_RELEASE( m_buffer );
-            m_stride = 0;
-            m_vertexCount = 0;
-            m_buffer = 0;
-        }
+		m_stride = 0;
+		m_vertexCount = 0;
 
-        D3D11_BUFFER_DESC vertBuffDesc;
-	    D3D11_SUBRESOURCE_DATA vertexData;
-        ID3D11Buffer* buffer;
-	    HRESULT hr;
+		UINT binding = createSOBuffer ? D3D11_BIND_STREAM_OUTPUT : D3D11_BIND_VERTEX_BUFFER; 
+		bool res = allocateBuffer(device, vertices, stride*numVertices, binding, usage, cpuAccess);
+		if (res){
+			m_vertexCount = numVertices;
+			m_stride = stride;
+			return true;
+		}
+		return false;
 
-        if(numVertices>0)
-        {
-	        vertBuffDesc.Usage = usage;
-	        vertBuffDesc.ByteWidth = stride*numVertices;
-	    
-            if(createSOBuffer)
-            {
-                vertBuffDesc.BindFlags = D3D11_BIND_STREAM_OUTPUT;
-            }
-            else
-            {
-                vertBuffDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-            }
-
-	        vertBuffDesc.CPUAccessFlags = cpuAccess;
-	        vertBuffDesc.MiscFlags = 0;
-	        vertBuffDesc.StructureByteStride = 0;
-
-	        vertexData.pSysMem = vertices;
-	        vertexData.SysMemPitch = 0;
-	        vertexData.SysMemSlicePitch = 0;
-
-            hr = device->CreateBuffer(&vertBuffDesc, &vertexData, &buffer);
-	        if(FAILED(hr))
-	        {
-		        return false;
-	        }
-            m_buffer = buffer;
-            m_vertexCount = numVertices;
-            m_stride = stride;
-            return true;
-        }
-        return false;
        
     }
 

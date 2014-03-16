@@ -32,8 +32,8 @@ namespace Dx11Sandbox
         void setVertexBuffer(VertexBuffer *vertices);
         void setIndexBuffer(IndexBuffer *indices);
         
-        void setPrimType(D3D11_PRIMITIVE_TOPOLOGY type){m_primType = type;}
-        D3D11_PRIMITIVE_TOPOLOGY getPrimType(){return m_primType;}
+		void setPrimType(D3D11_PRIMITIVE_TOPOLOGY type);
+		D3D11_PRIMITIVE_TOPOLOGY getPrimType();
 
         void createMeshFromBuffers(ID3D11Device* device,BYTE** vbuffers, BYTE* ibuffer, UINT numVertices, UINT numIndices,
             DXGI_FORMAT indexFormat,MeshInputLayouts::MESH_LAYOUT_TYPE type);

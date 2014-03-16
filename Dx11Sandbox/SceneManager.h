@@ -68,10 +68,10 @@ namespace Dx11Sandbox
 		RenderCamera* createCamera();
 		void destroyCamera(RenderCamera* camera);
         
-
+		void calculateVisibleLightsForCamera(RenderCamera* cam, std::vector<Cullable*>& out);
+		void calculateVisibleGeometryForCamera(RenderCamera* cam, std::vector<Cullable*>& out);
 
         void cullObjectsToRenderQueues(RenderCamera* cam);
-		
 
     protected:
         void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
@@ -81,7 +81,8 @@ namespace Dx11Sandbox
         
 		void drawDebug();
 
-		void cullObjectsFromPools(std::map<RenderLayer, CullDataAllocator*>& pools, RenderCamera* cam);
+		void cullObjectsFromPools(std::map<RenderLayer, CullDataAllocator*>& pools, RenderCamera* cam, std::vector<Cullable*>& out);
+		void addCachedObjectsToRenderBins();
 
         void destroyWorld();
         void clearRenderQueues();
@@ -93,7 +94,8 @@ namespace Dx11Sandbox
 
 		CullableGeometryManager m_renderGeometryManager;
 		CullableLightManager m_lightManager;
-        std::vector<Cullable*> m_cachedVisibleList;
+        std::vector<Cullable*> m_cachedVisibleLightsList;
+		std::vector<Cullable*> m_cachedVisibleGeometryList;
 		std::vector<DebugDrawer*> m_debugDrawList;
         
 		std::set<EnvironmentChangedListeners*> m_environmentListeners;

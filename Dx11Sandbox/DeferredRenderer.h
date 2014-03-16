@@ -26,6 +26,9 @@ namespace Dx11Sandbox
 		void unbindGBuffer();
 		void renderToGBuffer(RenderData** objects, unsigned int objectCount);
 		void doLightPass();
+		void initializeLightPass();
+		void uninitializeLightPass();
+
 		void copyLightPassOutputToRenderTarget();
 		
 		void createOutputTex(unsigned int w, unsigned int h);

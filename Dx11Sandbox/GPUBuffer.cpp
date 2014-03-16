@@ -14,7 +14,6 @@ namespace Dx11Sandbox
     }
 
 
-
     void GPUBuffer::copyDataFromBuffer( ID3D11DeviceContext* context, GPUBuffer* buffer, UINT offsetInBytes  )
     {
         if( !m_buffer || !buffer )
@@ -72,6 +71,54 @@ namespace Dx11Sandbox
 
         
     }
+
+
+	bool GPUBuffer::allocateBuffer(ID3D11Device* device, void* data, unsigned int sizeInBytes, UINT bindFlags, D3D11_USAGE usage, UINT cpuAccess, UINT miscFlags, UINT structByteStride)
+	{
+		if (m_buffer)
+		{
+			SAFE_RELEASE(m_buffer);
+			m_byteCount = 0;
+			m_buffer = 0;
+		}
+
+		D3D11_BUFFER_DESC buffDesc;
+		D3D11_SUBRESOURCE_DATA buffData;
+		D3D11_SUBRESOURCE_DATA* buffDataPtr = 0;
+		ID3D11Buffer* buffer;
+		HRESULT hr;
+
+		if (sizeInBytes>0)
+		{
+			buffDesc.Usage = usage;
+			buffDesc.ByteWidth = sizeInBytes;
+
+			buffDesc.BindFlags = bindFlags;
+			
+
+			buffDesc.CPUAccessFlags = cpuAccess;
+			buffDesc.MiscFlags = miscFlags;
+			buffDesc.StructureByteStride = structByteStride;
+
+			if (data){
+				buffData.pSysMem = data;
+				buffData.SysMemPitch = 0;
+				buffData.SysMemSlicePitch = 0;
+				buffDataPtr = &buffData;
+			}
+			
+
+			hr = device->CreateBuffer(&buffDesc, buffDataPtr, &buffer);
+			if (FAILED(hr))
+			{
+				return false;
+			}
+			m_buffer = buffer;
+			m_byteCount = sizeInBytes;
+			return true;
+		}
+		return false;
+	}
 
     void GPUBuffer::destroyGPUBuffer()
     {

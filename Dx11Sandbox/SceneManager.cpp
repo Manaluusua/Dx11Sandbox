@@ -273,8 +273,18 @@ namespace Dx11Sandbox
 #endif
     }
 
-
-	
+	void SceneManager::calculateVisibleLightsForCamera(RenderCamera* cam, std::vector<Cullable*>& out)
+	{
+		//addlights
+		std::map<RenderLayer, CullDataAllocator*>* cullDataPools = &m_lightManager.GetCullDataAllocators();
+		cullObjectsFromPools(*cullDataPools, cam, out);
+	}
+	void SceneManager::calculateVisibleGeometryForCamera(RenderCamera* cam, std::vector<Cullable*>& out)
+	{
+		//add geometry
+		std::map<RenderLayer, CullDataAllocator*>* cullDataPools = &m_renderGeometryManager.GetCullDataAllocators();
+		cullObjectsFromPools(*cullDataPools, cam, out);
+	}
 
 
     void SceneManager::cullObjectsToRenderQueues(RenderCamera* cam)
@@ -282,20 +292,18 @@ namespace Dx11Sandbox
 		
 
         clearRenderQueues();
+		m_cachedVisibleGeometryList.clear();
+		m_cachedVisibleLightsList.clear();
 
 		cam->startedCulling();
 
-
-		//add geometry
-		std::map<RenderLayer, CullDataAllocator*>* cullDataPools = &m_renderGeometryManager.GetCullDataAllocators();
-		cullObjectsFromPools(*cullDataPools, cam);
-
-		//addlights
-		cullDataPools = &m_lightManager.GetCullDataAllocators();
-		cullObjectsFromPools(*cullDataPools, cam);
+		calculateVisibleGeometryForCamera(cam, m_cachedVisibleGeometryList);
+		calculateVisibleLightsForCamera(cam, m_cachedVisibleLightsList);
+		addCachedObjectsToRenderBins();
+		
     }
 
-	void SceneManager::cullObjectsFromPools(std::map<RenderLayer, CullDataAllocator*>& pools, RenderCamera* cam)
+	void SceneManager::cullObjectsFromPools(std::map<RenderLayer, CullDataAllocator*>& pools, RenderCamera* cam, std::vector<Cullable*>& out)
 	{
 		Frustrum frust;
 		cam->calculateFrustrum(&frust);
@@ -313,20 +321,30 @@ namespace Dx11Sandbox
 			{
 
 				CullDataPool &objects = cullDataPool->getDynamicPoolVector(i);
-				m_culler->cull(frust,objects,m_cachedVisibleList);
+				m_culler->cull(frust, objects, out);
 			}
 
 			
 
 		}
 
-
-		//construct renderbin
-		for( UINT i = 0; i < m_cachedVisibleList.size(); ++i)
-		{
-			m_cachedVisibleList[i]->passedCulling(&m_RenderBin);
-		}
 		
-		m_cachedVisibleList.clear();
+	}
+
+	void SceneManager::addCachedObjectsToRenderBins()
+	{
+		
+
+		for (UINT i = 0; i < m_cachedVisibleGeometryList.size(); ++i)
+		{
+			m_cachedVisibleGeometryList[i]->passedCulling(&m_RenderBin);
+		}
+
+		for (UINT i = 0; i < m_cachedVisibleLightsList.size(); ++i)
+		{
+			m_cachedVisibleLightsList[i]->passedCulling(&m_RenderBin);
+		}
+
+		
 	}
 }

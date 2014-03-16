@@ -193,33 +193,67 @@ namespace Dx11Sandbox
 		m_state->disableDepthStencil(false);
 	}
 
+	void DeferredRenderer::initializeLightPass()
+	{
+		//unbind depth so we can bind it to light pass
+		m_state->disableDepthStencil(true);
+		ID3DX11Effect* effect = m_accumulateLightsCS->getEffect();
+
+		//set gbuffer
+		effect->GetVariableByName("albedoTex")->AsShaderResource()->SetResource(m_gbuffer->getBufferTexture(GBuffer::ALBEDO)->getShaderResourceView());
+		effect->GetVariableByName("normalTex")->AsShaderResource()->SetResource(m_gbuffer->getBufferTexture(GBuffer::NORMAL)->getShaderResourceView());
+		effect->GetVariableByName("specularTex")->AsShaderResource()->SetResource(m_gbuffer->getBufferTexture(GBuffer::SPECULAR)->getShaderResourceView());
+		effect->GetVariableByName("depthTex")->AsShaderResource()->SetResource(m_state->getDefaultDepthStencilTexture()->getShaderResourceView());
+		effect->GetVariableByName("output")->AsUnorderedAccessView()->SetUnorderedAccessView(m_lightingOutput->getUnorderedAccessView());
+
+		//set lights
+		
+
+		//set misc data
+		const D3DXMATRIX *view = m_cam->getViewMatrix();
+		const D3DXMATRIX *proj = m_cam->getProjectionMatrix();
+		D3DXMATRIX viewProj = (*view) * (*proj);
+		D3DXVECTOR3 transl = -(m_cam->getTranslation());
+		D3DXVECTOR4 camPos(transl.x, transl.y, transl.z, 1);
+		float viewWidth = static_cast<float>(m_gbuffer->getWidth()), viewHeight = static_cast<float>(m_gbuffer->getHeight());
+		D3DXVECTOR4 viewDimensions(viewWidth, viewHeight, 1.f / viewWidth, 1.f / viewHeight);
+
+		ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("misc");
+		ID3DX11EffectMatrixVariable* mat = buffer->GetMemberByName("viewProj")->AsMatrix();
+		mat->SetMatrix((float*)&viewProj);
+		mat = buffer->GetMemberByName("proj")->AsMatrix();
+		mat->SetMatrix((float*)proj);
+		buffer->GetMemberByName("camPos")->AsVector()->SetFloatVector((float*)&camPos);
+		buffer->GetMemberByName("screenDimensions")->AsVector()->SetFloatVector((float*)&viewDimensions);
+		buffer->GetMemberByName("lightCount")->AsScalar()->SetInt(m_lights->size());
+		effect->GetTechniqueByIndex(0)->GetPassByIndex(0)->Apply(0, m_state->getImmediateContext());
+		
+	}
+	void DeferredRenderer::uninitializeLightPass()
+	{
+		ID3DX11Effect* effect = m_accumulateLightsCS->getEffect();
+		effect->GetVariableByName("albedoTex")->AsShaderResource()->SetResource(0);
+		effect->GetVariableByName("normalTex")->AsShaderResource()->SetResource(0);
+		effect->GetVariableByName("specularTex")->AsShaderResource()->SetResource(0);
+		effect->GetVariableByName("depthTex")->AsShaderResource()->SetResource(0);
+		effect->GetVariableByName("output")->AsUnorderedAccessView()->SetUnorderedAccessView(0);
+		effect->GetTechniqueByIndex(0)->GetPassByIndex(0)->Apply(0, m_state->getImmediateContext());
+	}
+
+
 	void DeferredRenderer::doLightPass()
 	{
 		unbindGBuffer();
-		m_state->disableDepthStencil(true);
+		initializeLightPass();
 
-		ID3DX11Effect* effect = m_accumulateLightsCS->getEffect();
-		effect->GetVariableByName("albedo")->AsShaderResource()->SetResource(m_gbuffer->getBufferTexture(GBuffer::ALBEDO)->getShaderResourceView());
-		effect->GetVariableByName("normal")->AsShaderResource()->SetResource(m_gbuffer->getBufferTexture(GBuffer::NORMAL)->getShaderResourceView());
-		effect->GetVariableByName("specular")->AsShaderResource()->SetResource(m_gbuffer->getBufferTexture(GBuffer::SPECULAR)->getShaderResourceView());
-		effect->GetVariableByName("depth")->AsShaderResource()->SetResource(m_state->getDefaultDepthStencilTexture()->getShaderResourceView());
-		effect->GetVariableByName("output")->AsUnorderedAccessView()->SetUnorderedAccessView(m_lightingOutput->getUnorderedAccessView());
-		effect->GetTechniqueByIndex(0)->GetPassByIndex(0)->Apply(0, m_state->getImmediateContext());
+		
 
 		int threadsX = m_gbuffer->getWidth() / s_threadsPerGroupX + ( (m_gbuffer->getWidth() % s_threadsPerGroupX) > 0 ? 1 : 0);
 		int threadsY = m_gbuffer->getHeight() / s_threadsPerGroupY + ((m_gbuffer->getHeight() % s_threadsPerGroupY) > 0 ? 1 : 0);
 
 		m_state->getImmediateContext()->Dispatch(threadsX, threadsY, 1);
 
-		effect->GetVariableByName("albedo")->AsShaderResource()->SetResource(0);
-		effect->GetVariableByName("normal")->AsShaderResource()->SetResource(0);
-		effect->GetVariableByName("specular")->AsShaderResource()->SetResource(0);
-		effect->GetVariableByName("depth")->AsShaderResource()->SetResource(0);
-		effect->GetVariableByName("output")->AsUnorderedAccessView()->SetUnorderedAccessView(0);
-		effect->GetTechniqueByIndex(0)->GetPassByIndex(0)->Apply(0, m_state->getImmediateContext());
+		uninitializeLightPass();
 
-
-
-		
 	}
 }
