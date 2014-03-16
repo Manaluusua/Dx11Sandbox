@@ -26,6 +26,9 @@ namespace Dx11Sandbox
 		friend class SceneManager;
 	public:
 		
+		RenderCamera(void);
+		virtual ~RenderCamera(void);
+
 		void render(RenderBin& renderBin, RenderContext* state);
 
 		void setCameraPriority(INT32 priority);
@@ -39,17 +42,11 @@ namespace Dx11Sandbox
 
 		
 
-		
+		void startedCulling();
 
 		void setRenderer(RCObjectPtr<Renderer> renderer);
 		RCObjectPtr<Renderer> getRenderer() const;
 	protected:
-
-		DISABLE_COPY(RenderCamera)
-		RenderCamera(void);
-		virtual ~RenderCamera(void);
-
-		
 
 		std::set<RenderCameraListener*> m_renderListeners;
 		RCObjectPtr<Renderer> m_renderer;
@@ -57,7 +54,8 @@ namespace Dx11Sandbox
 		INT32 m_cameraPriority;
 		RenderLayer m_renderMask;
 	private:
-		void startedCulling();
+		DISABLE_COPY(RenderCamera)
+		
 	};
 };
 #endif

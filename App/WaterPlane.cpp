@@ -9,6 +9,7 @@
 #include "CullableGeometry.h"
 #include "Frustrum.h"
 #include "ReleasePtr.h"
+#include "RenderContext.h"
 #include "MathUtil.h"
 #include "EnvironmentInfo.h"
 #include "d3dx11effect.h"

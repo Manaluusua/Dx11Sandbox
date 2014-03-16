@@ -123,6 +123,7 @@
     <ClCompile Include="RenderData.cpp" />
     <ClCompile Include="CullableGeometry.cpp" />
     <ClCompile Include="Root.cpp" />
+    <ClCompile Include="BasicSceneManager.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderIncludeHandler.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="Cullable.h" />
     <ClInclude Include="DeferredRenderer.h" />
     <ClInclude Include="GBuffer.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="LightListToStructuredData.h" />
     <ClInclude Include="RenderPrimitiveGatherer.h" />
     <ClInclude Include="Culler.h" />
@@ -186,7 +188,7 @@
     <ClInclude Include="CullData.h" />
     <ClInclude Include="RenderContext.h" />
     <ClInclude Include="Root.h" />
-    <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="BasicSceneManager.h" />
     <ClInclude Include="TerrainBinHandler.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />

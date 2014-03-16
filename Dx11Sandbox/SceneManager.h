@@ -1,126 +1,69 @@
 #ifndef DX11SANDBOX_SCENEMANAGER_H
 #define DX11SANDBOX_SCENEMANAGER_H
 
-#include "RenderCamera.h"
-#include "CommonUtilities.h"
-#include "RenderContext.h"
-#include "RCObjectPtr.h"
-#include "CullData.h"
-#include "RenderBin.h"
-#include "CullableGeometry.h"
-#include "CullableObjectManager.h"
-#include "EnvironmentChangedListeners.h"
-#include "CullableLight.h"
-#include "DXUT.h"
-
-#include <map>
-#include <set>
 #include <vector>
 
-
+struct ID3D11Device;
+struct IDXGISwapChain;
+struct DXGI_SURFACE_DESC;
+struct ID3D11DeviceContext;
 namespace Dx11Sandbox
 {
-    class Material;
-    class GeometryBinHandler;
-    class RenderContext;
-    class SceneManager;
-    class Frustrum;
-    class Culler;
+	class Root;
+	class RenderCamera;
+	class RenderContext;
+	class RenderBin;
+	class CullableGeometry;
+	class CullableLight;
 	class DebugDrawer;
-    
-    
-    // GeometryBinHandler listener to listen and act for rendering events
-    class RenderStartListener
-    {
-    public:
-        virtual void renderingStarted(RenderContext* context,SceneManager* mngr, double fTime, float fElapsedTime)=0;
-        
-    };
+	class EnvironmentChangedListeners;
+	class Cullable;
 
-    
+	class SceneManager
+	{
+		friend class Root;
+	public:
+		SceneManager();
+		virtual ~SceneManager(void);
 
-    class SceneManager 
-    {
-    friend class Root;
-    public:
-        
-       
+		virtual void renderScene() = 0;
 
-        virtual ~SceneManager(void);
-
-        void renderScene( );
-
-        RenderCamera* getMainCamera();
-        RenderContext& getRenderContext();
+		virtual RenderCamera* getMainCamera() = 0;
+		virtual RenderContext& getRenderContext() = 0;
 
 
-        RenderBin& getRenderBin();
+		virtual RenderBin& getRenderBin() = 0;
 
-		CullableGeometry* createCullableGeometry();
-		CullableLight* createLight();
+		virtual CullableGeometry* createCullableGeometry() = 0;
+		virtual CullableLight* createLight() = 0;
 
-		void addDebugDrawer(DebugDrawer* drawer);
-		void removeDebugDrawer(DebugDrawer* drawer);
+		virtual void addDebugDrawer(DebugDrawer* drawer) = 0;
+		virtual void removeDebugDrawer(DebugDrawer* drawer) = 0;
 
-		void addEnvironmentListener(EnvironmentChangedListeners* l);
-		void removeEnvironmentListener(EnvironmentChangedListeners* l);
-        
-		RenderCamera* createCamera();
-		void destroyCamera(RenderCamera* camera);
-        
-		void calculateVisibleLightsForCamera(RenderCamera* cam, std::vector<Cullable*>& out);
-		void calculateVisibleGeometryForCamera(RenderCamera* cam, std::vector<Cullable*>& out);
+		virtual void addEnvironmentListener(EnvironmentChangedListeners* l) = 0;
+		virtual void removeEnvironmentListener(EnvironmentChangedListeners* l) = 0;
 
-        void cullObjectsToRenderQueues(RenderCamera* cam);
+		virtual RenderCamera* createCamera() = 0;
+		virtual void destroyCamera(RenderCamera* camera) = 0;
 
-    protected:
-        void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
-        void initialize(ID3D11Device* pd3dDevice, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
-        void update(double fTime, float fElapsedTime);
-        void beginDraw(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime, float fElapsedTime);
-        
-		void drawDebug();
+		virtual void calculateVisibleLightsForCamera(RenderCamera* cam, std::vector<Cullable*>& out) = 0;
+		virtual void calculateVisibleGeometryForCamera(RenderCamera* cam, std::vector<Cullable*>& out) = 0;
 
-		void cullObjectsFromPools(std::map<RenderLayer, CullDataAllocator*>& pools, RenderCamera* cam, std::vector<Cullable*>& out);
-		void addCachedObjectsToRenderBins();
+		virtual void cullObjectsToRenderQueues(RenderCamera* cam) = 0;
 
-        void destroyWorld();
-        void clearRenderQueues();
-        void destroyManagers();
+	protected:
+		//called from root
+		virtual void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc) = 0;
+		virtual void initialize(ID3D11Device* pd3dDevice, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc) = 0;
+		virtual void update(double fTime, float fElapsedTime) = 0;
+		virtual void beginDraw(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dImmediateContext, double fTime, float fElapsedTime) = 0;
 
-		std::vector<RenderCamera*> m_cameras;
+		void setEnvironmentTime(float time);
+		void setEnvironmentDeltaTime(float dt);
+		void setEnvironmentScreenDimension(float w, float h);
 
-        RenderBin    m_RenderBin;
+	};
 
-		CullableGeometryManager m_renderGeometryManager;
-		CullableLightManager m_lightManager;
-        std::vector<Cullable*> m_cachedVisibleLightsList;
-		std::vector<Cullable*> m_cachedVisibleGeometryList;
-		std::vector<DebugDrawer*> m_debugDrawList;
-        
-		std::set<EnvironmentChangedListeners*> m_environmentListeners;
-
-
-        RCObjectPtr<Culler> m_culler;
-
-        RenderCamera* m_mainCamera;
-
-        Root* m_root;
-
-        RenderContext m_renderContext;
-
-        RCObjectPtr<Renderer> m_defaultRenderer;
-
-    private:
-        static SceneManager* createSceneManager(Root* root);
-        DISABLE_COPY(SceneManager)
-        SceneManager(Root* root);
-
-
-
-    };
-
-}
-
-
+	
+};
 #endif

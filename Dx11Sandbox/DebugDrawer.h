@@ -4,10 +4,11 @@ namespace Dx11Sandbox
 {
 
 	class RenderContext;
+	class SceneManager;
 	class DebugDrawer
 	{
 	public:
-		virtual void draw(RenderContext* state) = 0;
+		virtual void draw(SceneManager* mngr, RenderContext* state) = 0;
 		virtual ~DebugDrawer(void);
 	};
 }

@@ -30,7 +30,7 @@ namespace Dx11Sandbox
 		m_debugData.clear();
 	}
 
-	void DebugDrawTextureToScreen::draw(RenderContext* state)
+	void DebugDrawTextureToScreen::draw(SceneManager* mngr, RenderContext* state)
 	{
 		state->disableDepthStencil(true);
 		m_renderer->renderBegin(&m_cam, 0, state);

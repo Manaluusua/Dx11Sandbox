@@ -24,9 +24,6 @@
     <ClCompile Include="TextureManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -153,6 +150,12 @@
     <ClCompile Include="LightListToStructuredData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BasicSceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Root.h">
@@ -162,9 +165,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
@@ -324,6 +324,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LightListToStructuredData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicSceneManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

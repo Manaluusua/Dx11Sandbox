@@ -1,5 +1,6 @@
 #include "SIMDCuller.h"
-#include "SceneManager.h"
+#include "CullData.h"
+#include "DynamicPoolAllocator.h"
 #include "Frustrum.h"
 namespace Dx11Sandbox
 {

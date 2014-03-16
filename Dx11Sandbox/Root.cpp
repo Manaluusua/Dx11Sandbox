@@ -1,6 +1,6 @@
 
 #include "Root.h"
-#include "SceneManager.h"
+#include "BasicSceneManager.h"
 #include <memory>
 
 Dx11Sandbox::Root* g_root = 0;
@@ -144,7 +144,7 @@ namespace Dx11Sandbox
         :m_mediaFolder("..\\Media\\"),
         m_application(0)
     {
-        m_sceneMngr = Dx11Sandbox::SceneManager::createSceneManager(this);
+        m_sceneMngr = Dx11Sandbox::BasicSceneManager::createSceneManager(this);
     }
 
     Root::~Root()

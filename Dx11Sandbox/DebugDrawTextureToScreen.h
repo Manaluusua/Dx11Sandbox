@@ -21,7 +21,7 @@ namespace Dx11Sandbox
 		DebugDrawTextureToScreen(ID3D11Device *device, float width, float height);
 		virtual ~DebugDrawTextureToScreen(void);
 
-		virtual void draw(RenderContext* state);
+		virtual void draw(SceneManager* mngr, RenderContext* state);
 
 		void addDebugTexture(Texture* tex, float x, float y, float width, float height);  
 		void addDebugTexture(ResourceID textureId, float x, float y, float width, float height);

@@ -2,6 +2,7 @@
 #define WATERPLANE_H
 
 #include "SceneManager.h"
+#include "RenderCamera.h"
 #include "CommonUtilities.h"
 #include "RCObject.h"
 
@@ -10,6 +11,7 @@ namespace Dx11Sandbox
 {
     class Mesh;
     class Texture;
+	class Material;
 	class RenderContext;
 }
 
