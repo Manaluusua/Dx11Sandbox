@@ -150,6 +150,7 @@ namespace Dx11Sandbox
 
 
 			ID3DX11EffectTechnique* tech = effect->GetTechniqueByIndex(Renderer::DEFERRED_RENDERER);
+			if (!tech->IsValid()) continue;
 			tech->GetDesc(&techDesc);
 
 

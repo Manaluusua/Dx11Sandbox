@@ -17,10 +17,6 @@ namespace Dx11Sandbox
 	{
 		friend class CullableObjectManager<CullableLight>;
 	public:
-		
-		virtual void setLightType(LightType type);
-		virtual void setLightParameters(const D3DXVECTOR4& params); 
-
 		virtual void passedCulling(RenderPrimitiveGatherer *gatherer);
 
 		void setVisible(bool value);
@@ -28,6 +24,10 @@ namespace Dx11Sandbox
 		void destroy();
 
 	protected:
+		//calculate new bounds when light parameters change
+		virtual void lightParametersChanged();
+		void calculateBoundsForLight(D3DXVECTOR4& bounds) const;
+		
 
 		CullableLight(CullableLightManager* mngr);
 		virtual ~CullableLight(void);

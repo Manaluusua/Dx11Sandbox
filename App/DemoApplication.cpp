@@ -2,6 +2,7 @@
 #include "SceneManager.h"
 #include "MeshUtility.h"
 #include "TextureManager.h"
+#include "MathUtil.h"
 #include "MaterialManager.h"
 #include "Material.h"
 #include "Shader.h"
@@ -12,8 +13,10 @@
 #include "CullableGeometry.h"
 #include "CullableLight.h"
 #include "DebugDrawTextureToScreen.h"
+#include "DebugDrawLights.h"
 #include "Texture.h"
 #include "d3dx11effect.h"
+
 
 DemoApplication::DemoApplication()
     :m_leftDown(false),
@@ -118,48 +121,69 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	ro->setMesh( mesh );
 	ro->setRenderQueue(RENDERQUEUE_SKYBOX);
 	ro->setRenderMask(RENDERLAYER_SKYBOX);
-
 	Texture* tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "skyboxCube.dds", "skyboxCube.dds");
-
     mat->setTexture("cubemap", tex->getName());
     
      
     //terrain
     mat = MaterialManager::singleton()->getOrCreateMaterial(device, "terrain.fx", "terrain1",MeshInputLayouts::POS3NORM3TEX2);
     MeshUtility::createTerrainFromHeightMap(device,mngr, "heightmapTerrain.png", mat,1000,1000,200,20,20,10);
-
-    //textures
-    //mat->setTexture("texture1", L"roughRock.png");
-    //TextureManager::getSingleton()->createTexture(device, L"roughRock.png", L"roughRock.png");
-
 	tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "grass.jpg", "grass.jpg");
     mat->setTexture("texture1", tex->getName());
-    
-
- 
-    //mat->setTexture("textureWeights", L"terrainweights.png");
-    //TextureManager::getSingleton()->createTexture(device, L"terrainweights.png", L"terrainweights.png");
-    
-
 
     //waterplane
     Dx11Sandbox::string name("waterPlane1");
 	m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-60,340,340,200,200, 512);
     
+	//lights
+	sun = m_mngr->createLight();
+	sun->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
+	sun->setColor(D3DXVECTOR3(1.f,1.f,1.f));
+
+	Light* l;
+	unsigned int lightsGenerated = 40;
+	float lightRadMin = 40.f;
+	float lightRadMax = 90.f;
+	float circleRadMin = 80.f;
+	float circleRadMax = 300.f;
+	float maxHeight = 100.f;
+	float minHeight = 60.f;
+	D3DXVECTOR3 color;
+	D3DXVECTOR3 pos;
+	for (int i = 0; i < lightsGenerated; ++i){
+		color.x = Dx11Sandbox::MathUtil::randomFloat();
+		color.y = Dx11Sandbox::MathUtil::randomFloat();
+		color.z = Dx11Sandbox::MathUtil::randomFloat();
+
+		float circleRad = circleRadMin + (circleRadMax - circleRadMin)*Dx11Sandbox::MathUtil::randomFloat();
+		float lightRad = lightRadMin + (lightRadMax - lightRadMin)*Dx11Sandbox::MathUtil::randomFloat();
+
+		pos.x = std::cos(2 * Dx11Sandbox::MathUtil::PI * (static_cast<float>(i) / lightsGenerated)) * circleRad;
+		pos.z = std::sin(2 * Dx11Sandbox::MathUtil::PI * (static_cast<float>(i) / lightsGenerated)) * circleRad;
+		pos.y = minHeight + (maxHeight - minHeight) * Dx11Sandbox::MathUtil::randomFloat();
+
+		l = m_mngr->createLight();
+		l->setLightType(Dx11Sandbox::Light::OMNI);
+		l->setRadius(lightRad);
+		l->setColor(color);
+		l->setPosition(pos);
+
+	}
+
+
+	//debug drawers
 	m_debugDrawerTexture = new DebugDrawTextureToScreen(device, 100.f, 100.f);
 	m_mngr->addDebugDrawer(m_debugDrawerTexture);
 	m_debugDrawerTexture->addDebugTexture(m_waterPlane->getRefractionTexture(), 40.f, 40.f, 20.f, 20.f);
 	m_debugDrawerTexture->addDebugTexture(m_waterPlane->getReflectionTexture(), 40.f, 20.f, 20.f, 20.f);
 
 	m_debugDrawerTexture->addDebugTexture("DepthStencil", -40.f, -20.f, 20.f, 20.f);
-	m_debugDrawerTexture->addDebugTexture("GBUFFER_ALBEDO",-40.f, 40.f, 20.f, 20.f);
+	m_debugDrawerTexture->addDebugTexture("GBUFFER_ALBEDO", -40.f, 40.f, 20.f, 20.f);
 	m_debugDrawerTexture->addDebugTexture("GBUFFER_NORMAL", -40.f, 20.f, 20.f, 20.f);
 	m_debugDrawerTexture->addDebugTexture("GBUFFER_SPECULAR", -40.f, 0.f, 20.f, 20.f);
-	
 
-	sun = m_mngr->createLight();
-	sun->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
-	sun->setColor(D3DXVECTOR4(1.0f,1.f,1.f,0));
+	m_debugDrawerLights = new DebugDrawLights(device);
+	m_mngr->addDebugDrawer(m_debugDrawerLights);
 
 }
 void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime)
@@ -167,9 +191,9 @@ void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime
     m_time += fElapsedTime;
     handleInput(mngr,fElapsedTime, static_cast<float>( fTime ) );
 
-	D3DXVECTOR4 sunDir( std::cos( m_time ), 0.f, std::sin( m_time ),0 );
-    D3DXVec4Normalize(&sunDir, &sunDir);
-	sun->setLightParameters(sunDir);
+	D3DXVECTOR3 sunDir( std::cos( m_time ), 0.f, std::sin( m_time ) );
+    D3DXVec3Normalize(&sunDir, &sunDir);
+	sun->setDirection(sunDir);
 }
 
 
@@ -256,6 +280,7 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 void DemoApplication::shutDown(SceneManager* mngr)
 {
 	SAFE_DELETE(m_debugDrawerTexture);
+	SAFE_DELETE(m_debugDrawerLights);
 	m_waterPlane = 0;
 }
 

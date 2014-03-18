@@ -5,36 +5,50 @@
 
 namespace Dx11Sandbox
 {
+
+	struct LightDefinition {
+		UINT lightType;
+		D3DXVECTOR4 colorInvRad;
+		D3DXVECTOR4 posRad;
+		D3DXVECTOR4 dirAng;
+	};
+
 	class Light
 	{
 	public:
 
 		enum LightType
 		{
-			OMNI,
-			DIRECTIONAL,
-			SPOT
+			OMNI = 0,
+			DIRECTIONAL = 1,
+			SPOT = 2
 		};
 
 		Light(void);
-		Light(LightType type, const D3DXVECTOR4& color,const D3DXVECTOR4& params );
 		virtual ~Light(void);
 
-		
-
-		void setColor( const D3DXVECTOR4& color );
+		void setColor( const D3DXVECTOR3& color );
 		const D3DXVECTOR4& getColor() const;
 
-		virtual void setLightParameters(const D3DXVECTOR4& params); 
-		const D3DXVECTOR4& getLightParameters() const;
+		void setPosition(const D3DXVECTOR3& pos);
+		const D3DXVECTOR4& getPosition() const;
+
+		void setDirection(const D3DXVECTOR3& dir);
+		const D3DXVECTOR4& getDirection() const;
+
+		void setRadius(float radius);
+		float getRadius() const;
+
+		void setSpotlightAngle(float angle);
+		float getSpotlightAngle();
 
 		LightType getLightType() const;
 		virtual void setLightType(LightType type);
 
 	protected:
-		LightType m_lightType;
-		D3DXVECTOR4 m_color;
-		D3DXVECTOR4 m_params;
+
+		virtual void lightParametersChanged();
+		LightDefinition m_lightDefinition;
 	};
 
 };

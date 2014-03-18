@@ -40,7 +40,6 @@ namespace Dx11Sandbox
 
 		m_renderer->renderBegin(this, &renderBin.getLights(), state);
 
-		//before CullableLight pass
 		while(mapIter != renderObjects.end()){
 			std::vector<RenderData*>& objects = mapIter->second;
 			queue = mapIter->first;

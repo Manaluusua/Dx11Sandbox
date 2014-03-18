@@ -96,6 +96,7 @@
     <ClCompile Include="Cullable.cpp" />
     <ClCompile Include="CullData.cpp" />
     <ClCompile Include="DebugDrawer.cpp" />
+    <ClCompile Include="DebugDrawLights.cpp" />
     <ClCompile Include="DebugDrawTextureToScreen.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />
     <ClCompile Include="EnvironmentChangedListeners.cpp" />
@@ -144,6 +145,7 @@
     <ClInclude Include="CommonUtilities.h" />
     <ClInclude Include="Compositor.h" />
     <ClInclude Include="Cullable.h" />
+    <ClInclude Include="DebugDrawLights.h" />
     <ClInclude Include="DeferredRenderer.h" />
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="SceneManager.h" />

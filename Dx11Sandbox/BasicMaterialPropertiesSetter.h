@@ -29,7 +29,6 @@ namespace Dx11Sandbox
 		Light& getLight();
 
 		Camera* m_cam;
-		Material* m_previousMaterial;
 		std::vector<Light*>* m_lights;
 	};
 

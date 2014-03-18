@@ -10,7 +10,6 @@ namespace Dx11Sandbox
 {
 	BasicMaterialPropertiesSetter::BasicMaterialPropertiesSetter(void)
 		:m_cam(0),
-		m_previousMaterial(0),
 		m_lights(0)
 	{
 	}
@@ -23,7 +22,6 @@ namespace Dx11Sandbox
 	void BasicMaterialPropertiesSetter::setCurrentCamera(Camera* cam)
 	{
 		m_cam = cam;
-		m_previousMaterial = 0;
 	}
 
 	void BasicMaterialPropertiesSetter::setLights(std::vector<Light*>* lights)
@@ -84,7 +82,7 @@ namespace Dx11Sandbox
 		ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("objectInfo");
 		if (buffer->IsValid())
 		{
-			buffer->GetMemberByName("sunDirection")->AsVector()->SetFloatVector((float*)&light.getLightParameters());
+			buffer->GetMemberByName("sunDirection")->AsVector()->SetFloatVector((float*)&light.getDirection());
 			buffer->GetMemberByName("sunColor")->AsVector()->SetFloatVector((float*)&light.getColor());
 		}
 
@@ -94,8 +92,6 @@ namespace Dx11Sandbox
 	{
 
 		if (!updateSceneUniforms && !updateLightUniforms) return;
-
-		if(m_previousMaterial != 0 && m_previousMaterial == mat)return;
 
 		//if no camera is set, return
 		if(m_cam == 0) return;
@@ -108,6 +104,5 @@ namespace Dx11Sandbox
 			setLightUniforms(mat);
 		}
 
-		m_previousMaterial = mat;
 	}
 }

@@ -14,6 +14,7 @@ class WaterPlane;
 namespace Dx11Sandbox
 {
 	class DebugDrawTextureToScreen;
+	class DebugDrawLights;
 };
 
 
@@ -49,6 +50,7 @@ private:
     bool m_moveMouse;
 
 	DebugDrawTextureToScreen* m_debugDrawerTexture;
+	DebugDrawLights* m_debugDrawerLights;
 
     D3DXVECTOR2 m_lastMousePos;
     D3DXVECTOR2 m_mouseDelta;

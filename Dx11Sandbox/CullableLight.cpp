@@ -53,44 +53,41 @@ namespace Dx11Sandbox
 	
 	}
 
-	void CullableLight::setLightType(LightType type)
+	void CullableLight::calculateBoundsForLight(D3DXVECTOR4& bounds) const
 	{
-		if(type == m_lightType) return;
-		
-		if(type == DIRECTIONAL)
+		if (m_lightDefinition.lightType == DIRECTIONAL)
 		{
-			m_bounds.w = FLT_MAX;
-		}else
-		{
-			m_bounds.w = m_params.w;
+
+			bounds.x = 0.f;
+			bounds.y = 0.f;
+			bounds.z = 0.f;
+			bounds.w = FLT_MAX;
 		}
-		
+		else if (m_lightDefinition.lightType == OMNI)
+		{
+			bounds = m_lightDefinition.posRad;
+		}
+		else{
+			//spot. Now just use way too big bounds, optimize later
+			bounds = m_lightDefinition.posRad;
+		}
 
-		m_lightType = type;
 
-		if(m_cullingInformation)
+
+	}
+
+	void CullableLight::lightParametersChanged()
+	{
+		D3DXVECTOR4 newBounds;
+		calculateBoundsForLight(newBounds);
+		if (newBounds == m_bounds) return;
+		m_bounds = newBounds;
+		if (m_cullingInformation)
 		{
 			(*m_cullingInformation)->boundingSphere = m_bounds;
 		}
 	}
 
-	void CullableLight::setLightParameters(const D3DXVECTOR4& params)
-	{
-		if(params == m_params) return;
-		
-		m_bounds = params;
-		Light::setLightParameters(params);
-
-		if(m_lightType == DIRECTIONAL)
-		{
-			m_bounds.w = FLT_MAX;
-		}
-
-		if(m_cullingInformation)
-		{
-			(*m_cullingInformation)->boundingSphere = m_bounds;
-		}
-	}
 
 	void CullableLight::destroy()
 	{

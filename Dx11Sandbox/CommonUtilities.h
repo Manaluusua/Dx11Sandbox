@@ -46,12 +46,10 @@ namespace Dx11Sandbox
 
 	void printDebug(const char* text);
 	void printDebug(const WCHAR* text);
-	void printDebug(string text);
+	void printDebug(const string& text);
 
     void showErrorDialog(const WCHAR* msg);
     void showErrorDialog(const char* msg);
-
-	
 
 	ResourceID stringToID(const string& id);
 

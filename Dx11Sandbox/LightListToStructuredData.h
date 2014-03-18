@@ -25,15 +25,6 @@ namespace Dx11Sandbox
 
 	private:
 
-		static const UINT s_lightTypeOmni;
-		static const UINT s_lightTypeDirectional;
-
-		struct ShaderLightStruct {
-			UINT lightType;
-			D3DXVECTOR3 pos; //float sqrRadius; 
-			D3DXVECTOR3 color; //float invSqrRadius; 
-		};
-
 		RCObjectPtr<GPUBuffer> m_buffer;
 		ReleasePtr<ID3D11ShaderResourceView> m_resourceView;
 	};

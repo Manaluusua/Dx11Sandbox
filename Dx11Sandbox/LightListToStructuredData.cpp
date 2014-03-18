@@ -5,8 +5,6 @@
 
 namespace Dx11Sandbox
 {
-	const UINT LightListToStructuredData::s_lightTypeOmni = 0;
-	const UINT LightListToStructuredData::s_lightTypeDirectional = 1;
 
 	LightListToStructuredData::LightListToStructuredData()
 	{

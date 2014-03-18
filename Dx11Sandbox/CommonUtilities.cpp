@@ -71,10 +71,9 @@ namespace Dx11Sandbox
 #endif
 	}
 
-	void printDebug(string text)
+	void printDebug(const string& text)
 	{
 #if defined(DEBUG) | defined(_DEBUG)
-
 		OutputDebugStringA(text.c_str());
 #endif
 	}

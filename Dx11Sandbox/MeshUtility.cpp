@@ -15,7 +15,6 @@
 namespace Dx11Sandbox
 {
 
-    //inlines
     D3DXVECTOR3 getNormalForPosition(int indexX, int indexY, int maxX, int maxY, D3DXVECTOR3 *positions)
     {
         int startX = max(indexX-1,0);
@@ -60,6 +59,158 @@ namespace Dx11Sandbox
         return ((1-frac1)*heights[0] + frac1*heights[1])*(1-frac2) + ((1-frac1)*heights[2] + frac1*heights[3])*(frac2);
     }
     
+
+	Mesh* MeshUtility::createUnitSphere(ID3D11Device *device, unsigned int tesselationZenith, unsigned int tesselationAzimuth, bool generateNormals, bool generateUVs, bool makeLineListInsteadOfTriangles)
+	{
+		//clamp to min values
+		tesselationZenith = max(tesselationZenith, 3);
+		tesselationAzimuth = max(tesselationAzimuth, 3);
+
+		Mesh *mesh = MeshManager::singleton()->createMeshUnmanaged();
+		if (!mesh) return 0;
+
+
+		///Initialize needed arrays
+		unsigned int pointCount = tesselationZenith * tesselationAzimuth;
+
+		//index count depends if we are drawing lines or triangles
+		unsigned int indexCount = makeLineListInsteadOfTriangles ? ((1 + tesselationZenith) * tesselationAzimuth + tesselationZenith * tesselationAzimuth) * 2
+			: ((tesselationZenith-1) * 2 * tesselationAzimuth) * 3;
+
+		D3DXVECTOR3* positions = new D3DXVECTOR3[pointCount];
+		D3DXVECTOR3* normals = generateNormals ? new D3DXVECTOR3[pointCount] : 0;
+		FLOAT* uvs = generateUVs ? new FLOAT[pointCount * 2] : 0;
+		UINT32* indices = new UINT32[indexCount];
+
+		///generate data
+		//vertex data
+		const float zenithMax = MathUtil::PI;
+
+		const float azimuthMax = 2.f * MathUtil::PI;
+		unsigned int posIndex = 0;
+
+		for (unsigned int z = 0; z < tesselationZenith; ++z){
+
+			float currentZenithRatio = static_cast<float>(z) / (tesselationZenith - 1);
+			float currentZenith = currentZenithRatio * zenithMax;
+
+			for (unsigned int a = 0; a < tesselationAzimuth; ++a){
+				int pointIndex = z * tesselationAzimuth + a;
+
+				float currentAzimuthRatio = static_cast<float>(a) / (tesselationAzimuth);
+				float currentAzimuth = currentAzimuthRatio * azimuthMax;
+				D3DXVECTOR3 vec;
+				float cosZ = cos(currentZenith);
+				float sinZ = sin(currentZenith);
+				float cosA = cos(currentAzimuth);
+				float sinA = sin(currentAzimuth);
+				vec.x = sinZ * cosA;
+				vec.y = cosZ;
+				vec.z = sinZ * sinA;
+				positions[pointIndex] = vec;
+
+				if (generateUVs){
+					uvs[pointIndex * 2] = currentAzimuthRatio;
+					uvs[pointIndex * 2 + 1] = currentZenith;
+				}
+			}
+		}
+
+		if (generateNormals){
+			//since we have a unit sphere, normals == positions
+			for (unsigned int i = 0; i < pointCount; ++i){
+				normals[i] = positions[i];
+			}
+		}
+
+		//indexData
+		unsigned int index = 0;
+		if (makeLineListInsteadOfTriangles){
+			//horizontal lines
+			for (unsigned int z = 1; z < (tesselationZenith - 1); ++z){
+				for (unsigned int a = 0; a < tesselationAzimuth; ++a){
+					UINT32 pointIndex1 = z * tesselationAzimuth + a;
+					UINT32 pointIndex2 = z * tesselationAzimuth + (a + 1) % tesselationAzimuth;
+					indices[index++] = pointIndex1;
+					indices[index++] = pointIndex2;
+				}
+			}
+
+			//vertical lines
+			for (unsigned int a = 0; a < tesselationAzimuth; ++a){
+				for (unsigned int z = 0; z < tesselationZenith; ++z){
+					UINT32 pointIndex1 = z * tesselationAzimuth + a;
+					UINT32 pointIndex2 = ((z + 1) % tesselationZenith) * tesselationAzimuth + a;
+					indices[index++] = pointIndex1;
+					indices[index++] = pointIndex2;
+				}
+			}
+
+		}
+		else{
+			//triangles
+			for (unsigned int z = 0; z < (tesselationZenith - 1); ++z){
+				for (unsigned int a = 0; a < tesselationAzimuth; ++a){
+					UINT32 pointIndex1 = z * tesselationAzimuth + a;
+					UINT32 pointIndex2 = z * tesselationAzimuth + (a + 1) % tesselationAzimuth;
+					UINT32 pointIndex3 = ((z + 1) % tesselationZenith) * tesselationAzimuth + a;
+					UINT32 pointIndex4 = ((z + 1) % tesselationZenith) * tesselationAzimuth + (a + 1) % tesselationAzimuth;
+					//tri1
+					indices[index++] = pointIndex1;
+					indices[index++] = pointIndex4;
+					indices[index++] = pointIndex3;
+
+					//tri2
+					indices[index++] = pointIndex4;
+					indices[index++] = pointIndex1;
+					indices[index++] = pointIndex2;
+				}
+			}
+
+		}
+
+		///submit data
+
+		MeshInputLayouts::MESH_LAYOUT_TYPE layoutType = MeshInputLayouts::POS3;
+		if (generateNormals && !generateUVs){
+			layoutType = MeshInputLayouts::POS3NORM3;
+		}
+		else if (!generateNormals && generateUVs){
+			layoutType = MeshInputLayouts::POS3TEX2;
+		}
+		else if(generateNormals && generateUVs) {
+			layoutType = MeshInputLayouts::POS3NORM3TEX2;
+		}
+		
+		unsigned int bufferCount = 2;
+		if (generateNormals){
+			++bufferCount;
+		}
+		if (generateUVs){
+			++bufferCount;
+		}
+		int bufferIndex = 1;
+		BYTE** ptr = new BYTE*[bufferCount];
+		ptr[0] = (BYTE*)positions;
+		if (generateNormals){
+			ptr[bufferIndex] = (BYTE*)normals;
+			++bufferIndex;
+		}
+		if (generateUVs){
+			ptr[bufferIndex] = (BYTE*)uvs;
+			++bufferIndex;
+		}
+		mesh->createMeshFromBuffers(device, ptr, (BYTE*)indices, pointCount, indexCount, DXGI_FORMAT_R32_UINT, layoutType);
+		mesh->setPrimType(makeLineListInsteadOfTriangles ? D3D11_PRIMITIVE_TOPOLOGY_LINELIST : D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		///cleanup
+		SAFE_DELETE_ARRAY(positions);
+		SAFE_DELETE_ARRAY(normals);
+		SAFE_DELETE_ARRAY(uvs);
+		SAFE_DELETE_ARRAY(indices);
+		SAFE_DELETE_ARRAY(ptr);
+
+		return mesh;
+	}
 
     //MeshUtility
     MeshUtility::MeshUtility(void)

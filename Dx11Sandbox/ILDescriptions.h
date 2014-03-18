@@ -13,6 +13,8 @@ namespace Dx11Sandbox
             POS3NORM3TEX3,
             POS3TEX3,
             POS3TEX2,
+			POS3NORM3,
+			POS3,
             NONE
         };
 
@@ -53,8 +55,27 @@ namespace Dx11Sandbox
             { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
             { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
         } ;
+
         const UINT POS3TEX2_ELEM_NUM = 2;
         const UINT POS3TEX2_ELEM_SIZES[] = {12,8};
+
+		//Position3, normal3
+		const D3D11_INPUT_ELEMENT_DESC POS3NORM3_DESC[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+
+		const UINT POS3NORM3_ELEM_NUM = 2;
+		const UINT POS3NORM3_ELEM_SIZES[] = { 12, 12 };
+
+		//Position3
+		const D3D11_INPUT_ELEMENT_DESC POS3_DESC[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+		const UINT POS3_ELEM_NUM = 1;
+		const UINT POS3_ELEM_SIZES[] = { 12 };
 
         const D3D11_INPUT_ELEMENT_DESC* getElementDescForType(MESH_LAYOUT_TYPE type);
         const UINT getElementCountForType(MESH_LAYOUT_TYPE type);

@@ -11,7 +11,7 @@ namespace Dx11Sandbox
 
         void calculateOrthogonalVector(const D3DXVECTOR3& vec, D3DXVECTOR3& orthogonal);
 
-
+		float randomFloat();
     }
 }
 
