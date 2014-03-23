@@ -3,7 +3,6 @@
 
 
 #include "ShadowCPUBuffer.h"
-#include <D3D11.h>
 struct ID3D11Buffer;
 namespace Dx11Sandbox
 {

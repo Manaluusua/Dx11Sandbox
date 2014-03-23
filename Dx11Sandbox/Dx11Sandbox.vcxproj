@@ -101,7 +101,7 @@
     <ClCompile Include="DeferredRenderer.cpp" />
     <ClCompile Include="EnvironmentChangedListeners.cpp" />
     <ClCompile Include="EnvironmentInfo.cpp" />
-    <ClCompile Include="Frustrum.cpp" />
+    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GBuffer.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="GPUBuffer.cpp" />
@@ -157,7 +157,7 @@
     <ClInclude Include="DebugDrawer.h" />
     <ClInclude Include="EnvironmentChangedListeners.h" />
     <ClInclude Include="DynamicPoolAllocator.h" />
-    <ClInclude Include="Frustrum.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GPUBuffer.h" />
     <ClInclude Include="ILDescriptions.h" />

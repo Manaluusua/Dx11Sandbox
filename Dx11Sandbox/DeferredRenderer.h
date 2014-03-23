@@ -3,6 +3,7 @@
 
 #include "Renderer.h"
 #include "RCObjectPtr.h"
+#include "LightListToStructuredData.h"
 #include "BasicMaterialPropertiesSetter.h"
 namespace Dx11Sandbox
 {
@@ -37,6 +38,7 @@ namespace Dx11Sandbox
 		static const unsigned int s_threadsPerGroupY;
 		static const string s_copyMaterialName;
 
+		LightListToStructuredData m_lightBuffer;
 		BasicMaterialPropertiesSetter m_materialPropertySetter;
 		RCObjectPtr<BasicForwardRenderer> m_forwardRenderer;
 		RenderContext* m_state;

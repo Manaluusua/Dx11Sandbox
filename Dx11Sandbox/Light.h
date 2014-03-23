@@ -45,11 +45,19 @@ namespace Dx11Sandbox
 		LightType getLightType() const;
 		virtual void setLightType(LightType type);
 
+		const LightDefinition& getLightDefinition() const;
+
 	protected:
 
 		virtual void lightParametersChanged();
 		LightDefinition m_lightDefinition;
 	};
+
+
+	inline const LightDefinition& Light::getLightDefinition() const
+	{
+		return m_lightDefinition;
+	}
 
 };
 

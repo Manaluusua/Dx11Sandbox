@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "Frustrum.h"
+#include "Frustum.h"
 
 namespace Dx11Sandbox
 {
@@ -352,10 +352,10 @@ namespace Dx11Sandbox
         m_reflected = val;
     }
 
-    void Camera::calculateFrustrum(Frustrum* frustrum)
+    void Camera::calculateFrustrum(Frustum* frustrum)
     {
         D3DXMATRIX viewProj((*getViewMatrix()) * (*getProjectionMatrix()));
         
-		Frustrum::calculateFrustrumFromMatrix(viewProj, *frustrum);
+		Frustum::calculateFrustrumFromMatrix(viewProj, *frustrum);
     }
 }

@@ -1,17 +1,17 @@
-#include "Frustrum.h"
+#include "Frustum.h"
 namespace Dx11Sandbox
 {
 
-    Frustrum::Frustrum()
+    Frustum::Frustum()
     {
     }
 
 
-    Frustrum::~Frustrum()
+    Frustum::~Frustum()
     {
     }
 
-	void Frustrum::calculateFrustrumFromMatrix(const D3DXMATRIX &matrix, Frustrum& outfrust)
+	void Frustum::calculateFrustrumFromMatrix(const D3DXMATRIX &matrix, Frustum& outfrust)
 	{
 		outfrust.rightPlane.a = matrix._14 - matrix._11;
 		outfrust.rightPlane.b = matrix._24 - matrix._21;
@@ -51,13 +51,13 @@ namespace Dx11Sandbox
 		D3DXPlaneNormalize(&outfrust.farPlane, &outfrust.farPlane);
 
 	}
-	void Frustrum::calculateMatrixFromFrustrum(const Frustrum& frust, D3DXMATRIX &matrix)
+	void Frustum::calculateMatrixFromFrustrum(const Frustum& frust, D3DXMATRIX &matrix)
 	{
 
 	}
 	
 
-	void Frustrum::convertToSimdFrustrum(Frustrum::SIMDFrustrum& out) const
+	void Frustum::convertToSimdFrustrum(Frustum::SIMDFrustrum& out) const
 	{
 
 		__declspec(align(16)) float line[4];

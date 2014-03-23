@@ -3,14 +3,21 @@
 namespace Dx11Sandbox
 {
     GPUBuffer::GPUBuffer()
-        :m_buffer( 0 )
+		:m_byteCount(0),
+		m_buffer( 0 )
+		
     {
 
     }
     GPUBuffer::GPUBuffer( ID3D11Buffer* buffer )
+		:m_byteCount(0)
     {
         m_buffer = buffer;
-        
+		if (m_buffer){
+			D3D11_BUFFER_DESC bdesc;
+			m_buffer->GetDesc(&bdesc);
+			m_byteCount = bdesc.ByteWidth;
+		}
     }
 
 

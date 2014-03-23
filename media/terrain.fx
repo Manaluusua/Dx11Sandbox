@@ -73,7 +73,7 @@ PS_GBUFFER_OUTPUT PS_Deferred( PS_INPUT input)
 	
 	output.color = texture1.Sample( samLinear, input.uv );
 	output.normal.rgb = input.normal;
-	output.specular = float4(output.color.g, output.color.g,output.color.g,output.color.g);
+	output.specular = float4(0.05f, 0.05f,0.05f, 0.05f);
 
     return output;
 }

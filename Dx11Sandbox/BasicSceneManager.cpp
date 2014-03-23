@@ -8,7 +8,7 @@
 #include "MeshManager.h"
 #include "Mesh.h"
 #include "BasicBinHandler.h"
-#include "Frustrum.h"
+#include "Frustum.h"
 #include "CullData.h"
 #include "SIMDCuller.h"
 #include "BasicForwardRenderer.h"
@@ -304,7 +304,7 @@ namespace Dx11Sandbox
 
 	void BasicSceneManager::cullObjectsFromPools(std::map<RenderLayer, CullDataAllocator*>& pools, RenderCamera* cam, std::vector<Cullable*>& out)
 	{
-		Frustrum frust;
+		Frustum frust;
 		cam->calculateFrustrum(&frust);
 		RenderLayer camMask = cam->getRenderMask();
 		

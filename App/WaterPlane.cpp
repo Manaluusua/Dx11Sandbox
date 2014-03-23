@@ -7,7 +7,7 @@
 #include "TextureManager.h"
 #include "Texture.h"
 #include "CullableGeometry.h"
-#include "Frustrum.h"
+#include "Frustum.h"
 #include "ReleasePtr.h"
 #include "RenderContext.h"
 #include "MathUtil.h"

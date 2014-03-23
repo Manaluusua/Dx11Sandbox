@@ -25,7 +25,7 @@ namespace Dx11Sandbox
     class GeometryBinHandler;
     class RenderContext;
     class SceneManager;
-    class Frustrum;
+    class Frustum;
     class Culler;
 	class DebugDrawer;
     

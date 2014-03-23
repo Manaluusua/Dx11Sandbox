@@ -4,7 +4,7 @@
 #include <xmmintrin.h>
 namespace Dx11Sandbox
 {
-    class Frustrum
+    class Frustum
     {
     public:
 
@@ -21,15 +21,15 @@ namespace Dx11Sandbox
             __m128 d5d6d5d6;
         };
 
-		static UINT32 cullSpheresSSE(Frustrum::SIMDFrustrum& frust,  const D3DXVECTOR4& sphere1, const D3DXVECTOR4& sphere2 );
-		static void calculateFrustrumFromMatrix(const D3DXMATRIX &matrix, Frustrum& outfrust);
-		static void calculateMatrixFromFrustrum(const Frustrum& frust, D3DXMATRIX &matrix);
+		static UINT32 cullSpheresSSE(Frustum::SIMDFrustrum& frust,  const D3DXVECTOR4& sphere1, const D3DXVECTOR4& sphere2 );
+		static void calculateFrustrumFromMatrix(const D3DXMATRIX &matrix, Frustum& outfrust);
+		static void calculateMatrixFromFrustrum(const Frustum& frust, D3DXMATRIX &matrix);
 
 
-        Frustrum();
-        ~Frustrum();
+        Frustum();
+        ~Frustum();
 
-		void convertToSimdFrustrum(Frustrum::SIMDFrustrum& out) const;
+		void convertToSimdFrustrum(Frustum::SIMDFrustrum& out) const;
         D3DXPLANE leftPlane;
         D3DXPLANE rightPlane;
         D3DXPLANE topPlane;
@@ -46,7 +46,7 @@ namespace Dx11Sandbox
 
     
 
-	inline UINT32 Frustrum::cullSpheresSSE(Frustrum::SIMDFrustrum& frust,  const D3DXVECTOR4& sphere1, const D3DXVECTOR4& sphere2 )
+	inline UINT32 Frustum::cullSpheresSSE(Frustum::SIMDFrustrum& frust,  const D3DXVECTOR4& sphere1, const D3DXVECTOR4& sphere2 )
 	{
 		UINT32 cullmask = 0x0;
 

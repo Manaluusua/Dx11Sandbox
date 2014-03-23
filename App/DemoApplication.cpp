@@ -31,7 +31,8 @@ DemoApplication::DemoApplication()
 	m_mouseSensitivity(0.01f),
     m_time(0),
     m_waterPlane(0),
-	m_debugDrawerTexture(0)
+	m_debugDrawerTexture(0),
+	m_debugDrawerLights(0)
 {
 
 }
@@ -141,12 +142,12 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	sun->setColor(D3DXVECTOR3(1.f,1.f,1.f));
 
 	Light* l;
-	unsigned int lightsGenerated = 40;
-	float lightRadMin = 40.f;
-	float lightRadMax = 90.f;
-	float circleRadMin = 80.f;
-	float circleRadMax = 300.f;
-	float maxHeight = 100.f;
+	unsigned int lightsGenerated = 50;
+	float lightRadMin = 80.f;
+	float lightRadMax = 150.f;
+	float circleRadMin = 100.f;
+	float circleRadMax = 800.f;
+	float maxHeight = 130.f;
 	float minHeight = 60.f;
 	D3DXVECTOR3 color;
 	D3DXVECTOR3 pos;
@@ -172,7 +173,11 @@ void DemoApplication::createWorld(SceneManager* mngr)
 
 
 	//debug drawers
-	m_debugDrawerTexture = new DebugDrawTextureToScreen(device, 100.f, 100.f);
+
+	//m_debugDrawerLights = new DebugDrawLights(device);
+	//m_mngr->addDebugDrawer(m_debugDrawerLights);
+
+	/*m_debugDrawerTexture = new DebugDrawTextureToScreen(device, 100.f, 100.f);
 	m_mngr->addDebugDrawer(m_debugDrawerTexture);
 	m_debugDrawerTexture->addDebugTexture(m_waterPlane->getRefractionTexture(), 40.f, 40.f, 20.f, 20.f);
 	m_debugDrawerTexture->addDebugTexture(m_waterPlane->getReflectionTexture(), 40.f, 20.f, 20.f, 20.f);
@@ -181,9 +186,8 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	m_debugDrawerTexture->addDebugTexture("GBUFFER_ALBEDO", -40.f, 40.f, 20.f, 20.f);
 	m_debugDrawerTexture->addDebugTexture("GBUFFER_NORMAL", -40.f, 20.f, 20.f, 20.f);
 	m_debugDrawerTexture->addDebugTexture("GBUFFER_SPECULAR", -40.f, 0.f, 20.f, 20.f);
-
-	m_debugDrawerLights = new DebugDrawLights(device);
-	m_mngr->addDebugDrawer(m_debugDrawerLights);
+	*/
+	
 
 }
 void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime)

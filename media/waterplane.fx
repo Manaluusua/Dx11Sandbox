@@ -9,7 +9,7 @@ SamplerState samLinear
 
 //shader impl and uniforms
 static const float3 waterColor = float3(0.3f,0.6f,0.6f);
-static const float4 specular = float4(1.0f,0.7f,0.4f,64.f);
+static const float4 specular = float4(1.0f,1.f,1.f,0.8f);
 
 Texture2D refraction;
 Texture2D reflection;  

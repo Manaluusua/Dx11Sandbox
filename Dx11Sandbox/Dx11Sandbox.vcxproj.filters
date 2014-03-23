@@ -60,9 +60,6 @@
     <ClCompile Include="Compositor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Frustrum.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SIMDCuller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -159,6 +156,9 @@
     <ClCompile Include="DebugDrawLights.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Root.h">
@@ -207,9 +207,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Compositor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Frustrum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Culler.h">
@@ -336,6 +333,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DebugDrawLights.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,7 +7,7 @@
 
 namespace Dx11Sandbox
 {
-	class Frustrum;
+	class Frustum;
     class Camera 
     {
     public:
@@ -70,7 +70,7 @@ namespace Dx11Sandbox
 		
 		ProjectionType getProjectionType() const;
 
-        void calculateFrustrum(Frustrum* frustrum);
+        void calculateFrustrum(Frustum* frustrum);
 
     protected:
 

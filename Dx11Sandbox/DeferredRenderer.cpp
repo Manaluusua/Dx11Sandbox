@@ -208,22 +208,28 @@ namespace Dx11Sandbox
 		effect->GetVariableByName("output")->AsUnorderedAccessView()->SetUnorderedAccessView(m_lightingOutput->getUnorderedAccessView());
 
 		//set lights
-		
+		m_lightBuffer.setupFromLightList(m_state, m_lights);
+		effect->GetVariableByName("lights")->AsShaderResource()->SetResource(m_lightBuffer.getResourceViewOfLightData());
 
 		//set misc data
 		const D3DXMATRIX *view = m_cam->getViewMatrix();
 		const D3DXMATRIX *proj = m_cam->getProjectionMatrix();
-		D3DXMATRIX viewProj = (*view) * (*proj);
+		D3DXMATRIX invView;
+		float determinant;
+		D3DXMatrixInverse(&invView, &determinant, view);
+
 		D3DXVECTOR3 transl = -(m_cam->getTranslation());
 		D3DXVECTOR4 camPos(transl.x, transl.y, transl.z, 1);
 		float viewWidth = static_cast<float>(m_gbuffer->getWidth()), viewHeight = static_cast<float>(m_gbuffer->getHeight());
 		D3DXVECTOR4 viewDimensions(viewWidth, viewHeight, 1.f / viewWidth, 1.f / viewHeight);
 
 		ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("misc");
-		ID3DX11EffectMatrixVariable* mat = buffer->GetMemberByName("viewProj")->AsMatrix();
-		mat->SetMatrix((float*)&viewProj);
-		mat = buffer->GetMemberByName("proj")->AsMatrix();
+		ID3DX11EffectMatrixVariable* mat = buffer->GetMemberByName("invViewMat")->AsMatrix();
+		mat->SetMatrix((float*)&invView);
+		mat = buffer->GetMemberByName("projMat")->AsMatrix();
 		mat->SetMatrix((float*)proj);
+		mat = buffer->GetMemberByName("viewMat")->AsMatrix();
+		mat->SetMatrix((float*)view);
 		buffer->GetMemberByName("camPos")->AsVector()->SetFloatVector((float*)&camPos);
 		buffer->GetMemberByName("screenDimensions")->AsVector()->SetFloatVector((float*)&viewDimensions);
 		buffer->GetMemberByName("lightCount")->AsScalar()->SetInt(m_lights->size());
