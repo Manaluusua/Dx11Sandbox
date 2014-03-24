@@ -23,6 +23,9 @@ namespace Dx11Sandbox
 
 		void destroy();
 
+		void setLightId(UINT id);
+		UINT getLightId();
+
 	protected:
 		//calculate new bounds when light parameters change
 		virtual void lightParametersChanged();
@@ -35,6 +38,7 @@ namespace Dx11Sandbox
 		D3DXVECTOR4 m_bounds;
 		CullData** m_cullingInformation;
 		CullableLightManager* m_mngr;
+		UINT m_lightId;
 	};
 
 };

@@ -9,7 +9,8 @@ namespace Dx11Sandbox
 	CullableLight::CullableLight(CullableLightManager* mngr)
 		:m_bounds(-1.f, -1.f,-1.f, -1.f),	
 		m_cullingInformation(0),
-		m_mngr(mngr)
+		m_mngr(mngr),
+		m_lightId(0)
 	{
 		setVisible(true);
 	}
@@ -20,7 +21,17 @@ namespace Dx11Sandbox
 		setVisible(false);
 	}
 
+	UINT CullableLight::getLightId()
+	{
+		return m_lightId;
 
+	}
+
+
+	void CullableLight::setLightId(UINT id)
+	{
+		m_lightId = id;
+	}
 	void CullableLight::passedCulling(RenderPrimitiveGatherer *gatherer)
 	{
 		gatherer->addLight(this);

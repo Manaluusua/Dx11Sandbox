@@ -141,8 +141,8 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	sun->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
 	sun->setColor(D3DXVECTOR3(1.f,1.f,1.f));
 
-	Light* l;
-	unsigned int lightsGenerated = 50;
+	CullableLight* l;
+	unsigned int lightsGenerated = 1000;
 	float lightRadMin = 80.f;
 	float lightRadMax = 150.f;
 	float circleRadMin = 100.f;
@@ -152,15 +152,17 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	D3DXVECTOR3 color;
 	D3DXVECTOR3 pos;
 	for (int i = 0; i < lightsGenerated; ++i){
-		color.x = Dx11Sandbox::MathUtil::randomFloat();
-		color.y = Dx11Sandbox::MathUtil::randomFloat();
-		color.z = Dx11Sandbox::MathUtil::randomFloat();
+		float rat = (static_cast<float>(i) / lightsGenerated);
+
+		color.x = rat;//Dx11Sandbox::MathUtil::randomFloat();
+		color.y = 1.f - rat;//Dx11Sandbox::MathUtil::randomFloat();
+		color.z = 0.f;//Dx11Sandbox::MathUtil::randomFloat();
 
 		float circleRad = circleRadMin + (circleRadMax - circleRadMin)*Dx11Sandbox::MathUtil::randomFloat();
 		float lightRad = lightRadMin + (lightRadMax - lightRadMin)*Dx11Sandbox::MathUtil::randomFloat();
 
-		pos.x = std::cos(2 * Dx11Sandbox::MathUtil::PI * (static_cast<float>(i) / lightsGenerated)) * circleRad;
-		pos.z = std::sin(2 * Dx11Sandbox::MathUtil::PI * (static_cast<float>(i) / lightsGenerated)) * circleRad;
+		pos.x = std::cos(2 * Dx11Sandbox::MathUtil::PI * rat) * circleRad;
+		pos.z = std::sin(2 * Dx11Sandbox::MathUtil::PI * rat) * circleRad;
 		pos.y = minHeight + (maxHeight - minHeight) * Dx11Sandbox::MathUtil::randomFloat();
 
 		l = m_mngr->createLight();
@@ -168,14 +170,14 @@ void DemoApplication::createWorld(SceneManager* mngr)
 		l->setRadius(lightRad);
 		l->setColor(color);
 		l->setPosition(pos);
-
+		l->setLightId(i + 1);
 	}
 
 
 	//debug drawers
 
-	//m_debugDrawerLights = new DebugDrawLights(device);
-	//m_mngr->addDebugDrawer(m_debugDrawerLights);
+	m_debugDrawerLights = new DebugDrawLights(device);
+	m_mngr->addDebugDrawer(m_debugDrawerLights);
 
 	/*m_debugDrawerTexture = new DebugDrawTextureToScreen(device, 100.f, 100.f);
 	m_mngr->addDebugDrawer(m_debugDrawerTexture);

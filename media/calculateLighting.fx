@@ -1,6 +1,8 @@
 //adapted from DICE  http://dice.se/wp-content/uploads/GDC11_DX11inBF3_Public.pdf and Andrew Lauritzen: http://software.intel.com/en-us/articles/deferred-rendering-for-current-and-future-rendering-pipelines/
 
-#define GROUP_SIZE 16
+#define GROUP_DIMENSION 16
+#define GROUP_SIZE GROUP_DIMENSION * GROUP_DIMENSION
+
 #define LIGHT_TYPE_OMNI 0
 #define LIGHT_TYPE_DIRECTIONAL 1
 #define LIGHT_TYPE_SPOT 2
@@ -124,7 +126,6 @@ float3 calculateShading(float2 threadIdXY, GBufferSample sample)
 	float3 color = float3(0.f, 0.f, 0.f);
 	for (uint index = 0; index < visibleLightCount; ++index) {
         Light light = lights[visibleLightIndices[index]];
-		float lightAttenuation = 0.f;
 		
 		
         if( light.lightType == LIGHT_TYPE_OMNI )
@@ -140,6 +141,7 @@ float3 calculateShading(float2 threadIdXY, GBufferSample sample)
 		
 		
     }
+	
 	return color;
 
 }
@@ -169,6 +171,7 @@ void cullLights(uint groupIndex, CullInfo info)
 			//cull omnilight
 			float4 posRad = light.posRad;
 			float4 lightViewPos = mul( float4(posRad.xyz, 1.f) , viewMat);
+			
 			[unroll] for (uint i = 0; i < 6; ++i) {
 				float d = dot(info.frustumPlanes[i], lightViewPos);
 				IsVisible = IsVisible && (d >= -posRad.w);
@@ -208,7 +211,7 @@ void calculateCullInfo(float depth, uint2 groupIdXY, out CullInfo info )
 	float2 minMaxDepth = float2(asfloat(groupMinDepthInt), asfloat(groupMaxDepthInt));
 	
 	// scale and bias projection matrix parameters to extract frustrum planes for tile frustum 
-    float2 scale = float2(screenDimensions.xy) * rcp(float(GROUP_SIZE * 2));
+    float2 scale = float2(screenDimensions.xy) * rcp(float(GROUP_DIMENSION * 2));
     float2 bias = scale - float2(groupIdXY);
 	
 	//extract scaled and biased projection values (only columns 1,2 and 4 needed since near & far planes are taken from min/max depth values
@@ -225,7 +228,6 @@ void calculateCullInfo(float depth, uint2 groupIdXY, out CullInfo info )
     info.frustumPlanes[4] = float4(0.0f, 0.0f,  1.0f, -minMaxDepth.x);
     info.frustumPlanes[5] = float4(0.0f, 0.0f, -1.0f,  minMaxDepth.y);
     
-    // Normalize side planes
     [unroll] for (uint i = 0; i < 4; ++i) {
         info.frustumPlanes[i] *= rcp(length(info.frustumPlanes[i].xyz));
     }
@@ -234,7 +236,7 @@ void calculateCullInfo(float depth, uint2 groupIdXY, out CullInfo info )
 
 //main
 
-[numthreads(GROUP_SIZE,GROUP_SIZE,1)] 
+[numthreads(GROUP_DIMENSION,GROUP_DIMENSION,1)] 
 void MainCS( 
  uint3 groupId : SV_GroupID, 
  uint3 groupThreadId : SV_GroupThreadID, 
