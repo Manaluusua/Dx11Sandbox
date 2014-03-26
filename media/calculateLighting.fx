@@ -1,12 +1,14 @@
 //adapted from DICE  http://dice.se/wp-content/uploads/GDC11_DX11inBF3_Public.pdf and Andrew Lauritzen: http://software.intel.com/en-us/articles/deferred-rendering-for-current-and-future-rendering-pipelines/
 
+#include "lightingEquations.hlsl"
+
 #define GROUP_DIMENSION 16
 #define GROUP_SIZE GROUP_DIMENSION * GROUP_DIMENSION
 
 #define LIGHT_TYPE_OMNI 0
 #define LIGHT_TYPE_DIRECTIONAL 1
 #define LIGHT_TYPE_SPOT 2
-#define SPECULAR_POWER 1024
+
 //global input
 
 //gbuffer
@@ -82,28 +84,23 @@ float3 calculateShadingOmniLight(float3 pos, GBufferSample sample, Light light)
 	float lightDist = length(lightDir);
 	lightDir = lightDir * rcp(lightDist);
 	
-	float3 halfVec = normalize(camDir + lightDir);
-	
 	float atten = clamp(1.0f - light.colorInvRad.w * lightDist, 0.0, 1.0);
 	
-	float3 color = sample.albedo * saturate(dot(lightDir, sample.normal)) * light.colorInvRad.rgb * atten;
+	float3 color = lightingEquation(sample.albedo, light.colorInvRad.rgb, sample.specular.rgb, sample.specular.w, sample.normal, lightDir, camDir);
 	
-	color += pow(saturate(dot(halfVec, sample.normal)), sample.specular.w * SPECULAR_POWER) * sample.specular.rgb * atten;
+	color *= atten;
 	return color;
 }
 
 float3 calculateShadingDirectionalLight(float3 pos, GBufferSample sample, Light light)
 {
-	return float3(0.f, 0.f, 0.f);
+
 	float3 camDir = camPos.xyz - pos;
 	camDir = normalize(camDir);
 	float3 lightDir = -light.dirAng.xyz;
 	
-	float3 halfVec = normalize(camDir + lightDir);
+	float3 color = lightingEquation(sample.albedo, light.colorInvRad.rgb, sample.specular.rgb, sample.specular.w, sample.normal, lightDir, camDir);
 	
-	float3 color = sample.albedo * saturate(dot(lightDir, sample.normal)) * light.colorInvRad.rgb;
-	
-	color += pow(saturate(dot(halfVec, sample.normal)), sample.specular.w * SPECULAR_POWER) * sample.specular.rgb;
 	return color;
 	
 }

@@ -139,10 +139,10 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	//lights
 	sun = m_mngr->createLight();
 	sun->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
-	sun->setColor(D3DXVECTOR3(1.f,1.f,1.f));
+	sun->setColor(D3DXVECTOR3(0.1f,0.1f,0.3f));
 
 	CullableLight* l;
-	unsigned int lightsGenerated = 1000;
+	unsigned int lightsGenerated = 100;
 	float lightRadMin = 80.f;
 	float lightRadMax = 150.f;
 	float circleRadMin = 100.f;
@@ -176,8 +176,8 @@ void DemoApplication::createWorld(SceneManager* mngr)
 
 	//debug drawers
 
-	m_debugDrawerLights = new DebugDrawLights(device);
-	m_mngr->addDebugDrawer(m_debugDrawerLights);
+	//m_debugDrawerLights = new DebugDrawLights(device);
+	//m_mngr->addDebugDrawer(m_debugDrawerLights);
 
 	/*m_debugDrawerTexture = new DebugDrawTextureToScreen(device, 100.f, 100.f);
 	m_mngr->addDebugDrawer(m_debugDrawerTexture);
