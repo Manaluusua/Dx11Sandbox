@@ -128,18 +128,26 @@ void DemoApplication::createWorld(SceneManager* mngr)
      
     //terrain
     mat = MaterialManager::singleton()->getOrCreateMaterial(device, "terrain.fx", "terrain1",MeshInputLayouts::POS3NORM3TEX2);
-    MeshUtility::createTerrainFromHeightMap(device,mngr, "heightmapTerrain.png", mat,1000,1000,200,20,20,10);
+    MeshUtility::createTerrainFromHeightMap(device,mngr, "heightmapTerrain.png", mat,1000,1000,200,30,30,10);
 	tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "grass.jpg", "grass.jpg");
     mat->setTexture("texture1", tex->getName());
 
     //waterplane
     Dx11Sandbox::string name("waterPlane1");
-	m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-60,340,340,200,200, 512);
+	m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-40,300,300,100,100, 512);
     
 	//lights
 	sun = m_mngr->createLight();
 	sun->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
 	sun->setColor(D3DXVECTOR3(0.1f,0.1f,0.3f));
+
+
+	CullableLight* li = m_mngr->createLight();
+	li->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
+	li->setColor(D3DXVECTOR3(0.1f, 0.1f, 0.3f));
+	D3DXVECTOR3 dir(1.f, -0.4f, 0.f);
+	D3DXVec3Normalize(&dir, &dir);
+	li->setDirection(dir);
 
 	CullableLight* l;
 	unsigned int lightsGenerated = 100;
@@ -154,9 +162,9 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	for (int i = 0; i < lightsGenerated; ++i){
 		float rat = (static_cast<float>(i) / lightsGenerated);
 
-		color.x = rat;//Dx11Sandbox::MathUtil::randomFloat();
-		color.y = 1.f - rat;//Dx11Sandbox::MathUtil::randomFloat();
-		color.z = 0.f;//Dx11Sandbox::MathUtil::randomFloat();
+		color.x = rat;
+		color.y = (1.f - rat);
+		color.z = 0.5f;
 
 		float circleRad = circleRadMin + (circleRadMax - circleRadMin)*Dx11Sandbox::MathUtil::randomFloat();
 		float lightRad = lightRadMin + (lightRadMax - lightRadMin)*Dx11Sandbox::MathUtil::randomFloat();
@@ -197,7 +205,7 @@ void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime
     m_time += fElapsedTime;
     handleInput(mngr,fElapsedTime, static_cast<float>( fTime ) );
 
-	D3DXVECTOR3 sunDir( std::cos( m_time ), 0.f, std::sin( m_time ) );
+	D3DXVECTOR3 sunDir( std::cos( m_time ), -0.4f, std::sin( m_time ) );
     D3DXVec3Normalize(&sunDir, &sunDir);
 	sun->setDirection(sunDir);
 }

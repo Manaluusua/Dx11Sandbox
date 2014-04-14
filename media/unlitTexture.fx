@@ -43,13 +43,6 @@ float4 PS( PS_INPUT input) : SV_Target
 {
 
 	float4 output = tex.Sample( samLinear, input.uv );
-    /*float n = 0.1f;
-	float f = 800.f;
-	float z_b = output.r;
-	float z_l =  (2.0 * n) / (f + n - z_b * (f - n));
-
-	
-	output.r = z_l;*/
     return output;
 }
 
