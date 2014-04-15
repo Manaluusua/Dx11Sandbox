@@ -108,6 +108,7 @@
     <ClCompile Include="ILDescriptions.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="CullableLight.cpp" />
+    <ClCompile Include="InputLayoutDescription.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LightListToStructuredData.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="DebugDrawLights.h" />
     <ClInclude Include="DeferredRenderer.h" />
     <ClInclude Include="GBuffer.h" />
+    <ClInclude Include="InputLayoutDescription.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="LightListToStructuredData.h" />
     <ClInclude Include="RenderPrimitiveGatherer.h" />

@@ -1,7 +1,6 @@
 #ifndef DX11SANDBOX_MESH_H
 #define DX11SANDBOX_MESH_H
 #include <D3D11.h>
-#include "ILDescriptions.h"
 #include <vector>
 #include "CommonUtilities.h"
 #include "RCObject.h"
@@ -15,6 +14,7 @@ struct ID3D11Device;
 
 namespace Dx11Sandbox
 {
+	class InputLayoutDescription;
     class VertexBuffer;
     class IndexBuffer;
     class RenderContext;
@@ -36,10 +36,10 @@ namespace Dx11Sandbox
 		D3D11_PRIMITIVE_TOPOLOGY getPrimType();
 
         void createMeshFromBuffers(ID3D11Device* device,BYTE** vbuffers, BYTE* ibuffer, UINT numVertices, UINT numIndices,
-            DXGI_FORMAT indexFormat,MeshInputLayouts::MESH_LAYOUT_TYPE type);
+            DXGI_FORMAT indexFormat,const InputLayoutDescription& inputLayout);
 
         void createVertexBuffer(ID3D11Device* device,BYTE** vbuffers, UINT numVertices, 
-            MeshInputLayouts::MESH_LAYOUT_TYPE type);
+			const InputLayoutDescription& inputLayout);
 
         void createIndexBuffer(ID3D11Device* device, BYTE* ibuffer, UINT numIndices,
             DXGI_FORMAT indexFormat);

@@ -2,6 +2,7 @@
 #include "MathUtil.h"
 
 #include "Mesh.h"
+#include "InputLayoutDescription.h"
 #include "TextureManager.h"
 #include "Texture.h"
 #include "PixelBox.h"
@@ -171,15 +172,16 @@ namespace Dx11Sandbox
 
 		///submit data
 
-		MeshInputLayouts::MESH_LAYOUT_TYPE layoutType = MeshInputLayouts::POS3;
+		InputLayoutDescription inputDescription;
+		inputDescription.appendDescription("POSITION", DXGI_FORMAT_R32G32B32_FLOAT);
 		if (generateNormals && !generateUVs){
-			layoutType = MeshInputLayouts::POS3NORM3;
+			inputDescription.appendDescription("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT);
 		}
 		else if (!generateNormals && generateUVs){
-			layoutType = MeshInputLayouts::POS3TEX2;
+			inputDescription.appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
 		}
 		else if(generateNormals && generateUVs) {
-			layoutType = MeshInputLayouts::POS3NORM3TEX2;
+			inputDescription.appendDescription("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
 		}
 		
 		unsigned int bufferCount = 2;
@@ -200,7 +202,7 @@ namespace Dx11Sandbox
 			ptr[bufferIndex] = (BYTE*)uvs;
 			++bufferIndex;
 		}
-		mesh->createMeshFromBuffers(device, ptr, (BYTE*)indices, pointCount, indexCount, DXGI_FORMAT_R32_UINT, layoutType);
+		mesh->createMeshFromBuffers(device, ptr, (BYTE*)indices, pointCount, indexCount, DXGI_FORMAT_R32_UINT, inputDescription);
 		mesh->setPrimType(makeLineListInsteadOfTriangles ? D3D11_PRIMITIVE_TOPOLOGY_LINELIST : D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		///cleanup
 		SAFE_DELETE_ARRAY(positions);
@@ -237,10 +239,12 @@ namespace Dx11Sandbox
 		FLOAT UV[8] = { minuvx, minuvy, maxuvx, minuvy, minuvx, maxuvy, maxuvx, maxuvy };
 		UINT16 indices[6] = { 0, 2, 1, 1, 2, 3 };
 
+		InputLayoutDescription inputDescription;
+		inputDescription.appendDescription("POSITION", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
 		BYTE* ptr[2];
 		ptr[0] = (BYTE*)corners;
 		ptr[1] = (BYTE*)UV;
-		mesh->createMeshFromBuffers(device, ptr, (BYTE*)indices, 4,6,DXGI_FORMAT_R16_UINT,MeshInputLayouts::POS3TEX2);
+		mesh->createMeshFromBuffers(device, ptr, (BYTE*)indices, 4, 6, DXGI_FORMAT_R16_UINT, inputDescription);
 		return mesh;
 	}
 
@@ -353,7 +357,11 @@ namespace Dx11Sandbox
         indices[34] = 6;
         indices[35] = 5;
 
-        mesh->createMeshFromBuffers(device, ptr, (BYTE*)indices, 8,36,DXGI_FORMAT_R16_UINT,MeshInputLayouts::POS3TEX3);
+
+		InputLayoutDescription inputDescription;
+		inputDescription.appendDescription("POSITION", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TEXCOORD", DXGI_FORMAT_R32G32B32_FLOAT);
+
+		mesh->createMeshFromBuffers(device, ptr, (BYTE*)indices, 8, 36, DXGI_FORMAT_R16_UINT, inputDescription);
         return mesh;
     }
 
@@ -419,8 +427,11 @@ namespace Dx11Sandbox
                 UV[i*pointsX*2 + j*2 + 1] = ((float)(i))/tesselationFactorZ;
             }
         }
-        
-        mesh->createVertexBuffer(device,ptr,pointsX*pointsZ,MeshInputLayouts::POS3NORM3TEX2);
+		InputLayoutDescription inputDescription;
+		inputDescription.appendDescription("POSITION", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
+
+
+		mesh->createVertexBuffer(device, ptr, pointsX*pointsZ, inputDescription);
 
         UINT indicesCount = (tesselationFactorX)*(tesselationFactorZ)*6;
         UINT32 *indices = new UINT32[indicesCount];
@@ -594,8 +605,11 @@ namespace Dx11Sandbox
                 UV[i*totalPointsX*2 + j*2 + 1] = 0.5f*((float)(i))/tesselationFactor;
             }
         }
-        
-        vertices->createVertexBuffer(device,ptr,totalPointsX*totalPointsZ,MeshInputLayouts::POS3NORM3TEX2);
+
+		InputLayoutDescription desc;
+		desc.appendDescription("POSITION", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
+
+		vertices->createVertexBuffer(device, ptr, totalPointsX*totalPointsZ, desc);
 
         terrainName = terrainName + "Indices";
 

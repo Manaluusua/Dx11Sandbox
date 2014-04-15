@@ -3,7 +3,7 @@
 #include "RenderContext.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
-
+#include "InputLayoutDescription.h"
 
 
 namespace Dx11Sandbox
@@ -74,13 +74,13 @@ namespace Dx11Sandbox
 	}
 
     void Mesh::createMeshFromBuffers(ID3D11Device* device,BYTE** vbuffers, BYTE* ibuffer, UINT numVertices, UINT numIndices,
-            DXGI_FORMAT indexFormat,MeshInputLayouts::MESH_LAYOUT_TYPE type)
+		DXGI_FORMAT indexFormat, const InputLayoutDescription& inputLayout)
     {
         
 
         if(numVertices>0)
         {
-            createVertexBuffer(device, vbuffers,numVertices,type);
+            createVertexBuffer(device, vbuffers,numVertices,inputLayout);
         }
 
         if(numIndices>0)
@@ -94,22 +94,21 @@ namespace Dx11Sandbox
     }
 
 
-    void Mesh::createVertexBuffer(ID3D11Device* device,BYTE** vbuffers, UINT numVertices, MeshInputLayouts::MESH_LAYOUT_TYPE type)
+	void Mesh::createVertexBuffer(ID3D11Device* device, BYTE** vbuffers, UINT numVertices, const InputLayoutDescription& inputLayout)
     {
         UINT stride = 0;
         BYTE* vertexBuffer= 0;
 
         if(numVertices>0)
         {
-            int numBuffers = MeshInputLayouts::getElementCountForType(type);
-            const UINT* bufferSizes = MeshInputLayouts::getElementSizesForType(type);
+            int numBuffers = inputLayout.getElementCount();
 
             assert(numBuffers>0);
 
            
             for(int i=0;i<numBuffers;i++)
             {
-                stride += bufferSizes[i];
+                stride += inputLayout.getElementByteWidth(i);
             }
 
             vertexBuffer = new BYTE[stride*numVertices];
@@ -119,7 +118,7 @@ namespace Dx11Sandbox
                 UINT elemOffset = 0;
                 for(int j=0;j<numBuffers;++j)
                 {
-                    UINT elemSize = bufferSizes[j];
+					UINT elemSize = inputLayout.getElementByteWidth(j);
                     memcpy( &vertexBuffer[i*stride + elemOffset],  &vbuffers[j][i*elemSize], elemSize);
                     elemOffset += elemSize;
                 }
