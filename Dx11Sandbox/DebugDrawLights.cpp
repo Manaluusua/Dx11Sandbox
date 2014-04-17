@@ -9,8 +9,10 @@
 #include "RenderBin.h"
 #include "ILDescriptions.h"
 #include "Light.h"
+#include "Mesh.h"
 #include "RenderCamera.h"
 #include "d3dx11effect.h"
+
 namespace Dx11Sandbox
 {
 
@@ -25,8 +27,9 @@ namespace Dx11Sandbox
 		m_device(device)
 		
 	{
+
 		Mesh* mesh = MeshUtility::createUnitSphere(device, 25, 20, false, false, true);
-		Material* mat = MaterialManager::singleton()->getOrCreateMaterial(device, "gizmoColored.fx", "gizmo", MeshInputLayouts::POS3);
+		Material* mat = MaterialManager::singleton()->getOrCreateMaterial(device, "gizmoColored.fx", "gizmo", mesh->getInputLayout());
 		m_renderData->setMaterial(mat);
 		m_renderData->setMesh(mesh);
 		

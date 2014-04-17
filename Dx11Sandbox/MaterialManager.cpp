@@ -1,5 +1,6 @@
 #include "MaterialManager.h"
 #include "Material.h"
+#include "InputLayoutDescription.h"
 namespace Dx11Sandbox
 {
 
@@ -18,7 +19,7 @@ namespace Dx11Sandbox
 		return m_assetPath;
 	}
 
-    bool MaterialManager::createMaterial(ID3D11Device* device, const string& filename,const string& matname, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type)
+	bool MaterialManager::createMaterial(ID3D11Device* device, const string& filename, const string& matname, const InputLayoutDescription& inputDescription)
     {
         
 
@@ -34,7 +35,7 @@ namespace Dx11Sandbox
 
 		string path = m_assetPath + filename;
 
-        if(mat->loadAndInitializeMaterial(path,device,type))
+        if(mat->loadAndInitializeMaterial(path,device,inputDescription))
         {
             m_loadedMaterials[matname] = mat;
             return true;
@@ -50,12 +51,12 @@ namespace Dx11Sandbox
 		m_assetPath = path;
 	}
 
-    Material* MaterialManager::getOrCreateMaterial(ID3D11Device* device, const string& filename,const string& matname, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type)
+	Material* MaterialManager::getOrCreateMaterial(ID3D11Device* device, const string& filename, const string& matname, const InputLayoutDescription& inputDescription)
     {
         Material* mat = getMaterial(matname);
         if(!mat)
         {
-            if(createMaterial(device,filename, matname, type))
+            if(createMaterial(device,filename, matname, inputDescription))
             {
                 mat = getMaterial(matname);
             }

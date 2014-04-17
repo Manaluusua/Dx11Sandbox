@@ -6,6 +6,7 @@
 #include "RenderData.h"
 #include "Texture.h"
 #include "RenderContext.h"
+#include "InputLayoutDescription.h"
 
 namespace Dx11Sandbox
 {
@@ -16,7 +17,9 @@ namespace Dx11Sandbox
 		:m_device(device)
 	{
 		m_cam.setProjectionOrthographic(width, width/height, 0.1f, 100.f);
-		MaterialManager::singleton()->getOrCreateMaterial(device, "unlitTexture.fx", s_debugMaterialName, MeshInputLayouts::POS3TEX2);
+		InputLayoutDescription inputDescription;
+		inputDescription.appendDescription("POSITION", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
+		MaterialManager::singleton()->getOrCreateMaterial(device, "unlitTexture.fx", s_debugMaterialName, inputDescription);
 		m_renderer = new BasicForwardRenderer;
 	}
 

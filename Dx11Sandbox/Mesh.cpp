@@ -3,7 +3,7 @@
 #include "RenderContext.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
-#include "InputLayoutDescription.h"
+
 
 
 namespace Dx11Sandbox
@@ -73,6 +73,12 @@ namespace Dx11Sandbox
 		return m_primType; 
 	}
 
+	const InputLayoutDescription& Mesh::getInputLayout() const
+	{
+		return m_inputLayout;
+
+	}
+
     void Mesh::createMeshFromBuffers(ID3D11Device* device,BYTE** vbuffers, BYTE* ibuffer, UINT numVertices, UINT numIndices,
 		DXGI_FORMAT indexFormat, const InputLayoutDescription& inputLayout)
     {
@@ -88,7 +94,7 @@ namespace Dx11Sandbox
             createIndexBuffer(device,ibuffer,numIndices,indexFormat);
         }
 
-
+		
 
   
     }
@@ -98,7 +104,7 @@ namespace Dx11Sandbox
     {
         UINT stride = 0;
         BYTE* vertexBuffer= 0;
-
+		m_inputLayout = inputLayout;
         if(numVertices>0)
         {
             int numBuffers = inputLayout.getElementCount();

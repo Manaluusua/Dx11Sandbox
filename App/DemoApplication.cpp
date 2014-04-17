@@ -6,6 +6,7 @@
 #include "MaterialManager.h"
 #include "Material.h"
 #include "Shader.h"
+#include "Mesh.h"
 #include "RenderCamera.h"
 #include "MeshManager.h"
 #include "RenderContext.h"
@@ -114,8 +115,9 @@ void DemoApplication::createWorld(SceneManager* mngr)
     CullableGeometry *ro;
 
     //skybox
-    mat = MaterialManager::singleton()->getOrCreateMaterial(device, "skybox.fx", "skybox",MeshInputLayouts::POS3TEX3);
+    
     mesh = MeshUtility::createSkyBoxMesh(device, "skybox" + generateID());
+	mat = MaterialManager::singleton()->getOrCreateMaterial(device, "skybox.fx", "skybox", mesh->getInputLayout());
 	ro = mngr->createCullableGeometry();
 	ro->setBoundingSphere( D3DXVECTOR4( 0,0,0, FLT_MAX ) );
 	ro->setMaterial( mat );
@@ -127,7 +129,9 @@ void DemoApplication::createWorld(SceneManager* mngr)
     
      
     //terrain
-    mat = MaterialManager::singleton()->getOrCreateMaterial(device, "terrain.fx", "terrain1",MeshInputLayouts::POS3NORM3TEX2);
+	InputLayoutDescription inputDescription;
+	inputDescription.appendDescription("POSITION", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
+	mat = MaterialManager::singleton()->getOrCreateMaterial(device, "terrain.fx", "terrain1", inputDescription);
     MeshUtility::createTerrainFromHeightMap(device,mngr, "heightmapTerrain.png", mat,1000,1000,200,30,30,10);
 	tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "grass.jpg", "grass.jpg");
     mat->setTexture("texture1", tex->getName());

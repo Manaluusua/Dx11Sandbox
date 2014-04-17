@@ -38,7 +38,7 @@ namespace Dx11Sandbox
 	{
 
 		m_copyData->setMesh(MeshUtility::createQuad(m_state->getDevice(), 0, 0, 2, 2, false, true));
-		m_copyData->setMaterial( MaterialManager::singleton()->getOrCreateMaterial(m_state->getDevice(), "unlitTexture.fx", s_copyMaterialName, MeshInputLayouts::POS3TEX2) );
+		m_copyData->setMaterial( MaterialManager::singleton()->getOrCreateMaterial(m_state->getDevice(), "unlitTexture.fx", s_copyMaterialName, m_copyData->getMesh()->getInputLayout()) );
 		m_accumulateLightsCS = new Shader(MaterialManager::singleton()->getAssetPath() + "calculateLighting.fx",state->getDevice());
 	}
 

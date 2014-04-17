@@ -3,8 +3,10 @@
 #include "Texture.h"
 #include "TextureManager.h"
 #include "Shader.h"
+#include "InputLayoutDescription.h"
 #include <iostream>
 #include <memory>
+#include <D3D11.h>
 #include <d3dx11effect.h>
 namespace Dx11Sandbox
 {
@@ -48,21 +50,20 @@ namespace Dx11Sandbox
 		return m_textureRefs;
 	}
 
-    bool Material::loadAndInitializeMaterial(const string& effectName, ID3D11Device* pd3dDevice, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type)
+	bool Material::loadAndInitializeMaterial(const string& effectName, ID3D11Device* pd3dDevice, const InputLayoutDescription& inputDescription)
     {
         bool succesfull = true;
 		ID3D11InputLayout* layout;
 		m_shader = new Shader(effectName, pd3dDevice);
 		succesfull = m_shader->isShaderInitialized();
-
 		if (!succesfull){
 			return succesfull;
 		}
 
         D3DX11_PASS_DESC PassDesc;
         m_shader->getEffect()->GetTechniqueByIndex(0)->GetPassByIndex( 0 )->GetDesc( &PassDesc );
-		HRESULT hr = pd3dDevice->CreateInputLayout(Dx11Sandbox::MeshInputLayouts::getElementDescForType(type),
-            Dx11Sandbox::MeshInputLayouts::getElementCountForType(type), PassDesc.pIAInputSignature,
+		HRESULT hr = pd3dDevice->CreateInputLayout(inputDescription.getElementDescriptions(),
+			inputDescription.getElementCount(), PassDesc.pIAInputSignature,
             PassDesc.IAInputSignatureSize, &layout );
 
 		

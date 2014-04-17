@@ -3,6 +3,7 @@
 #include <D3D11.h>
 #include <vector>
 #include "CommonUtilities.h"
+#include "InputLayoutDescription.h"
 #include "RCObject.h"
 #include "RCObjectPtr.h"
 
@@ -51,12 +52,16 @@ namespace Dx11Sandbox
 		UINT getIndicesToDrawCount() const;
 		UINT getIndicesToDrawOffset() const;
 
+		const InputLayoutDescription& getInputLayout() const;
+
         bool bind(RenderContext *context);
 
     private:
 
-        DISABLE_COPY(Mesh)
-        
+		DISABLE_COPY(Mesh)
+
+
+		InputLayoutDescription m_inputLayout;
         RCObjectPtr<IndexBuffer> m_indices;
         RCObjectPtr<VertexBuffer> m_vertices;
         D3D11_PRIMITIVE_TOPOLOGY m_primType;

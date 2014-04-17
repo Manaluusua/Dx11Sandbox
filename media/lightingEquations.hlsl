@@ -1,22 +1,44 @@
 
 #define FRESNELSPECULAR fresnelSchlickSpecular
 #define FRESNELDIFFUSE fresnelDiffuse
-#define GEOMETRIC geometricTorranceSparrowApprox
+#define GEOMETRIC geometricTorranceSparrow
 #define DISTRIBUTION distributionBlinnPhong
 #define DIFFUSE diffuseLambertian
 
 
-#define PI 3.1415
+#define PI 3.1415f
+#define InvPI 1.f/PI
 
 float geometricImplicit(float3 lightDir, float3 viewDir, float3 halfVec, float3 normal, float roughness)
 {
 	return 0.25f;
 }
 
+float geometricTorranceSparrow(float3 lightDir, float3 viewDir, float3 halfVec, float3 normal, float roughness)
+{
+	float dotNH = dot(normal, halfVec);
+	float invDotVH = rcp(dot(viewDir, halfVec));
+	float ret = min( (2.f * dotNH * dot(normal, viewDir)) * invDotVH, (2.f * dotNH * dot(normal, lightDir)) * invDotVH ); 
+	return min( 1.f, ret );
+}
+
 float geometricTorranceSparrowApprox(float3 lightDir, float3 viewDir, float3 halfVec, float3 normal, float roughness)
 {
 	return rcp(pow(dot(halfVec, viewDir),2)) * 0.25f;
 }
+
+float GSchlick(float3 dir, float3 normal, float k)
+{
+	float dp = saturate(dot(dir, normal));
+	return dp * rcp(dp * ( 1.f - k ) + k);
+}
+
+float geometricSmith(float3 lightDir, float3 viewDir, float3 halfVec, float3 normal, float roughness)
+{
+	float k = sqrt( (2.f * pow(roughness,2.f)) * InvPI );
+	return GSchlick(lightDir, normal,k) * GSchlick(viewDir, normal,k);
+}
+
 
 
 float distributionBlinnPhong(float3 halfVec, float3 normal, float roughness)

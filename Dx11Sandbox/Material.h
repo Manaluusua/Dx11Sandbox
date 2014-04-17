@@ -5,15 +5,17 @@
 #include "CommonUtilities.h"
 #include "RCObject.h"
 #include "ReleasePtr.h"
-#include "ILDescriptions.h"
 #include "RCObjectPtr.h"
+#include "D3Dcommon.h"
 #include <map>
 
-
+struct ID3D11Device;
+struct ID3D11InputLayout;
 namespace Dx11Sandbox
 {
     class RenderContext;
 	class Shader;
+	class InputLayoutDescription;
     class Material : public RCObject
     {
     public:
@@ -26,8 +28,7 @@ namespace Dx11Sandbox
 		Material& operator=(const Material&);
 		virtual ~Material();
 
-        virtual bool loadAndInitializeMaterial(const string& effectName, ID3D11Device* pd3dDevice,
-            Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type =  Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
+		virtual bool loadAndInitializeMaterial(const string& effectName, ID3D11Device* pd3dDevice, const InputLayoutDescription& inputDescription);
 
         void setTexture(const string& shaderVariable, ResourceID textureName);
 		Shader* getShader();

@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "TextureManager.h"
 #include "Texture.h"
+#include "Mesh.h"
 #include "CullableGeometry.h"
 #include "Frustum.h"
 #include "ReleasePtr.h"
@@ -38,7 +39,7 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
     m_mngr = mngr;
 
     m_renderObject = Dx11Sandbox::MeshUtility::createFinitePlane(device,mngr,name,normal,d,extends1, extends2, static_cast<int>( tesselationX ), static_cast<int>( tesselationY ) );
-	Dx11Sandbox::RCObjectPtr<Dx11Sandbox::Material> mat = Dx11Sandbox::MaterialManager::singleton()->getOrCreateMaterial(device, "waterplane.fx",  "waterplane",Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
+	Dx11Sandbox::RCObjectPtr<Dx11Sandbox::Material> mat = Dx11Sandbox::MaterialManager::singleton()->getOrCreateMaterial(device, "waterplane.fx",  "waterplane",m_renderObject->getMesh()->getInputLayout());
 	m_renderObject->setMaterial(mat);
 	m_renderObject->setRenderQueue(Dx11Sandbox::RENDERQUEUE_OPAQUE_SCENE_INPUT);
 	m_renderObject->setRenderMask(Dx11Sandbox::RENDERLAYER_OPAQUE_SCENE_INPUT);

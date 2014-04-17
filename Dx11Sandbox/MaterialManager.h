@@ -5,11 +5,11 @@
 #include "Singleton.h"
 #include "RCObjectPtr.h"
 #include <DXUT.h>
-#include "ILDescriptions.h"
 
 namespace Dx11Sandbox
 {
     class Material;
+	class InputLayoutDescription;
     typedef std::map<string, Material*>::iterator MaterialMapIterator;
     class MaterialManager : public Singleton<MaterialManager>
     {
@@ -25,8 +25,8 @@ namespace Dx11Sandbox
         Material* getMaterial(const string& matname);
         bool releaseMaterial(const string& matname);
 
-        bool createMaterial(ID3D11Device* device, const string& filename,const string& matname, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type =  Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
-        Material* getOrCreateMaterial(ID3D11Device* device, const string& filename,const string& matname, Dx11Sandbox::MeshInputLayouts::MESH_LAYOUT_TYPE type =  Dx11Sandbox::MeshInputLayouts::POS3NORM3TEX2);
+		bool createMaterial(ID3D11Device* device, const string& filename, const string& matname, const InputLayoutDescription& inputDescription);
+		Material* getOrCreateMaterial(ID3D11Device* device, const string& filename, const string& matname, const InputLayoutDescription& inputDescription);
 
     private:
 
