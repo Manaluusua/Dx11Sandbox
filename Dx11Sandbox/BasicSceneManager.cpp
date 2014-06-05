@@ -267,9 +267,9 @@ namespace Dx11Sandbox
 				
 		}
 
-#if defined( DEBUG ) || defined( _DEBUG )
+
 		drawDebug();
-#endif
+
     }
 
 	void BasicSceneManager::calculateVisibleLightsForCamera(RenderCamera* cam, std::vector<Cullable*>& out)

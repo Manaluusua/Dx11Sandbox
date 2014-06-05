@@ -40,8 +40,7 @@ namespace Dx11Sandbox
 
 	void CullableGeometry::setWorldMatrix(const D3DXMATRIX& matrix)
 	{
-		RenderData::setWorldMatrix(matrix);
-
+		m_renderData.setWorldMatrix(matrix);
 		updateCullData();
 
 	}
@@ -69,7 +68,7 @@ namespace Dx11Sandbox
 		//calculate world space bounds
 		D3DXVECTOR3 center = m_bounds;
 		D3DXVECTOR4 boundsWorld;
-		D3DXVec3Transform(&boundsWorld, &center, &m_worldMatrix);
+		D3DXVec3Transform(&boundsWorld, &center, &m_renderData.getWorldMatrix());
 		boundsWorld.w = calculateWorldSpaceRadius(m_bounds.w) * 0.9f;;
 
 		(*m_cullingInformation)->boundingSphere = boundsWorld;
@@ -88,7 +87,7 @@ namespace Dx11Sandbox
 			local.y = i == 1 ? localRadius : 0.f;
 			local.z = i == 2 ? localRadius : 0.f;
 
-			D3DXVec3TransformNormal(&world, &local, &m_worldMatrix);
+			D3DXVec3TransformNormal(&world, &local, &m_renderData.getWorldMatrix());
 
 			float lqsr = D3DXVec3LengthSq(&world);
 			if (lqsr <= lenSqr) continue;
@@ -121,7 +120,7 @@ namespace Dx11Sandbox
 			returnCullData();
 		}
 
-		Geometry::setRenderMask(mask);
+		BasicGeometry::setRenderMask(mask);
 		
 		if(reAcquireCullData)
 		{

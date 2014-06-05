@@ -22,7 +22,8 @@ struct VS_INPUT
 {
     float3 position   : POSITION;
 	float3 normal : NORMAL;
-    float2 uv       : TEXCOORD0;
+	float3 tangent : TANGENT;
+    float2 uv : TEXCOORD0;
 };
 
 
@@ -73,7 +74,7 @@ PS_GBUFFER_OUTPUT PS_Deferred( PS_INPUT input)
 	
 	output.color = texture1.Sample( samLinear, input.uv );
 	output.normal.rgb = input.normal;
-	output.specular = float4(0.f,0.f,0.f, 0.9f);
+	output.specular = float4(0.001f,0.001f,0.001f, 0.9f);
 
     return output;
 }

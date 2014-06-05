@@ -1,7 +1,7 @@
 #ifndef DX11SANDBOX_CULLABLEGEOMETRY_H
 #define DX11SANDBOX_CULLABLEGEOMETRY_H
 
-#include "Geometry.h"
+#include "BasicGeometry.h"
 #include "Cullable.h"
 
 #include <d3dx9math.h>
@@ -17,7 +17,7 @@ namespace Dx11Sandbox
 
 	typedef CullableObjectManager<CullableGeometry> CullableGeometryManager;
 
-	class CullableGeometry : public Geometry, public Cullable
+	class CullableGeometry : public BasicGeometry, public Cullable
 	{
 		
 		friend class CullableObjectManager<CullableGeometry>;

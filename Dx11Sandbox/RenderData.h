@@ -2,6 +2,7 @@
 #define DX11SANDBOX_RENDERDATA_H
 
 #include "RCObjectPtr.h"
+#include "RCObject.h"
 #include <d3dx9math.h>
 
 namespace Dx11Sandbox

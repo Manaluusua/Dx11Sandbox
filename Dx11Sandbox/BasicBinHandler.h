@@ -4,6 +4,7 @@
 #include "GeometryBinHandler.h"
 namespace Dx11Sandbox
 {
+	//bin handler that just passes objects through without doing anything to them
     class BasicBinHandler: public GeometryBinHandler
     {
     public:

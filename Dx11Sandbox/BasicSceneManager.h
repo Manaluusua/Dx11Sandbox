@@ -39,7 +39,7 @@ namespace Dx11Sandbox
     };
 
     
-
+	//Default implementation of a scenemanager
     class BasicSceneManager : public SceneManager
     {
     friend class Root;

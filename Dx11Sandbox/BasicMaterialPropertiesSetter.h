@@ -10,6 +10,7 @@ namespace Dx11Sandbox
 	class RenderData;
 	class Material;
 
+	//Handles setting common shader uniforms etc.
 	class BasicMaterialPropertiesSetter 
 	{
 	public:

@@ -25,7 +25,7 @@ namespace Dx11Sandbox
 		static Mesh* createQuad(ID3D11Device *device, float x, float y, float w, float h, bool flipTextureCoordinatesX = false, bool flipTextureCoordinatesY = false);
         static CullableGeometry* createFinitePlane(ID3D11Device *device,SceneManager* mngr, const string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, int tesselationFactorX=1, int tesselationFactorZ=1); 
 
-        static void createTerrainFromHeightMap(ID3D11Device *device, SceneManager* mngr, const  string& heightmapName,Material* mat, float scaleX, float scaleZ,float scaleY, unsigned int pagesX=10, unsigned int pagesZ=10, unsigned int tesselationFactor=100.f);
+		static void createTerrainFromHeightMap(ID3D11Device *device, SceneManager* mngr, const  string& heightmapName, Material* mat, float scaleX, float scaleZ, float scaleY, unsigned int pagesX = 10, unsigned int pagesZ = 10, unsigned int tesselationFactor = 100.f);
     
 
         

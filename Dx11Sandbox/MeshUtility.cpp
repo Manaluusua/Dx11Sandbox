@@ -8,31 +8,42 @@
 #include "PixelBox.h"
 #include "Material.h"
 #include "CullableGeometry.h"
+#include "RenderData.h"
 #include "MeshManager.h"
 #include "SceneManager.h"
 #include "IndexBuffer.h"
 #include "DXUT.h"
 #include <cmath>
+
+
+/*
+Helper functions for creating different kinds of simple meshes
+*/
+
 namespace Dx11Sandbox
 {
 
-    D3DXVECTOR3 getNormalForPosition(int indexX, int indexY, int maxX, int maxY, D3DXVECTOR3 *positions)
+	void calculateNormalTangentBitangentForPosition(int indexX, int indexY, int maxX, int maxY, D3DXVECTOR3 *positions, D3DXVECTOR3& outNormal, D3DXVECTOR3& outTangent, D3DXVECTOR3& outBitangent)
     {
         int startX = max(indexX-1,0);
         int endX = min(indexX+1,maxX-1);
         int startY = max(indexY-1,0);
         int endY = min(indexY+1,maxY-1);
 
-        D3DXVECTOR3 vec1 = positions[indexY * maxX +  startX] -  positions[indexY * maxX +  endX];
-        D3DXVECTOR3 vec2 = positions[startY * maxX +  indexX] -  positions[endY * maxX +  indexX];
+		D3DXVECTOR3 tangent = positions[indexY * maxX + endX] - positions[indexY * maxX + startX];
+		D3DXVECTOR3 bitangent = positions[endY * maxX + indexX] - positions[startY * maxX + indexX];
         D3DXVECTOR3 normal;
-        D3DXVec3Cross(&normal,&vec2, &vec1);
+		D3DXVec3Cross(&normal, &bitangent, &tangent);
         D3DXVec3Normalize(&normal, &normal);
+		D3DXVec3Normalize(&tangent, &tangent);
+		D3DXVec3Normalize(&bitangent, &bitangent);
 
-        return normal;
+		outNormal = normal;
+		outTangent = tangent;
+		outBitangent = bitangent;
     }
 
-    
+
     float getHeightForPosition(const PixelBox * const map, float x, float y, float scale)
     {
         float heights[4];
@@ -405,7 +416,6 @@ namespace Dx11Sandbox
         ptr[0] = (BYTE*)positions;
         ptr[1] = (BYTE*)normals;
         ptr[2] = (BYTE*)UV;
-        //create "point cloud"
         //positions
         for(i=0u,zz=-1.f;i<pointsZ;++i,zz+=incrementZ)
         {
@@ -421,8 +431,11 @@ namespace Dx11Sandbox
         {
             for(j=0u;j<pointsX;++j)
             {
-                
-                normals[i*pointsX + j] = getNormalForPosition(j,i,pointsX, pointsZ,positions);
+				D3DXVECTOR3 normal;
+				D3DXVECTOR3 tangent;
+				D3DXVECTOR3 bitangent;
+				calculateNormalTangentBitangentForPosition(j, i, pointsX, pointsZ, positions, normal, tangent, bitangent);
+				normals[i*pointsX + j] = normal;
                 UV[i*pointsX*2 + j*2] = ((float)(j))/tesselationFactorX;
                 UV[i*pointsX*2 + j*2 + 1] = ((float)(i))/tesselationFactorZ;
             }
@@ -457,7 +470,7 @@ namespace Dx11Sandbox
 
         mesh->createIndexBuffer(device,(BYTE*)indices,indicesCount,DXGI_FORMAT_R32_UINT);
 
-		ro->setMesh( mesh );
+		ro->getRenderData().setMesh(mesh);
 		ro->setBoundingSphere( calculateBoundingSphereForPositions(indices,indicesCount , positions) );
 
         delete[] positions;
@@ -526,7 +539,7 @@ namespace Dx11Sandbox
     }
 
 
-    void MeshUtility::createTerrainFromHeightMap(ID3D11Device *device, SceneManager* mngr, const string& heightmapName,Material* mat, float scaleX, float scaleZ,float scaleY, unsigned int pagesX, unsigned int pagesZ, unsigned int tesselationFactor)
+	void MeshUtility::createTerrainFromHeightMap(ID3D11Device *device, SceneManager* mngr, const string& heightmapName, Material* mat, float scaleX, float scaleZ, float scaleY, unsigned int pagesX, unsigned int pagesZ, unsigned int tesselationFactor)
     {
         Texture *tex = TextureManager::singleton()->createTexture(heightmapName);
 		tex->createResourceFromFile(device, TextureManager::singleton()->getAssetPath() + heightmapName, D3D11_CPU_ACCESS_READ, D3D11_USAGE_STAGING);
@@ -560,7 +573,7 @@ namespace Dx11Sandbox
 
         //allocate renderObjects
         string terrainName("terrain");
-        terrainName = terrainName + numberToString(generateID());
+        terrainName = terrainName + intToString(generateID());
 
 
         
@@ -573,12 +586,14 @@ namespace Dx11Sandbox
         unsigned int i,j;
         D3DXVECTOR3 *positions = new D3DXVECTOR3[totalPointsX*totalPointsZ];
         D3DXVECTOR3 *normals = new D3DXVECTOR3[totalPointsX*totalPointsZ];
+		D3DXVECTOR3 *tangents = new D3DXVECTOR3[totalPointsX*totalPointsZ];
         float* UV = new float[totalPointsX*totalPointsZ*2];
-        BYTE* ptr[3];
+        BYTE* ptr[4];
 
         ptr[0] = (BYTE*)positions;
         ptr[1] = (BYTE*)normals;
-        ptr[2] = (BYTE*)UV;
+		ptr[2] = (BYTE*)tangents;
+        ptr[3] = (BYTE*)UV;
         //create "point cloud"
         //positions
 
@@ -593,21 +608,28 @@ namespace Dx11Sandbox
             }
         }
 
-        //normals & UVS
+        //normals, tangents & UVS
 
-         for(i=0,zz=0;i<totalPointsZ;++i,zz+=segmentZ)
+        for(i=0,zz=0;i<totalPointsZ;++i,zz+=segmentZ)
         {
+			
             for(j=0,xx=0;j<totalPointsX;++j, xx+=segmentX)
             {
-                
-                normals[i*totalPointsX + j] = getNormalForPosition(j,i,totalPointsX, totalPointsZ,positions);
-                UV[i*totalPointsX*2 + j*2] = 0.5f*((float)(j))/tesselationFactor;
-                UV[i*totalPointsX*2 + j*2 + 1] = 0.5f*((float)(i))/tesselationFactor;
+				D3DXVECTOR3 normal;
+				D3DXVECTOR3 tangent;
+				D3DXVECTOR3 bitangent;
+				calculateNormalTangentBitangentForPosition(j, i, totalPointsX, totalPointsZ, positions, normal, tangent, bitangent);
+				normals[i*totalPointsX + j] = normal;
+				tangents[i*totalPointsX + j] = tangent;
+
+				UV[i*totalPointsX * 2 + j * 2] = 0.5f*((float)(j)) / tesselationFactor;
+				UV[i*totalPointsX * 2 + j * 2 + 1] = 0.5f*((float)(i)) / tesselationFactor;
             }
+			
         }
 
 		InputLayoutDescription desc;
-		desc.appendDescription("POSITION", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
+		desc.appendDescription("POSITION", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TANGENT", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
 
 		vertices->createVertexBuffer(device, ptr, totalPointsX*totalPointsZ, desc);
 
@@ -653,7 +675,7 @@ namespace Dx11Sandbox
                 //create object
 				CullableGeometry* obj = mngr->createCullableGeometry();
 
-                Mesh* mesh = MeshManager::singleton()->createMesh(terrainName + numberToString(pz*pagesX + px));
+                Mesh* mesh = MeshManager::singleton()->createMesh(terrainName + intToString(pz*pagesX + px));
 
                 //mesh->createIndexBuffer(device,(BYTE*)indices,indicesCount,DXGI_FORMAT_R32_UINT);
                 //just create empty, non-allocated index buffer
@@ -662,8 +684,8 @@ namespace Dx11Sandbox
                 mesh->getIndexBuffer()->setShadowBuffer( indices, 4 * indicesCount );
 
                 mesh->setVertexBuffer(vertices->getVertexBuffer());
-				obj->setMesh( mesh );
-				obj->setMaterial( mat );
+				obj->getRenderData().setMesh( mesh );
+				obj->getRenderData().setMaterial(mat);
 				obj->setBoundingSphere( calculateBoundingSphereForPositions(indices,pwidth * pheight * 6 , positions) );
 				obj->setRenderMask(Dx11Sandbox::RENDERLAYER_DEFAULT_OPAQUE);
 				obj->setRenderQueue(Dx11Sandbox::RENDERQUEUE_TERRAIN);
@@ -673,6 +695,7 @@ namespace Dx11Sandbox
 
         delete[] positions;
         delete[] normals;
+		delete[] tangents;
         delete[] UV;
         delete[] indices;
         delete pixb;

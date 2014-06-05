@@ -11,6 +11,7 @@
 #include "MeshManager.h"
 #include "RenderContext.h"
 #include "TerrainBinHandler.h"
+#include "RenderData.h"
 #include "CullableGeometry.h"
 #include "CullableLight.h"
 #include "DebugDrawTextureToScreen.h"
@@ -120,8 +121,8 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	mat = MaterialManager::singleton()->getOrCreateMaterial(device, "skybox.fx", "skybox", mesh->getInputLayout());
 	ro = mngr->createCullableGeometry();
 	ro->setBoundingSphere( D3DXVECTOR4( 0,0,0, FLT_MAX ) );
-	ro->setMaterial( mat );
-	ro->setMesh( mesh );
+	ro->getRenderData().setMaterial( mat );
+	ro->getRenderData().setMesh( mesh );
 	ro->setRenderQueue(RENDERQUEUE_SKYBOX);
 	ro->setRenderMask(RENDERLAYER_SKYBOX);
 	Texture* tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "skyboxCube.dds", "skyboxCube.dds");
@@ -130,7 +131,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
      
     //terrain
 	InputLayoutDescription inputDescription;
-	inputDescription.appendDescription("POSITION", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
+	inputDescription.appendDescription("POSITION", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TANGENT", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
 	mat = MaterialManager::singleton()->getOrCreateMaterial(device, "terrain.fx", "terrain1", inputDescription);
     MeshUtility::createTerrainFromHeightMap(device,mngr, "heightmapTerrain.png", mat,1000,1000,200,30,30,10);
 	tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "grass.jpg", "grass.jpg");
@@ -188,10 +189,10 @@ void DemoApplication::createWorld(SceneManager* mngr)
 
 	//debug drawers
 
-	//m_debugDrawerLights = new DebugDrawLights(device);
-	//m_mngr->addDebugDrawer(m_debugDrawerLights);
-
-	/*m_debugDrawerTexture = new DebugDrawTextureToScreen(device, 100.f, 100.f);
+	m_debugDrawerLights = new DebugDrawLights(device);
+	m_mngr->addDebugDrawer(m_debugDrawerLights);
+	
+	m_debugDrawerTexture = new DebugDrawTextureToScreen(device, 100.f, 100.f);
 	m_mngr->addDebugDrawer(m_debugDrawerTexture);
 	m_debugDrawerTexture->addDebugTexture(m_waterPlane->getRefractionTexture(), 40.f, 40.f, 20.f, 20.f);
 	m_debugDrawerTexture->addDebugTexture(m_waterPlane->getReflectionTexture(), 40.f, 20.f, 20.f, 20.f);
@@ -200,7 +201,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	m_debugDrawerTexture->addDebugTexture("GBUFFER_ALBEDO", -40.f, 40.f, 20.f, 20.f);
 	m_debugDrawerTexture->addDebugTexture("GBUFFER_NORMAL", -40.f, 20.f, 20.f, 20.f);
 	m_debugDrawerTexture->addDebugTexture("GBUFFER_SPECULAR", -40.f, 0.f, 20.f, 20.f);
-	*/
+	
 	
 
 }
@@ -308,7 +309,7 @@ void DemoApplication::objectBeingRendered(CullableGeometry* obj)
 	//Tämä pois kokonaan lopulta, engine hoitaa. For now laita listeneri rendereriin (saa staten ja listan renderdatoista)
 	Dx11Sandbox::RenderContext& state = m_mngr->getRenderContext();
 
-	Material* mat = obj->getMaterial();
+	Material* mat = obj->getRenderData().getMaterial();
 
     //new pass, don't try to skip effect state setting
     

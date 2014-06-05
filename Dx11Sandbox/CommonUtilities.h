@@ -55,7 +55,8 @@ namespace Dx11Sandbox
 
     GIDTYPE generateID();
 
-    string numberToString(int number);
+    string intToString(int number);
+	string floatToString(float number);
 
 }
 

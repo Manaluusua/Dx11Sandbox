@@ -19,6 +19,7 @@ namespace Dx11Sandbox
     class SceneManager;
 	class Light;
 	class RenderData;
+	class Geometry;
 	class CullableGeometry;
 	class Cullable;
     class RenderBin : public RenderPrimitiveGatherer

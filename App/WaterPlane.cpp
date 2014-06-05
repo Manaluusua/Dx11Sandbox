@@ -39,8 +39,8 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
     m_mngr = mngr;
 
     m_renderObject = Dx11Sandbox::MeshUtility::createFinitePlane(device,mngr,name,normal,d,extends1, extends2, static_cast<int>( tesselationX ), static_cast<int>( tesselationY ) );
-	Dx11Sandbox::RCObjectPtr<Dx11Sandbox::Material> mat = Dx11Sandbox::MaterialManager::singleton()->getOrCreateMaterial(device, "waterplane.fx",  "waterplane",m_renderObject->getMesh()->getInputLayout());
-	m_renderObject->setMaterial(mat);
+	Dx11Sandbox::RCObjectPtr<Dx11Sandbox::Material> mat = Dx11Sandbox::MaterialManager::singleton()->getOrCreateMaterial(device, "waterplane.fx",  "waterplane",m_renderObject->getRenderData().getMesh()->getInputLayout());
+	m_renderObject->getRenderData().setMaterial(mat);
 	m_renderObject->setRenderQueue(Dx11Sandbox::RENDERQUEUE_OPAQUE_SCENE_INPUT);
 	m_renderObject->setRenderMask(Dx11Sandbox::RENDERLAYER_OPAQUE_SCENE_INPUT);
 
@@ -134,7 +134,7 @@ void WaterPlane::initializeRenderTargets(ID3D11Device *device, Dx11Sandbox::RCOb
 
 void WaterPlane::setupWaves()
 {
-	ID3DX11Effect* effect =  m_renderObject->getMaterial()->getShader()->getEffect();
+	ID3DX11Effect* effect =  m_renderObject->getRenderData().getMaterial()->getShader()->getEffect();
     ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("waveDefinitions");
     D3DXMATRIX matrix;
     matrix._11 = m_waves[0].direction.x;
@@ -214,7 +214,7 @@ void WaterPlane::setupReflectionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sa
 	state->clearState();
 
     //unbind reflection and refraction textures
-	ID3DX11Effect* effect =  m_renderObject->getMaterial()->getShader()->getEffect();
+	ID3DX11Effect* effect =  m_renderObject->getRenderData().getMaterial()->getShader()->getEffect();
 
     //make sure the rendertargets are not bound to pipeline
     effect->GetVariableByName("reflection")->AsShaderResource()->SetResource(0);
@@ -285,7 +285,7 @@ void WaterPlane::setupRefractionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sa
 	state->clearState();
 	Dx11Sandbox::RenderCamera* cam = m_mngr->getMainCamera();
 
-	ID3DX11Effect* effect =  m_renderObject->getMaterial()->getShader()->getEffect();
+	ID3DX11Effect* effect =  m_renderObject->getRenderData().getMaterial()->getShader()->getEffect();
 
     effect->GetVariableByName("refraction")->AsShaderResource()->SetResource(0);
     effect->GetTechniqueByIndex(0)->GetPassByIndex(0)->Apply(0, state->getImmediateContext());

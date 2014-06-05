@@ -1,36 +1,20 @@
 #ifndef DX11SANDBOX_GEOMETRY_H
 #define DX11SANDBOX_GEOMETRY_H
 
-#include "RenderData.h"
-#include "CommonUtilities.h"
+#include "CommonTypes.h"
+
 namespace Dx11Sandbox
 {
-
-	class Geometry : public RenderData
+	class RenderData;
+	
+	class Geometry 
 	{
 	public:
-		Geometry(void);
-		virtual ~Geometry(void);
-
-		virtual void setRenderMask(RenderLayer mask);
-        virtual void setRenderQueue(RenderQueueID queue);
-
-		RenderQueueID getRenderQueue() const;
-		RenderLayer getRenderMask() const;
-	protected:
-		RenderLayer m_renderLayer;
-		RenderQueueID m_renderQueue;
-
+		virtual RenderQueueID getRenderQueue() const = 0;
+		virtual RenderLayer getRenderMask() const = 0;
+		virtual RenderData& getRenderData() = 0;
 	};
 
-	inline RenderQueueID Geometry::getRenderQueue() const
-	{
-		return m_renderQueue;
-	}
-
-	inline RenderLayer Geometry::getRenderMask() const
-	{
-		return m_renderLayer;
-	}
 };
+
 #endif

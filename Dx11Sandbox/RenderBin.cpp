@@ -3,6 +3,7 @@
 #include "TerrainBinHandler.h"
 #include "CullableLight.h"
 
+
 namespace Dx11Sandbox
 {
 
@@ -38,7 +39,7 @@ namespace Dx11Sandbox
 	void RenderBin::addGeometry(Geometry* geom)
 	{
 		RenderQueueID id = geom->getRenderQueue();
-		m_geometryBins[id].push_back( geom );
+		m_geometryBins[id].push_back( &geom->getRenderData() );
 	}
 
 	void RenderBin::addLight(Light* light)

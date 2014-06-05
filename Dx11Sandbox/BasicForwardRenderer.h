@@ -7,7 +7,7 @@
 namespace Dx11Sandbox
 {
 
-
+	//Basic forward rendering implementation
 	class BasicForwardRenderer :
 		public Renderer
 	{

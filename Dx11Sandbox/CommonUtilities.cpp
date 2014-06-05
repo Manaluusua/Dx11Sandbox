@@ -100,10 +100,17 @@ namespace Dx11Sandbox
 		//return std::hash<std::string>()(id);
 	}
 
-    string numberToString(int number)
+    string intToString(int number)
     {
         std::ostringstream stream;
         stream << number;
         return stream.str(); 
     }
+
+	string floatToString(float number)
+	{
+		std::ostringstream stream;
+		stream << number;
+		return stream.str();
+	}
 }
