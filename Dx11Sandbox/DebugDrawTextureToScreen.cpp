@@ -14,7 +14,8 @@ namespace Dx11Sandbox
 	const string DebugDrawTextureToScreen::s_debugMaterialName = "unlitTexture";
 
 	DebugDrawTextureToScreen::DebugDrawTextureToScreen(ID3D11Device *device, float width, float height)
-		:m_device(device)
+		:m_device(device),
+		m_enabled(true)
 	{
 		m_cam.setProjectionOrthographic(width, width/height, 0.1f, 100.f);
 		InputLayoutDescription inputDescription;
@@ -23,6 +24,15 @@ namespace Dx11Sandbox
 		m_renderer = new BasicForwardRenderer;
 	}
 
+
+	bool DebugDrawTextureToScreen::isEnabled(){
+		return m_enabled;
+	}
+
+
+	void DebugDrawTextureToScreen::setEnabled(bool value){
+		m_enabled = value;
+	}
 
 	DebugDrawTextureToScreen::~DebugDrawTextureToScreen(void)
 	{
@@ -35,6 +45,8 @@ namespace Dx11Sandbox
 
 	void DebugDrawTextureToScreen::draw(SceneManager* mngr, RenderContext* state)
 	{
+		if (!m_enabled) return;
+
 		state->disableDepthStencil(true);
 		m_renderer->renderBegin(&m_cam, 0, state);
 		m_renderer->render(m_debugData.data(), m_debugData.size());

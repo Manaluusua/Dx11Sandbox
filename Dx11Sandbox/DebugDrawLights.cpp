@@ -24,8 +24,8 @@ namespace Dx11Sandbox
 	DebugDrawLights::DebugDrawLights(ID3D11Device *device)
 		:m_renderer(new BasicForwardRenderer),
 		m_renderData(new RenderData),
-		m_device(device)
-		
+		m_device(device),
+		m_enabled(true)
 	{
 
 		Mesh* mesh = MeshUtility::createUnitSphere(device, 25, 20, false, false, true);
@@ -35,8 +35,18 @@ namespace Dx11Sandbox
 		
 	}
 
+	void DebugDrawLights::setEnabled(bool value){
+		m_enabled = value;
+	}
+
+	bool DebugDrawLights::isEnabled(){
+		return m_enabled;
+	}
+
 	void DebugDrawLights::draw(SceneManager* mngr, RenderContext* state)
 	{
+		if (!m_enabled) return;
+
 		m_renderer->renderBegin(mngr->getMainCamera(), 0, state);
 		RenderBin& rb = mngr->getRenderBin();
 		std::vector<Light*>& lightList = rb.getLights();

@@ -62,6 +62,18 @@ void DemoApplication::OnKeyboard( UINT nChar, bool bKeyDown, bool bAltDown)
     case 'E':
         m_downDown = bKeyDown;
         break;
+	case 'L':
+		if (bKeyDown){
+			m_debugDrawerLights->setEnabled(!m_debugDrawerLights->isEnabled());
+		}
+		break;
+
+	case 'T':
+		if (bKeyDown){
+			m_debugDrawerTexture->setEnabled(!m_debugDrawerTexture->isEnabled());
+		}
+		
+		break;
     }
     
 }
@@ -260,7 +272,7 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 
 
 
-    //le mouse
+
     POINT mousePos;
     D3DXVECTOR2 mousePosVec;
 
@@ -268,7 +280,7 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 
     if(m_moveMouse)
     {
-            // Get current position of mouse
+
         GetCursorPos( &mousePos );
         mousePosVec = D3DXVECTOR2( static_cast<float>( mousePos.x ), static_cast<float>( mousePos.y ) );
         if(m_lastMousePos == D3DXVECTOR2(-1,-1))
@@ -306,12 +318,12 @@ void DemoApplication::shutDown(SceneManager* mngr)
 
 void DemoApplication::objectBeingRendered(CullableGeometry* obj)
 {
-	//Tämä pois kokonaan lopulta, engine hoitaa. For now laita listeneri rendereriin (saa staten ja listan renderdatoista)
+	
 	Dx11Sandbox::RenderContext& state = m_mngr->getRenderContext();
 
 	Material* mat = obj->getRenderData().getMaterial();
 
-    //new pass, don't try to skip effect state setting
+
     
 
 

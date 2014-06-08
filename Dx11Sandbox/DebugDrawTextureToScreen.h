@@ -26,7 +26,8 @@ namespace Dx11Sandbox
 		void addDebugTexture(Texture* tex, float x, float y, float width, float height);  
 		void addDebugTexture(ResourceID textureId, float x, float y, float width, float height);
 		void addDebugTexture(const string& textureName, float x, float y, float width, float height);
-
+		void setEnabled(bool value);
+		bool isEnabled();
 	private:
 
 
@@ -36,7 +37,7 @@ namespace Dx11Sandbox
 		RCObjectPtr<Renderer> m_renderer;
 		
 		ID3D11Device* m_device;
-
+		bool m_enabled;
 	};
 };
 
