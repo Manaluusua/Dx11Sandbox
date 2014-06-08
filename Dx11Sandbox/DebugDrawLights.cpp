@@ -25,7 +25,7 @@ namespace Dx11Sandbox
 		:m_renderer(new BasicForwardRenderer),
 		m_renderData(new RenderData),
 		m_device(device),
-		m_enabled(true)
+		m_enabled(false)
 	{
 
 		Mesh* mesh = MeshUtility::createUnitSphere(device, 25, 20, false, false, true);

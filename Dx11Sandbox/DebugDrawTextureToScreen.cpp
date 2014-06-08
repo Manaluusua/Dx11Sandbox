@@ -15,7 +15,7 @@ namespace Dx11Sandbox
 
 	DebugDrawTextureToScreen::DebugDrawTextureToScreen(ID3D11Device *device, float width, float height)
 		:m_device(device),
-		m_enabled(true)
+		m_enabled(false)
 	{
 		m_cam.setProjectionOrthographic(width, width/height, 0.1f, 100.f);
 		InputLayoutDescription inputDescription;
