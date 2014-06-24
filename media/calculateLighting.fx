@@ -1,6 +1,7 @@
 //adapted from DICE  http://dice.se/wp-content/uploads/GDC11_DX11inBF3_Public.pdf and Andrew Lauritzen: http://software.intel.com/en-us/articles/deferred-rendering-for-current-and-future-rendering-pipelines/
 
 #include "lightingEquations.hlsl"
+#include "commonfunctions.hlsl"
 
 #define GROUP_DIMENSION 16
 #define GROUP_SIZE GROUP_DIMENSION * GROUP_DIMENSION
@@ -14,8 +15,9 @@
 //gbuffer
 Texture2D<float4> albedoTex : register(t0); 
 Texture2D<float4> normalTex : register(t1); 
-Texture2D<float4> specularTex : register(t2); 
-Texture2D<float> depthTex : register(t3); 
+Texture2D<float4> specularTex : register(t2);
+Texture2D<float4> environmentTex : register(t3); 
+Texture2D<float> depthTex : register(t4); 
  
 RWTexture2D<float4> output : register(u0);
 
@@ -61,25 +63,22 @@ struct CullInfo {
  };
  
 struct GBufferSample {
-	float3 albedo;
-	float3 normal;
 	float4 specular;
-	float bufferDepth;
-	float viewDepth;
+	float3 albedo; float bufferDepth;
+	float3 normal; float viewDepth;
+	float3 environment;
 };
 
 
 //functions
 
-float3 calculateShadingSpotLight(float3 pos, GBufferSample sample, Light light)
+float3 calculateShadingSpotLight(float3 pos, float3 camDir, GBufferSample sample, Light light)
 {
 	return float3(0.f, 0.f, 0.f);
 }
 
-float3 calculateShadingOmniLight(float3 pos, GBufferSample sample, Light light)
+float3 calculateShadingOmniLight(float3 pos, float3 camDir, GBufferSample sample, Light light)
 {
-	float3 camDir = camPos.xyz - pos;
-	camDir = normalize(camDir);
 	float3 lightDir = light.posRad.xyz - pos;
 	float lightDist = length(lightDir);
 	lightDir = lightDir * rcp(lightDist);
@@ -92,17 +91,21 @@ float3 calculateShadingOmniLight(float3 pos, GBufferSample sample, Light light)
 	return color;
 }
 
-float3 calculateShadingDirectionalLight(float3 pos, GBufferSample sample, Light light)
+float3 calculateShadingDirectionalLight(float3 pos, float3 camDir, GBufferSample sample, Light light)
 {
 
-	float3 camDir = camPos.xyz - pos;
-	camDir = normalize(camDir);
+
 	float3 lightDir = -light.dirAng.xyz;
 	
 	float3 color = lightingEquation(sample.albedo, light.colorInvRad.rgb, sample.specular.rgb, sample.specular.w, sample.normal, lightDir, camDir);
 	
 	return color;
 	
+}
+
+float3 calculateAmbientLighting(float3 pos, float3 camDir, GBufferSample sample) 
+{
+	return fresnelSchlickSpecularWithRoughness(sample.specular.rgb, camDir, sample.normal, sample.specular.a) * sample.environment;
 }
 
 float3 calculateShading(float2 threadIdXY, GBufferSample sample)
@@ -120,6 +123,9 @@ float3 calculateShading(float2 threadIdXY, GBufferSample sample)
 	viewPos = mul( viewPos, invViewMat );
 	float3 wpos = viewPos.xyz;
 	
+	float3 camDir = camPos.xyz - wpos;
+	camDir = normalize(camDir);
+	
 	float3 color = float3(0.f, 0.f, 0.f);
 	for (uint index = 0; index < visibleLightCount; ++index) {
         Light light = lights[visibleLightIndices[index]];
@@ -127,18 +133,19 @@ float3 calculateShading(float2 threadIdXY, GBufferSample sample)
 		
         if( light.lightType == LIGHT_TYPE_OMNI )
 		{
-			color += calculateShadingOmniLight(wpos, sample, light);
+			color += calculateShadingOmniLight(wpos, camDir, sample, light);
 		} else if( light.lightType == LIGHT_TYPE_DIRECTIONAL )
 		{
-			color += calculateShadingDirectionalLight(wpos, sample, light);
+			color += calculateShadingDirectionalLight(wpos, camDir, sample, light);
 		} else if( light.lightType == LIGHT_TYPE_SPOT )
 		{
-			color += calculateShadingSpotLight(wpos, sample, light);
+			color += calculateShadingSpotLight(wpos, camDir, sample, light);
 		}
 		
 		
     }
 	
+	color += calculateAmbientLighting(wpos, camDir, sample);
 	return color;
 
 }
@@ -150,9 +157,9 @@ void sampleGBuffer(uint2 sampleLocation, int sampleIndex, out GBufferSample samp
 	sample.bufferDepth = zBuffDepth;
 	sample.viewDepth = viewDepth;
 	sample.albedo = albedoTex.Load(uint3(sampleLocation, 0)).xyz;
-	sample.normal = normalTex.Load(uint3(sampleLocation, 0)).xyz;
+	sample.normal = unpackNormal( normalTex.Load(uint3(sampleLocation, 0)).xyz );
 	sample.specular = specularTex.Load(uint3(sampleLocation, 0));
-	
+	sample.environment = environmentTex.Load(uint3(sampleLocation, 0)).xyz;
 }
 
 void cullLights(uint groupIndex, CullInfo info)

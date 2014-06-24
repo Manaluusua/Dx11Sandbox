@@ -10,9 +10,11 @@ SamplerState samLinear
 //shader impl and uniforms
 
 static const float3 ambient   = float3( 0.1f, 0.1f, 0.1f );  
+static const float4 specular   = float4( 0.f, 0.f, 0.f, 0.99f );  
 static const float3 heightLevels = float3(60.f,0,0);
 
 #include "commonUniforms.fx"
+#include "commonFunctions.hlsl"
 
 Texture2D texture1;  
 
@@ -22,7 +24,7 @@ struct VS_INPUT
 {
     float3 position   : POSITION;
 	float3 normal : NORMAL;
-	float3 tangent : TANGENT;
+	float4 tangent : TANGENT;
     float2 uv : TEXCOORD0;
 };
 
@@ -73,8 +75,9 @@ PS_GBUFFER_OUTPUT PS_Deferred( PS_INPUT input)
 	PS_GBUFFER_OUTPUT output;
 	
 	output.color = texture1.Sample( samLinear, input.uv );
-	output.normal.rgb = input.normal;
-	output.specular = float4(0.001f,0.001f,0.001f, 0.9f);
+	output.normal.rgb = packNormal( input.normal );
+	output.specular = specular;
+	output.environment = float4( ambient, 0.f );
 
     return output;
 }

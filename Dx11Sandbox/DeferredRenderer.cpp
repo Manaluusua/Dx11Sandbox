@@ -204,6 +204,7 @@ namespace Dx11Sandbox
 		effect->GetVariableByName("albedoTex")->AsShaderResource()->SetResource(m_gbuffer->getBufferTexture(GBuffer::ALBEDO)->getShaderResourceView());
 		effect->GetVariableByName("normalTex")->AsShaderResource()->SetResource(m_gbuffer->getBufferTexture(GBuffer::NORMAL)->getShaderResourceView());
 		effect->GetVariableByName("specularTex")->AsShaderResource()->SetResource(m_gbuffer->getBufferTexture(GBuffer::SPECULAR)->getShaderResourceView());
+		effect->GetVariableByName("environmentTex")->AsShaderResource()->SetResource(m_gbuffer->getBufferTexture(GBuffer::ENVIRONMENT)->getShaderResourceView());
 		effect->GetVariableByName("depthTex")->AsShaderResource()->SetResource(m_state->getDefaultDepthStencilTexture()->getShaderResourceView());
 		effect->GetVariableByName("output")->AsUnorderedAccessView()->SetUnorderedAccessView(m_lightingOutput->getUnorderedAccessView());
 
@@ -242,6 +243,7 @@ namespace Dx11Sandbox
 		effect->GetVariableByName("albedoTex")->AsShaderResource()->SetResource(0);
 		effect->GetVariableByName("normalTex")->AsShaderResource()->SetResource(0);
 		effect->GetVariableByName("specularTex")->AsShaderResource()->SetResource(0);
+		effect->GetVariableByName("environmentTex")->AsShaderResource()->SetResource(0);
 		effect->GetVariableByName("depthTex")->AsShaderResource()->SetResource(0);
 		effect->GetVariableByName("output")->AsUnorderedAccessView()->SetUnorderedAccessView(0);
 		effect->GetTechniqueByIndex(0)->GetPassByIndex(0)->Apply(0, m_state->getImmediateContext());

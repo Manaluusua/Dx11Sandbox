@@ -16,7 +16,8 @@ namespace Dx11Sandbox
 		enum GBufferTexture{
 			ALBEDO = 0,
 			NORMAL = 1,
-			SPECULAR = 2
+			SPECULAR = 2,
+			ENVIRONMENT = 3
 		};
 		GBuffer(RenderContext* context);
 		virtual ~GBuffer();

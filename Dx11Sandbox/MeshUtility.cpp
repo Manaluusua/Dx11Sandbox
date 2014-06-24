@@ -72,8 +72,12 @@ namespace Dx11Sandbox
     }
     
 
-	Mesh* MeshUtility::createUnitSphere(ID3D11Device *device, unsigned int tesselationZenith, unsigned int tesselationAzimuth, bool generateNormals, bool generateUVs, bool makeLineListInsteadOfTriangles)
+	Mesh* MeshUtility::createUnitSphere(ID3D11Device *device, unsigned int tesselationZenith, unsigned int tesselationAzimuth, bool generateNormals, bool generateTangents, bool generateUVs, bool makeLineListInsteadOfTriangles)
 	{
+
+		//tangents are generated only if normals and uvs are also generated
+		generateTangents = generateNormals && generateTangents && generateUVs;
+
 		//clamp to min values
 		tesselationZenith = max(tesselationZenith, 3);
 		tesselationAzimuth = max(tesselationAzimuth, 3);
@@ -91,6 +95,7 @@ namespace Dx11Sandbox
 
 		D3DXVECTOR3* positions = new D3DXVECTOR3[pointCount];
 		D3DXVECTOR3* normals = generateNormals ? new D3DXVECTOR3[pointCount] : 0;
+		D3DXVECTOR4* tangents = generateTangents ? new D3DXVECTOR4[pointCount] : 0;
 		FLOAT* uvs = generateUVs ? new FLOAT[pointCount * 2] : 0;
 		UINT32* indices = new UINT32[indexCount];
 
@@ -123,16 +128,89 @@ namespace Dx11Sandbox
 
 				if (generateUVs){
 					uvs[pointIndex * 2] = currentAzimuthRatio;
-					uvs[pointIndex * 2 + 1] = currentZenith;
+					uvs[pointIndex * 2 + 1] = currentZenithRatio;
 				}
+
 			}
 		}
 
 		if (generateNormals){
 			//since we have a unit sphere, normals == positions
 			for (unsigned int i = 0; i < pointCount; ++i){
+
 				normals[i] = positions[i];
 			}
+		}
+
+		if (generateTangents){
+			
+			D3DXVECTOR3* tan = new D3DXVECTOR3[pointCount];
+			D3DXVECTOR3* bitan = new D3DXVECTOR3[pointCount];
+
+			for (unsigned int i = 0; i < pointCount; ++i){
+				tan[i] = D3DXVECTOR3(0.f, 0.f, 0.f);
+				bitan[i] = D3DXVECTOR3(0.f, 0.f, 0.f);
+			}
+
+
+			D3DXVECTOR2* uvAsVec2 = reinterpret_cast<D3DXVECTOR2*>(uvs);
+			for (unsigned int z = 0; z < (tesselationZenith - 1); ++z){
+				for (unsigned int a = 0; a < tesselationAzimuth; ++a){
+					UINT32 pointIndex1 = z * tesselationAzimuth + a;
+					UINT32 pointIndex2 = z * tesselationAzimuth + (a + 1) % tesselationAzimuth;
+					UINT32 pointIndex3 = ((z + 1) % tesselationZenith) * tesselationAzimuth + a;
+					UINT32 pointIndex4 = ((z + 1) % tesselationZenith) * tesselationAzimuth + (a + 1) % tesselationAzimuth;
+					//tri1
+					const D3DXVECTOR3& p1 = positions[pointIndex1];
+					const D3DXVECTOR3& p2 = positions[pointIndex2];
+					const D3DXVECTOR3& p3 = positions[pointIndex3];
+					const D3DXVECTOR3& p4 = positions[pointIndex4];
+
+					const D3DXVECTOR2& t1 = uvAsVec2[pointIndex1];
+					const D3DXVECTOR2& t2 = uvAsVec2[pointIndex2];
+					const D3DXVECTOR2& t3 = uvAsVec2[pointIndex3];
+					const D3DXVECTOR2& t4 = uvAsVec2[pointIndex4];
+
+					D3DXVECTOR3 tangent1;
+					D3DXVECTOR3 tangent2;
+					D3DXVECTOR3 bitangent1;
+					D3DXVECTOR3 bitangent2;
+
+					MathUtil::calculateTangentAndBitangent(p1, p4, p3, t1, t4, t3, tangent1, bitangent1);
+					MathUtil::calculateTangentAndBitangent(p4, p1, p2, t4, t1, t2, tangent2, bitangent2);
+
+					tan[pointIndex1] += tangent1;
+					tan[pointIndex3] += tangent1;
+					tan[pointIndex4] += tangent1;
+
+					bitan[pointIndex1] += bitangent1;
+					bitan[pointIndex3] += bitangent1;
+					bitan[pointIndex4] += bitangent1;
+
+					tan[pointIndex1] += tangent2;
+					tan[pointIndex2] += tangent2;
+					tan[pointIndex4] += tangent2;
+
+					bitan[pointIndex1] += bitangent2;
+					bitan[pointIndex3] += bitangent2;
+					bitan[pointIndex4] += bitangent2;
+					
+				}
+			}
+
+			for (unsigned int i = 0; i < pointCount; ++i){
+				const D3DXVECTOR3& normal = normals[i];
+				D3DXVECTOR3& tangent = tan[i];
+				D3DXVECTOR3& bitangent = bitan[i];
+				D3DXVECTOR3 newTangent;
+				MathUtil::orthogonalizeAndNormalizeTangent(tangent, normal, newTangent);
+				tangents[i] = D3DXVECTOR4(newTangent, MathUtil::calculateHandedness(tangent, bitangent, normal));
+
+			}
+
+			SAFE_DELETE_ARRAY(tan);
+			SAFE_DELETE_ARRAY(bitan);
+
 		}
 
 		//indexData
@@ -165,8 +243,8 @@ namespace Dx11Sandbox
 				for (unsigned int a = 0; a < tesselationAzimuth; ++a){
 					UINT32 pointIndex1 = z * tesselationAzimuth + a;
 					UINT32 pointIndex2 = z * tesselationAzimuth + (a + 1) % tesselationAzimuth;
-					UINT32 pointIndex3 = ((z + 1) % tesselationZenith) * tesselationAzimuth + a;
-					UINT32 pointIndex4 = ((z + 1) % tesselationZenith) * tesselationAzimuth + (a + 1) % tesselationAzimuth;
+					UINT32 pointIndex3 = ((z + 1) ) * tesselationAzimuth + a;
+					UINT32 pointIndex4 = ((z + 1) ) * tesselationAzimuth + (a + 1) % tesselationAzimuth;
 					//tri1
 					indices[index++] = pointIndex1;
 					indices[index++] = pointIndex4;
@@ -181,19 +259,22 @@ namespace Dx11Sandbox
 
 		}
 
+
+
 		///submit data
 
 		InputLayoutDescription inputDescription;
 		inputDescription.appendDescription("POSITION", DXGI_FORMAT_R32G32B32_FLOAT);
-		if (generateNormals && !generateUVs){
+		if (generateNormals){
 			inputDescription.appendDescription("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT);
 		}
-		else if (!generateNormals && generateUVs){
+		if (generateTangents){
+			inputDescription.appendDescription("TANGENT", DXGI_FORMAT_R32G32B32A32_FLOAT);
+		}
+		if (generateUVs){
 			inputDescription.appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
 		}
-		else if(generateNormals && generateUVs) {
-			inputDescription.appendDescription("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
-		}
+		
 		
 		unsigned int bufferCount = 2;
 		if (generateNormals){
@@ -202,6 +283,11 @@ namespace Dx11Sandbox
 		if (generateUVs){
 			++bufferCount;
 		}
+		if (generateTangents){
+			++bufferCount;
+		}
+
+
 		int bufferIndex = 1;
 		BYTE** ptr = new BYTE*[bufferCount];
 		ptr[0] = (BYTE*)positions;
@@ -209,16 +295,22 @@ namespace Dx11Sandbox
 			ptr[bufferIndex] = (BYTE*)normals;
 			++bufferIndex;
 		}
+		if (generateTangents){
+			ptr[bufferIndex] = (BYTE*)tangents;
+			++bufferIndex;
+		}
 		if (generateUVs){
 			ptr[bufferIndex] = (BYTE*)uvs;
 			++bufferIndex;
 		}
+		
 		mesh->createMeshFromBuffers(device, ptr, (BYTE*)indices, pointCount, indexCount, DXGI_FORMAT_R32_UINT, inputDescription);
 		mesh->setPrimType(makeLineListInsteadOfTriangles ? D3D11_PRIMITIVE_TOPOLOGY_LINELIST : D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		///cleanup
 		SAFE_DELETE_ARRAY(positions);
 		SAFE_DELETE_ARRAY(normals);
 		SAFE_DELETE_ARRAY(uvs);
+		SAFE_DELETE_ARRAY(tangents);
 		SAFE_DELETE_ARRAY(indices);
 		SAFE_DELETE_ARRAY(ptr);
 

@@ -49,7 +49,7 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 	initializeRenderTargets(device, mat, name,  textureResolution);
 
 	Dx11Sandbox::string normalTexName = "waterplanenormalmap";
-	m_normalMap = Dx11Sandbox::TextureManager::singleton()->getOrCreateTextureFromFile(device, "waternormal.png", normalTexName, 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_POINT);
+	m_normalMap = Dx11Sandbox::TextureManager::singleton()->getOrCreateTextureFromFile(device, "water.jpg", normalTexName, 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_POINT);
 	mat->setTexture("normalmap", m_normalMap->getName());
     
     m_normal = normal;
@@ -74,8 +74,8 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 	
 	
 	m_refractionCamera = m_mngr->createCamera();
-	clipplane = D3DXVECTOR4(-m_normal, -m_d);
-	m_refractionCamera->setClipPlane(clipplane);
+	//clipplane = D3DXVECTOR4(-m_normal, -m_d);
+	//m_refractionCamera->setClipPlane(clipplane);
 	m_refractionCamera->setRenderMask(Dx11Sandbox::RENDERLAYER_DEFAULT_OPAQUE | Dx11Sandbox::RENDERLAYER_SKYBOX | Dx11Sandbox::RENDERLAYER_LIGHTPASS);
 	m_refractionCamera->addRenderListener(this);
 	m_refractionCamera->setCameraPriority(-1);

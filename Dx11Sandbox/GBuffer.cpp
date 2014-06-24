@@ -8,7 +8,7 @@
 namespace Dx11Sandbox
 {
 
-	const unsigned int GBuffer::GBUFFER_TEXTURE_COUNT = 3;
+	const unsigned int GBuffer::GBUFFER_TEXTURE_COUNT = 4;
 
 	GBuffer::GBuffer(RenderContext* context)
 		:m_bufferWidth(0),
@@ -42,9 +42,11 @@ namespace Dx11Sandbox
 		if (!m_isAllocated) return;
 		float clearColor[4] = { 0.f, 0.f, 0.f, 0.0f };
 		
-		m_context->getImmediateContext()->ClearRenderTargetView(m_textures[ALBEDO]->getRenderTargetView(), clearColor);
-		m_context->getImmediateContext()->ClearRenderTargetView(m_textures[NORMAL]->getRenderTargetView(), clearColor);
-		m_context->getImmediateContext()->ClearRenderTargetView(m_textures[SPECULAR]->getRenderTargetView(), clearColor);
+		for (unsigned int i = 0; i < GBUFFER_TEXTURE_COUNT; ++i){
+			m_context->getImmediateContext()->ClearRenderTargetView(m_textures[i]->getRenderTargetView(), clearColor);
+		}
+
+		
 		m_context->getImmediateContext()->ClearDepthStencilView(m_context->getDefaultDepthStencilTexture()->getDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0);
 	}
 
@@ -72,16 +74,18 @@ namespace Dx11Sandbox
 		Texture* specular = TextureManager::singleton()->createTexture("GBUFFER_SPECULAR");
 		specular->createResource(m_context->getDevice(), m_bufferWidth, m_bufferHeight, true, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE, DXGI_FORMAT_R32G32B32A32_FLOAT);
 
-	
+		Texture* refl = TextureManager::singleton()->createTexture("GBUFFER_ENVIRONMENT");
+		refl->createResource(m_context->getDevice(), m_bufferWidth, m_bufferHeight, true, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE, DXGI_FORMAT_R32G32B32A32_FLOAT);
 
 		m_textures[ALBEDO] = albedo;
 		m_textures[NORMAL] = normal;
 		m_textures[SPECULAR] = specular;
+		m_textures[ENVIRONMENT] = refl;
 
 		m_renderTargets[ALBEDO] = albedo->getRenderTargetView();
 		m_renderTargets[NORMAL] = normal->getRenderTargetView();
 		m_renderTargets[SPECULAR] = specular->getRenderTargetView();
-
+		m_renderTargets[ENVIRONMENT] = refl->getRenderTargetView();
 
 		m_isAllocated = true;
 	}

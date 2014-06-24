@@ -8,14 +8,20 @@ SamplerState samLinear
 
 
 //shader impl and uniforms
-static const float3 waterColor = float3(0.3f,0.6f,0.6f);
-static const float4 specular = float4(0.2f,0.2f,0.2f,0.06f);
+static const float3 waterColor = float3(0.5f,0.6f,0.6f);
+static const float4 specular = float4(0.2,0.2f,0.2f,0.06f);
+
+static const float offsetRefl = 0.05;
+static const float offsetRefr = 0.0;
+
 
 Texture2D refraction;
 Texture2D reflection;  
 Texture2D normalmap;
 
 #include "commonUniforms.fx"
+#include "commonFunctions.hlsl"
+#include "lightingEquations.hlsl"
 
 cbuffer waterPlaneInfo
 {
@@ -54,14 +60,6 @@ struct PS_INPUT_FORWARD : PS_INPUT_DEFERRED
 
 
 
-float3 fresnel(float3 normal, float3 viewDir, float exponent, float3 col1, float3 col2)
-{
-	static const float mat1 = 1.0003f;
-	static const float mat2 = 1.3333f;
-
-	float a = abs((mat1 - mat2))/(mat1+mat2);
-	return a*col1 + col2*(1-a)*pow(1-saturate(dot(normal, viewDir)),exponent);
-}
 
 float calculateHeightForPoint(float2 position, float time)
 {
@@ -99,8 +97,6 @@ float3 getNormalFromNormalMap( Texture2D normalmap, float2 uvs )
 {
 	float3 normal = normalmap.Sample( samLinear, uvs ).rbg;
 	normal = (normal - 0.5) * 2;
-	normal.b = -normal.b;
-	normal.r = -normal.r;
 	
 	return normalize(normal);
 }
@@ -140,10 +136,9 @@ void calculatePixelShaderInputForward(VS_INPUT input, out PS_INPUT_FORWARD outpu
 	output.lightDir = normalize( mul(sunDirection.xyz, toTangentSpace) );
 }
 
-void calculateWaterColorAndNormal(PS_INPUT_DEFERRED input, out float3 color, out float3 normal)
+void calculateWaterNormal(PS_INPUT_DEFERRED input, out float3 normal)
 {
-	float offsetRefl = 0.05;
-	float offsetRefr = 0.0;
+	
 	
 	float2 movedUvs = input.uv * 4;
 	
@@ -159,11 +154,13 @@ void calculateWaterColorAndNormal(PS_INPUT_DEFERRED input, out float3 color, out
 	float3 newnormal2 = getNormalFromNormalMap(normalmap, movedUvs.yx*2);
 	
 	
-	normal = normal*0.2 + (newnormal + newnormal2)*0.4;
-	
-	
-	
+	normal = normal*0.2 + (newnormal.rbg + newnormal2.rbg)*0.4;
+}
 
+void calculateWaterColors(PS_INPUT_DEFERRED input, out float3 reflColor, out float3 refrColor, float3 normal)
+{
+	
+	
 	float2 reflCoords = (input.reflPos.xy / input.reflPos.w)*0.5f+0.5f;
 	reflCoords.y = -reflCoords.y;
 	
@@ -172,10 +169,10 @@ void calculateWaterColorAndNormal(PS_INPUT_DEFERRED input, out float3 color, out
 	
 	
 	
-    float3 reflCol = reflection.Sample( samLinear, reflCoords + normal.xy*offsetRefl).rgb;
-	float3 refrCol = refraction.Sample( samLinear, refrCoords + normal.xy*offsetRefr).rgb;
+    reflColor = reflection.Sample( samLinear, reflCoords + normal.xy*offsetRefl).rgb;
+	refrColor = refraction.Sample( samLinear, refrCoords + normal.xy*offsetRefr).rgb;
 	
-	color = waterColor * fresnel(normal, input.camDir, 1.0f, refrCol , reflCol);
+	
 	
 }
 
@@ -197,10 +194,16 @@ float4 PS_FORWARD( PS_INPUT_FORWARD input) : SV_Target
 {
 	float4 output = float4(0,0,0,1);
 	float3 normal;
-	float3 color;
+	float3 colorRefl;
+	float3 colorRefr;
+
+	calculateWaterNormal((PS_INPUT_DEFERRED)input, normal);
+	calculateWaterColors((PS_INPUT_DEFERRED)input, colorRefl, colorRefr, normal);
 	
-	calculateWaterColorAndNormal((PS_INPUT_DEFERRED)input, color, normal);
-	output.rgb = color;
+	
+	
+	float f = fresnelSchlickDiffuse(specular.w,input.camDir ,normal );
+	output.rgb =  f * colorRefr * waterColor + (1.f-f) * colorRefl;
 
 	float3 halfVec = normalize(input.camDir + input.lightDir);
 	output.rgb += pow(saturate(dot(halfVec, normal)), specular.w) * specular.rgb;
@@ -223,12 +226,18 @@ PS_GBUFFER_OUTPUT PS_DEFERRED( PS_INPUT_DEFERRED input)
 
 	PS_GBUFFER_OUTPUT output;
 	float3 normal;
-	float3 color;
+	float3 colorRefl;
+	float3 colorRefr;
 	
-	calculateWaterColorAndNormal(input, color, normal);
-	output.color = float4(color, 1.f);
-	output.normal.rgb = normal;
+	calculateWaterNormal(input, normal);
+	calculateWaterColors(input, colorRefl, colorRefr, normal);
+	
+	float3 f = fresnelSchlickSpecularWithRoughness(specular.rgb,input.camDir ,normal, specular.w);
+	
+	output.color = float4(colorRefr * (1.f - f) * waterColor, 1.f);
+	output.normal.rgb = packNormal(normal);
 	output.specular = specular;
+	output.environment = float4( colorRefl, 0.f );
     return output;
 }
 

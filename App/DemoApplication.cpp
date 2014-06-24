@@ -156,15 +156,8 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	//lights
 	sun = m_mngr->createLight();
 	sun->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
-	sun->setColor(D3DXVECTOR3(0.1f,0.1f,0.3f));
+	sun->setColor(D3DXVECTOR3(0.6f,0.6f,0.6f));
 
-
-	CullableLight* li = m_mngr->createLight();
-	li->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
-	li->setColor(D3DXVECTOR3(0.1f, 0.1f, 0.3f));
-	D3DXVECTOR3 dir(1.f, -0.4f, 0.f);
-	D3DXVec3Normalize(&dir, &dir);
-	li->setDirection(dir);
 
 	CullableLight* l;
 	unsigned int lightsGenerated = 100;
@@ -197,7 +190,8 @@ void DemoApplication::createWorld(SceneManager* mngr)
 		l->setPosition(pos);
 		l->setLightId(i + 1);
 	}
-
+	
+	createMaterialBalls(mngr);
 
 	//debug drawers
 
@@ -209,20 +203,64 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	m_debugDrawerTexture->addDebugTexture(m_waterPlane->getRefractionTexture(), 40.f, 40.f, 20.f, 20.f);
 	m_debugDrawerTexture->addDebugTexture(m_waterPlane->getReflectionTexture(), 40.f, 20.f, 20.f, 20.f);
 
-	m_debugDrawerTexture->addDebugTexture("DepthStencil", -40.f, -20.f, 20.f, 20.f);
+	
 	m_debugDrawerTexture->addDebugTexture("GBUFFER_ALBEDO", -40.f, 40.f, 20.f, 20.f);
 	m_debugDrawerTexture->addDebugTexture("GBUFFER_NORMAL", -40.f, 20.f, 20.f, 20.f);
 	m_debugDrawerTexture->addDebugTexture("GBUFFER_SPECULAR", -40.f, 0.f, 20.f, 20.f);
-	
+	m_debugDrawerTexture->addDebugTexture("GBUFFER_ENVIRONMENT", -40.f, -20.f, 20.f, 20.f);
+	m_debugDrawerTexture->addDebugTexture("DepthStencil", -40.f, -40.f, 20.f, 20.f);
 	
 
 }
+
+void DemoApplication::createMaterialBalls(SceneManager* mngr)
+{
+
+	ID3D11Device* device = mngr->getRenderContext().getDevice();
+
+	Material* mat = 0;
+	Mesh* mesh = 0;
+	CullableGeometry *ro;
+	D3DXMATRIX wmatrix;
+	D3DXMatrixIdentity(&wmatrix);
+
+	mesh = MeshUtility::createUnitSphere(device, 20,20);
+
+	mat = MaterialManager::singleton()->getOrCreateMaterial(device, "albedoNormalSpecular.fx", "albedoNormalSpecular", mesh->getInputLayout());
+
+	Texture* tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "grass.jpg", "grass.jpg");
+	mat->setTexture("albedoTex", tex->getName());
+	mat->setTexture("specularTex", tex->getName());
+	tex = Dx11Sandbox::TextureManager::singleton()->getOrCreateTextureFromFile(device, "metal_bump.jpg", "bump_metal", 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_POINT);
+	mat->setTexture("normalTex", tex->getName());
+
+	wmatrix._11 = 10.f;
+	wmatrix._22 = 10.f;
+	wmatrix._33 = 10.f;
+	wmatrix._41 = 0.f;
+	wmatrix._42 = 60.f;
+	wmatrix._43 = 0.f;
+	ro = mngr->createCullableGeometry();
+	ro->setBoundingSphere(D3DXVECTOR4(0, 0, 0, FLT_MAX));
+	ro->setWorldMatrix(wmatrix);
+	ro->getRenderData().setMaterial(mat);
+	ro->getRenderData().setMesh(mesh);
+	ro->setRenderQueue(RENDERQUEUE_DEFAULT_OPAQUE);
+	ro->setRenderMask(RENDERLAYER_DEFAULT_OPAQUE);
+	
+
+}
+
+
+
 void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime)
 {
     m_time += fElapsedTime;
     handleInput(mngr,fElapsedTime, static_cast<float>( fTime ) );
 
 	D3DXVECTOR3 sunDir( std::cos( m_time ), -0.4f, std::sin( m_time ) );
+
+
     D3DXVec3Normalize(&sunDir, &sunDir);
 	sun->setDirection(sunDir);
 }

@@ -39,6 +39,7 @@ public:
 
 private:
 
+	void createMaterialBalls(SceneManager* mngr);
     void handleInput(SceneManager* mngr,float dt, float elapsedTime);
 
     bool m_leftDown;

@@ -1,6 +1,6 @@
 
 #define FRESNELSPECULAR fresnelSchlickSpecular
-#define FRESNELDIFFUSE fresnelDiffuse
+#define fresnelSchlickDiffuse fresnelSchlickDiffuse
 #define GEOMETRIC geometricTorranceSparrow
 #define DISTRIBUTION distributionBlinnPhong
 #define DIFFUSE diffuseLambertian
@@ -9,6 +9,7 @@
 #define PI 3.1415f
 #define InvPI 1.f/PI
 
+//geometric term
 float geometricImplicit(float3 lightDir, float3 viewDir, float3 halfVec, float3 normal, float roughness)
 {
 	return 0.25f;
@@ -40,22 +41,47 @@ float geometricSmith(float3 lightDir, float3 viewDir, float3 halfVec, float3 nor
 }
 
 
-
+//NDF
 float distributionBlinnPhong(float3 halfVec, float3 normal, float roughness)
 {
 	float a = 2 * rcp(roughness * roughness) - 2;
 	return ((a + 2) * 0.5f ) * pow(saturate(dot(halfVec, normal)), a);
 }
 
-float3 fresnelSchlickSpecular(float3 refraction,float3 lightDir ,float3 halfVector)
+
+
+
+
+//fresnel
+float3 fresnelSchlickSpecular(float3 spec,float3 viewDir ,float3 halfVector)
 {
-    return refraction + (1.f - refraction) * pow(1.0f - dot(lightDir, halfVector), 5);
+    return spec + (1.f - spec) * pow(1.0f - dot(viewDir, halfVector), 5);
 }
 
-float3 fresnelDiffuse(float3 refraction,float3 lightDir ,float3 normal )
+float fresnelSchlickSpecular(float spec,float3 viewDir ,float3 halfVector)
 {
-	return refraction + (1.f - refraction) * pow(saturate(dot(lightDir, normal)), 5);
+    return spec + (1.f - spec) * pow(1.0f - dot(viewDir, halfVector), 5);
 }
+
+
+
+float3 fresnelSchlickDiffuse(float3 spec,float3 viewDir ,float3 normal )
+{
+	return spec + (1.f - spec) * pow(saturate(dot(viewDir, normal)), 5);
+}
+
+float fresnelSchlickDiffuse(float spec,float3 viewDir ,float3 normal )
+{
+	return spec + (1.f - spec) * pow(saturate(dot(viewDir, normal)), 5);
+}
+
+//taken from blog of Sébastien Lagarde:http://seblagarde.wordpress.com/2011/08/17/hello-world/
+float3 fresnelSchlickSpecularWithRoughness(float3 spec,float3 viewDir ,float3 normal, float roughness )
+{
+	return spec + ( max(spec, (1.f - roughness) ) - spec) * pow(1.f - saturate(dot(viewDir, normal)), 5);
+}
+
+//misc
 
 float3 diffuseLambertian(float3 albedo, float3 normal, float3 lightDir)
 {
@@ -67,8 +93,8 @@ float3 lightingEquation(float3 albedo, float3 lightColor, float3 specular,float 
 	roughness = max(roughness, 0.001f);
 	float3 halfVec = normalize(viewDir + lightDir);
 	float3 specularBrdf = FRESNELSPECULAR(specular, viewDir, halfVec)*GEOMETRIC(lightDir, viewDir, halfVec, normal, roughness)*DISTRIBUTION(halfVec, normal, roughness)* saturate(dot(lightDir, normal));
-	float3 diffuseBrdf = (1.f - FRESNELDIFFUSE(specular, lightDir, normal))*DIFFUSE(albedo, normal,lightDir);
+	float3 diffuseBrdf = (1.f - fresnelSchlickDiffuse(specular, lightDir, normal))*DIFFUSE(albedo, normal,lightDir);
 	
-	//scaling with fresnel to balance ratios between specular and diffuse is not really physically correct way to retain energy conservation since it violates reciprocity of the equation but haven't found a better way yet
+	
 	return (diffuseBrdf + specularBrdf)* lightColor;
 }

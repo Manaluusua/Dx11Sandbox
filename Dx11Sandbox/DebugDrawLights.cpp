@@ -28,7 +28,7 @@ namespace Dx11Sandbox
 		m_enabled(false)
 	{
 
-		Mesh* mesh = MeshUtility::createUnitSphere(device, 25, 20, false, false, true);
+		Mesh* mesh = MeshUtility::createUnitSphere(device, 25, 20, false, false, false, true);
 		Material* mat = MaterialManager::singleton()->getOrCreateMaterial(device, "gizmoColored.fx", "gizmo", mesh->getInputLayout());
 		m_renderData->setMaterial(mat);
 		m_renderData->setMesh(mesh);

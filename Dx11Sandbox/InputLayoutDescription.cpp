@@ -29,6 +29,9 @@ namespace Dx11Sandbox
 		UINT size = 0;
 		switch (format)
 		{
+			case DXGI_FORMAT_R32G32B32A32_FLOAT:
+				size = 16;
+				break;
 			case DXGI_FORMAT_R32G32B32_FLOAT:
 				size = 12;
 				break;

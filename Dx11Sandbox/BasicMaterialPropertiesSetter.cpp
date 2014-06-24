@@ -45,9 +45,12 @@ namespace Dx11Sandbox
 
 	void BasicMaterialPropertiesSetter::setSceneInfoUniforms(RenderData* object, Material* mat)
 	{
+		D3DXMATRIX invWorld;
+		float det;
 		const D3DXMATRIX *view = m_cam->getViewMatrix();
 		const D3DXMATRIX *proj = m_cam->getProjectionMatrix();
 		const D3DXMATRIX& world = object->getWorldMatrix();
+		D3DXMatrixInverse(&invWorld, &det, &world);
 		D3DXMATRIX worldviewProj = world * (*view) * (*proj);
 
 		D3DXVECTOR3 transl = -(m_cam->getTranslation());
@@ -63,6 +66,8 @@ namespace Dx11Sandbox
 			mat->SetMatrix((float*)&worldviewProj);
 			mat = buffer->GetMemberByName("world")->AsMatrix();
 			mat->SetMatrix((float*)&world);
+			mat = buffer->GetMemberByName("worldInv")->AsMatrix();
+			mat->SetMatrix((float*)&invWorld);
 			buffer->GetMemberByName("camPos")->AsVector()->SetFloatVector((float*)&camPos);
 			buffer->GetMemberByName("clipPlane")->AsVector()->SetFloatVector((float*)&clip);
 			buffer->GetMemberByName("time")->AsScalar()->SetFloat((float)EnvironmentInfo::getTime());
