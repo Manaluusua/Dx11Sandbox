@@ -10,7 +10,7 @@ SamplerState samLinear
 //shader impl and uniforms
 
 static const float3 ambient   = float3( 0.1f, 0.1f, 0.1f );  
-static const float4 specular   = float4( 0.02f, 0.02f, 0.02f, 1.f );  
+static const float4 specular   = float4( 0.002f, 0.002f, 0.002f, 1.f );  
 static const float3 heightLevels = float3(60.f,0,0);
 
 #include "commonUniforms.fx"

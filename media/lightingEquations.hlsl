@@ -46,14 +46,14 @@ float geometricSmith(float3 lightDir, float3 viewDir, float3 halfVec, float3 nor
 float distributionBlinnPhong(float3 halfVec, float3 normal, float roughness)
 {
 	float a = max(0.0001f, 2.f * rcp(roughness * roughness) - 2);
-	float HdotN = min( saturate(dot(halfVec, normal)), 0.9999f );
+	float HdotN = min( saturate(dot(halfVec, normal)), 0.99999f );
 	return ((roughness + 2) * 0.5f ) * pow( HdotN, a) ;
 }
 
 float distributionTrowbridgeReitz(float3 halfVec, float3 normal, float roughness)
 {
 	float r2 = roughness*roughness;
-	float HdotN = min( saturate(dot(halfVec, normal)), 0.9999f );
+	float HdotN = min( saturate(dot(halfVec, normal)), 0.99999f );
 	return r2 / pow(pow( HdotN, 2) * (r2 - 1.f) + 1, 2);
 }
 
