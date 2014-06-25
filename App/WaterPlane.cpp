@@ -36,6 +36,8 @@ WaterPlane::WaveDefinition::WaveDefinition(D3DXVECTOR2 dir,float amplitude, floa
 WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, const Dx11Sandbox::string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, float tesselationX, float tesselationY, int textureResolution)
 {
 
+	const float clipPlaneOffset = 1.f;
+
     m_mngr = mngr;
 
     m_renderObject = Dx11Sandbox::MeshUtility::createFinitePlane(device,mngr,name,normal,d,extends1, extends2, static_cast<int>( tesselationX ), static_cast<int>( tesselationY ) );
@@ -66,7 +68,7 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 	m_reflectionCamera = m_mngr->createCamera();
 	m_reflectionCamera->setReflectionPlane(m_normal,m_d);
 	m_reflectionCamera->setReflectionEnabled(true);
-	D3DXVECTOR4 clipplane(m_normal, m_d);
+	D3DXVECTOR4 clipplane(m_normal, m_d + clipPlaneOffset);
 	m_reflectionCamera->setClipPlane(clipplane);
 	m_reflectionCamera->setRenderMask(Dx11Sandbox::RENDERLAYER_DEFAULT_OPAQUE | Dx11Sandbox::RENDERLAYER_SKYBOX | Dx11Sandbox::RENDERLAYER_LIGHTPASS);
 	m_reflectionCamera->addRenderListener(this);
@@ -74,8 +76,8 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 	
 	
 	m_refractionCamera = m_mngr->createCamera();
-	//clipplane = D3DXVECTOR4(-m_normal, -m_d);
-	//m_refractionCamera->setClipPlane(clipplane);
+	clipplane = D3DXVECTOR4(-m_normal, -m_d + clipPlaneOffset);
+	m_refractionCamera->setClipPlane(clipplane);
 	m_refractionCamera->setRenderMask(Dx11Sandbox::RENDERLAYER_DEFAULT_OPAQUE | Dx11Sandbox::RENDERLAYER_SKYBOX | Dx11Sandbox::RENDERLAYER_LIGHTPASS);
 	m_refractionCamera->addRenderListener(this);
 	m_refractionCamera->setCameraPriority(-1);

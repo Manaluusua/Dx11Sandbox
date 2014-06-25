@@ -119,7 +119,7 @@ PS_GBUFFER_OUTPUT PS_Deferred( PS_INPUT_DEFERRED input)
 									input.normal
 									);
 	output.normal = float4( packNormal( normalize( mul( normal, toWorldSpace ) ) ), 0.f);
-	output.environment = float4(0.f, 0.f, 0.f, 0.f);
+	output.environment = float4(1.0f, 0.76f, 0.33f, 0.005f);
 	
     return output;
 }

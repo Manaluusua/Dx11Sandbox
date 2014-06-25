@@ -172,9 +172,11 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	/*for (int i = 0; i < lightsGenerated; ++i){
 		float rat = (static_cast<float>(i) / lightsGenerated);
 
-		color.x = rat;
-		color.y = (1.f - rat);
-		color.z = 0.5f;
+		float r = 0.5f + Dx11Sandbox::MathUtil::randomFloat() * 0.5f;
+
+		color.x = r;
+		color.y = r;
+		color.z = r;
 
 		float circleRad = circleRadMin + (circleRadMax - circleRadMin)*Dx11Sandbox::MathUtil::randomFloat();
 		float lightRad = lightRadMin + (lightRadMax - lightRadMin)*Dx11Sandbox::MathUtil::randomFloat();
@@ -189,8 +191,8 @@ void DemoApplication::createWorld(SceneManager* mngr)
 		l->setColor(color);
 		l->setPosition(pos);
 		l->setLightId(i + 1);
-	}
-	*/
+	}*/
+	
 	createMaterialBalls(mngr);
 
 	//debug drawers

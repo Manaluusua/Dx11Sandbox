@@ -66,7 +66,7 @@ struct GBufferSample {
 	float4 specular;
 	float3 albedo; float bufferDepth;
 	float3 normal; float viewDepth;
-	float3 environment;
+	float4 environment;
 };
 
 
@@ -105,7 +105,7 @@ float3 calculateShadingDirectionalLight(float3 pos, float3 camDir, GBufferSample
 
 float3 calculateAmbientLighting(float3 pos, float3 camDir, GBufferSample sample) 
 {
-	return fresnelSchlickSpecularWithRoughness(sample.specular.rgb, camDir, sample.normal, sample.specular.a) * sample.environment;
+	return fresnelSchlickSpecularWithRoughness(sample.specular.rgb, camDir, sample.normal, sample.specular.a) * sample.environment.rgb * sample.environment.a;
 }
 
 float3 calculateShading(float2 threadIdXY, GBufferSample sample)
@@ -159,7 +159,7 @@ void sampleGBuffer(uint2 sampleLocation, int sampleIndex, out GBufferSample samp
 	sample.albedo = albedoTex.Load(uint3(sampleLocation, 0)).xyz;
 	sample.normal = unpackNormal( normalTex.Load(uint3(sampleLocation, 0)).xyz );
 	sample.specular = specularTex.Load(uint3(sampleLocation, 0));
-	sample.environment = environmentTex.Load(uint3(sampleLocation, 0)).xyz;
+	sample.environment = environmentTex.Load(uint3(sampleLocation, 0));
 }
 
 void cullLights(uint groupIndex, CullInfo info)
