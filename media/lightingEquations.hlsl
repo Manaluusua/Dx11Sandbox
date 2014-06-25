@@ -1,8 +1,8 @@
 
-#define FRESNELSPECULAR fresnelSchlickSpecular
-#define fresnelSchlickDiffuse fresnelSchlickDiffuse
+#define FRESNELSPECULAR fresnelSchlickSpecularWithRoughness
+#define FRESNELDIFFUSE fresnelSchlickDiffuse
 #define GEOMETRIC geometricTorranceSparrow
-#define DISTRIBUTION distributionBlinnPhong
+#define DISTRIBUTION distributionTrowbridgeReitz
 #define DIFFUSE diffuseLambertian
 
 
@@ -46,10 +46,16 @@ float geometricSmith(float3 lightDir, float3 viewDir, float3 halfVec, float3 nor
 float distributionBlinnPhong(float3 halfVec, float3 normal, float roughness)
 {
 	float a = max(0.0001f, 2.f * rcp(roughness * roughness) - 2);
-	return ((a + 2) * 0.5f ) * pow( min( saturate(dot(halfVec, normal)), 0.999f ), a) ;
+	float HdotN = min( saturate(dot(halfVec, normal)), 0.9999f );
+	return ((roughness + 2) * 0.5f ) * pow( HdotN, a) ;
 }
 
-
+float distributionTrowbridgeReitz(float3 halfVec, float3 normal, float roughness)
+{
+	float r2 = roughness*roughness;
+	float HdotN = min( saturate(dot(halfVec, normal)), 0.9999f );
+	return r2 / pow(pow( HdotN, 2) * (r2 - 1.f) + 1, 2);
+}
 
 
 
@@ -89,14 +95,20 @@ float3 diffuseLambertian(float3 albedo, float3 normal, float3 lightDir)
 	return albedo * saturate(dot(lightDir, normal));
 }
 
+float luminance(float3 color)
+{
+ return (color.x + color.y + color.z) * 0.33333f;
+}
+
+
 float3 lightingEquation(float3 albedo, float3 lightColor, float3 specular,float roughness, float3 normal, float3 lightDir, float3 viewDir )
 {
-	roughness = max(roughness, 0.01f);
+	roughness = max(roughness * roughness, 0.00001f);
 	float3 halfVec = normalize(viewDir + lightDir);
 	
 	
-	float specularBrdf =  FRESNELSPECULAR(specular, lightDir, halfVec)*GEOMETRIC(lightDir, viewDir, halfVec, normal, roughness)*DISTRIBUTION(halfVec, normal, roughness)* saturate(dot(lightDir, normal));
-	float3 diffuseBrdf = (1.f - specular) * DIFFUSE(albedo, normal,lightDir);
+	float3 specularBrdf =  FRESNELSPECULAR(specular, lightDir, halfVec, roughness)*GEOMETRIC(lightDir, viewDir, halfVec, normal, roughness)*DISTRIBUTION(halfVec, normal, roughness)* saturate(dot(lightDir, normal));
+	float3 diffuseBrdf =(1.f - luminance(specular) ) * DIFFUSE(albedo, normal,lightDir);
 	
 	
 	return (diffuseBrdf + specularBrdf)* lightColor;

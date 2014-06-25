@@ -169,7 +169,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	float minHeight = 60.f;
 	D3DXVECTOR3 color;
 	D3DXVECTOR3 pos;
-	for (int i = 0; i < lightsGenerated; ++i){
+	/*for (int i = 0; i < lightsGenerated; ++i){
 		float rat = (static_cast<float>(i) / lightsGenerated);
 
 		color.x = rat;
@@ -190,7 +190,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
 		l->setPosition(pos);
 		l->setLightId(i + 1);
 	}
-	
+	*/
 	createMaterialBalls(mngr);
 
 	//debug drawers
@@ -231,7 +231,7 @@ void DemoApplication::createMaterialBalls(SceneManager* mngr)
 	Texture* tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "grass.jpg", "grass.jpg");
 	mat->setTexture("albedoTex", tex->getName());
 	mat->setTexture("specularTex", tex->getName());
-	tex = Dx11Sandbox::TextureManager::singleton()->getOrCreateTextureFromFile(device, "metal_bump.jpg", "bump_metal", 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_POINT);
+	tex = Dx11Sandbox::TextureManager::singleton()->getOrCreateTextureFromFile(device, "metal_bump.jpg", "bump_metal", 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_NONE);
 	mat->setTexture("normalTex", tex->getName());
 
 	wmatrix._11 = 10.f;
@@ -259,6 +259,8 @@ void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime
     handleInput(mngr,fElapsedTime, static_cast<float>( fTime ) );
 
 	D3DXVECTOR3 sunDir( std::cos( m_time ), -0.4f, std::sin( m_time ) );
+
+	//sunDir = mngr->getMainCamera()->getTranslation();
 
 
     D3DXVec3Normalize(&sunDir, &sunDir);

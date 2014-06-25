@@ -10,7 +10,7 @@ SamplerState samLinear
 //shader impl and uniforms
 
 static const float3 ambient   = float3( 0.1f, 0.1f, 0.1f );  
-static const float4 specular   = float4( 0.f, 0.f, 0.f, 0.99f );  
+static const float4 specular   = float4( 0.02f, 0.02f, 0.02f, 1.f );  
 static const float3 heightLevels = float3(60.f,0,0);
 
 #include "commonUniforms.fx"
@@ -48,7 +48,7 @@ PS_INPUT VS( VS_INPUT input )
 	
     output.uv = input.uv;
 
-	output.clipDistance = dot(float4(input.position,1),clipPlane);
+	output.clipDistance = dot( mul( float4(input.position,1), world ),clipPlane);
 	
     return output;
 }
@@ -62,7 +62,7 @@ float4 PS_Forward( PS_INPUT input) : SV_Target
 	
 	
 	
-	output.rgb *= ambient + sunColor*saturate(dot(input.normal,sunDirection));
+	output.rgb *= ambient + sunColor*saturate(dot(input.normal,-sunDirection));
 
 	
 	

@@ -54,7 +54,7 @@ PS_INPUT_FORWARD VS_Forward( VS_INPUT input )
 	
     output.position = pos;
     output.uv = input.uv;
-	output.clipDistance = dot(float4(input.position,1),clipPlane);
+	output.clipDistance = dot( mul( float4(input.position,1), world ),clipPlane);
 	
 	float3 bitangent = cross( input.normal, input.tangent.xyz ) * input.tangent.w;
 	
@@ -95,7 +95,7 @@ PS_INPUT_DEFERRED VS_Deferred( VS_INPUT input )
 	output.tangent =  float4( normalize( mul( float4(input.tangent.xyz,0), world) ).xyz, input.tangent.w );
     output.uv = input.uv;
 
-	output.clipDistance = dot(float4(input.position,1),clipPlane);
+	output.clipDistance = dot( mul( float4(input.position,1), world ),clipPlane);
 	
     return output;
 }
@@ -106,7 +106,7 @@ PS_GBUFFER_OUTPUT PS_Deferred( PS_INPUT_DEFERRED input)
 	PS_GBUFFER_OUTPUT output;
 	
 	output.color = albedoTex.Sample( samLinear, input.uv );
-	output.specular = float4(0.0f, 0.0f, 0.0f, 0.9f);//specularTex.Sample( samLinear, input.uv );
+	output.specular = float4(1.0f, 0.76f, 0.33f, 0.1f);//specularTex.Sample( samLinear, input.uv );
 	float3 normal = unpackNormal(normalTex.Sample( samLinear, input.uv ).rgb);
 
 	
