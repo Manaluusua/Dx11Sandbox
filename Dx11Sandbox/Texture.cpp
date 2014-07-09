@@ -163,7 +163,11 @@ namespace Dx11Sandbox
 	void Texture::createResourceFromFile(ID3D11Device* device, const string& filepath, UINT cpuAccess, D3D11_USAGE usage, UINT filter)
     {
 		destroyResourcesAndViews();
-        D3DX11_IMAGE_LOAD_INFO info;
+        
+		
+		D3DX11_IMAGE_LOAD_INFO info;
+		info.FirstMipLevel = 0;
+
         info.CpuAccessFlags = cpuAccess;
         info.Usage = usage;
         info.Filter = filter ;

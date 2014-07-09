@@ -137,8 +137,8 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	ro->getRenderData().setMesh( mesh );
 	ro->setRenderQueue(RENDERQUEUE_SKYBOX);
 	ro->setRenderMask(RENDERLAYER_SKYBOX);
-	Texture* tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "skyboxCube.dds", "skyboxCube.dds");
-    mat->setTexture("cubemap", tex->getName());
+	Texture* tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "skyboxCube.dds", "skybox");
+	mat->setTexture("cubemap", tex->getName());
     
      
     //terrain
@@ -146,7 +146,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	inputDescription.appendDescription("POSITION", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TANGENT", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
 	mat = MaterialManager::singleton()->getOrCreateMaterial(device, "terrain.fx", "terrain1", inputDescription);
     MeshUtility::createTerrainFromHeightMap(device,mngr, "heightmapTerrain.png", mat,1000,1000,200,30,30,10);
-	tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "grass.jpg", "grass.jpg");
+	 tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "grass.jpg", "grass.jpg");
     mat->setTexture("texture1", tex->getName());
 
     //waterplane
@@ -156,11 +156,15 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	//lights
 	sun = m_mngr->createLight();
 	sun->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
-	sun->setColor(D3DXVECTOR3(0.6f,0.6f,0.6f));
+	sun->setColor(D3DXVECTOR3(0.2f,0.2f,0.2f));
+	D3DXVECTOR3 sunDir( 1.f, -1.f, 0.f );
+	D3DXVec3Normalize(&sunDir, &sunDir);
+	sun->setDirection(sunDir);
+
 
 
 	CullableLight* l;
-	unsigned int lightsGenerated = 100;
+	unsigned int lightsGenerated = 180;
 	float lightRadMin = 80.f;
 	float lightRadMax = 150.f;
 	float circleRadMin = 100.f;
@@ -169,13 +173,14 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	float minHeight = 60.f;
 	D3DXVECTOR3 color;
 	D3DXVECTOR3 pos;
-	/*for (int i = 0; i < lightsGenerated; ++i){
+	for (int i = 0; i < lightsGenerated; ++i){
 		float rat = (static_cast<float>(i) / lightsGenerated);
 
-		float r = 0.5f + Dx11Sandbox::MathUtil::randomFloat() * 0.5f;
-
+		float r = 0.1f + Dx11Sandbox::MathUtil::randomFloat() * 0.9f;
 		color.x = r;
+		r = 0.1f + Dx11Sandbox::MathUtil::randomFloat() * 0.9f;
 		color.y = r;
+		r = 0.1f + Dx11Sandbox::MathUtil::randomFloat() * 0.9f;
 		color.z = r;
 
 		float circleRad = circleRadMin + (circleRadMax - circleRadMin)*Dx11Sandbox::MathUtil::randomFloat();
@@ -191,7 +196,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
 		l->setColor(color);
 		l->setPosition(pos);
 		l->setLightId(i + 1);
-	}*/
+	}
 	
 	createMaterialBalls(mngr);
 
@@ -215,8 +220,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
 
 }
 
-void DemoApplication::createMaterialBalls(SceneManager* mngr)
-{
+void createMaterialBall(SceneManager* mngr,const string& albedoTex, const string& specularTex,const string& normalTex, float x, float y){
 
 	ID3D11Device* device = mngr->getRenderContext().getDevice();
 
@@ -228,19 +232,23 @@ void DemoApplication::createMaterialBalls(SceneManager* mngr)
 
 	mesh = MeshUtility::createUnitSphere(device, 20,20);
 
-	mat = MaterialManager::singleton()->getOrCreateMaterial(device, "albedoNormalSpecular.fx", "albedoNormalSpecular", mesh->getInputLayout());
+	mat = new Material(*MaterialManager::singleton()->getMaterial( "albedoNormalSpecular"));
+	Texture* tex = TextureManager::singleton()->getTexture(stringToID("environmentMap"));
+	mat->setTexture("environmentTex", tex->getName());
 
-	Texture* tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "grass.jpg", "grass.jpg");
+
+	tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, albedoTex, albedoTex);
 	mat->setTexture("albedoTex", tex->getName());
+	tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, specularTex, specularTex);
 	mat->setTexture("specularTex", tex->getName());
-	tex = Dx11Sandbox::TextureManager::singleton()->getOrCreateTextureFromFile(device, "metal_bump.jpg", "bump_metal", 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_NONE);
+	tex = Dx11Sandbox::TextureManager::singleton()->getOrCreateTextureFromFile(device, normalTex, normalTex, 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_NONE);
 	mat->setTexture("normalTex", tex->getName());
 
 	wmatrix._11 = 10.f;
 	wmatrix._22 = 10.f;
 	wmatrix._33 = 10.f;
-	wmatrix._41 = 0.f;
-	wmatrix._42 = 60.f;
+	wmatrix._41 = x;
+	wmatrix._42 = y;
 	wmatrix._43 = 0.f;
 	ro = mngr->createCullableGeometry();
 	ro->setBoundingSphere(D3DXVECTOR4(0, 0, 0, FLT_MAX));
@@ -249,8 +257,24 @@ void DemoApplication::createMaterialBalls(SceneManager* mngr)
 	ro->getRenderData().setMesh(mesh);
 	ro->setRenderQueue(RENDERQUEUE_DEFAULT_OPAQUE);
 	ro->setRenderMask(RENDERLAYER_DEFAULT_OPAQUE);
-	
 
+}
+
+void DemoApplication::createMaterialBalls(SceneManager* mngr)
+{
+
+	ID3D11Device* device = mngr->getRenderContext().getDevice();
+	InputLayoutDescription inputDescription;
+	inputDescription.appendDescription("POSITION", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT).appendDescription("TANGENT", DXGI_FORMAT_R32G32B32A32_FLOAT).appendDescription("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
+
+	Material* mat = MaterialManager::singleton()->getOrCreateMaterial(device, "albedoNormalSpecular.fx", "albedoNormalSpecular", inputDescription);
+	Texture* tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, "skyboxCube2.dds", "environmentMap");
+
+	createMaterialBall(mngr, "gold_albedo.jpg", "gold_specular.png", "gold_normal.jpg", 0.f, 60.f);
+	createMaterialBall(mngr, "red_albedo.jpg", "red_specular_fine.png", "red_normal.jpg", 30.f, 60.f);
+	createMaterialBall(mngr, "red_albedo.jpg", "red_specular_semifine.png", "red_normal.jpg", 60.f, 60.f);
+	createMaterialBall(mngr, "red_albedo.jpg", "red_specular_coarse.png", "red_normal.jpg", 90.f, 60.f);
+	createMaterialBall(mngr, "red_albedo.jpg", "red_specular_verycoarse.png", "red_normal.jpg", 120.f, 60.f);
 }
 
 
@@ -261,10 +285,6 @@ void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime
     handleInput(mngr,fElapsedTime, static_cast<float>( fTime ) );
 
 	D3DXVECTOR3 sunDir( std::cos( m_time ), -0.4f, std::sin( m_time ) );
-
-	//sunDir = mngr->getMainCamera()->getTranslation();
-
-
     D3DXVec3Normalize(&sunDir, &sunDir);
 	sun->setDirection(sunDir);
 }

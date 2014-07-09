@@ -1,7 +1,7 @@
 
-#define FRESNELSPECULAR fresnelSchlickSpecularWithRoughness
+#define FRESNELSPECULAR fresnelSchlickSpecular
 #define FRESNELDIFFUSE fresnelSchlickDiffuse
-#define GEOMETRIC geometricTorranceSparrow
+#define GEOMETRIC geometricSmithSchlick
 #define DISTRIBUTION distributionTrowbridgeReitz
 #define DIFFUSE diffuseLambertian
 
@@ -17,9 +17,9 @@ float geometricImplicit(float3 lightDir, float3 viewDir, float3 halfVec, float3 
 
 float geometricTorranceSparrow(float3 lightDir, float3 viewDir, float3 halfVec, float3 normal, float roughness)
 {
-	float dotNH = dot(normal, halfVec);
-	float invDotVH = rcp(dot(viewDir, halfVec));
-	float ret = min( (2.f * dotNH * dot(normal, viewDir)) * invDotVH, (2.f * dotNH * dot(normal, lightDir)) * invDotVH ); 
+	float NdotH = dot(normal, halfVec);
+	float invVDotH = rcp(dot(viewDir, halfVec));
+	float ret = min( (2.f * NdotH * dot(normal, viewDir)) * invVDotH, (2.f * NdotH * dot(normal, lightDir)) * invVDotH ); 
 	return min( 1.f, ret ) * rcp(4.f * dot(normal,viewDir) * dot(normal, lightDir));
 }
 
@@ -29,31 +29,43 @@ float geometricTorranceSparrowApprox(float3 lightDir, float3 viewDir, float3 hal
 	return 4.f * rcp(dot(h,h)) * 0.25f;
 }
 
+
+
+float geometricSmithTrowbridgeReitz(float3 lightDir, float3 viewDir, float3 halfVec, float3 normal, float roughness)
+{
+	float r2 = roughness*roughness;
+	float NdotV = dot(viewDir, normal);
+	float NdotL = dot(lightDir, normal);
+	float Gview = NdotV + sqrt( (NdotV - NdotV * r2) * NdotV + r2 );
+	float Glight = NdotL + sqrt( (NdotL - NdotL * r2) * NdotL + r2 );
+	return rcp( Gview * Glight );
+}
+
 float GSchlick(float3 dir, float3 normal, float k)
 {
 	float dp = saturate(dot(dir, normal));
 	return dp * rcp(dp * ( 1.f - k ) + k);
 }
 
-float geometricSmith(float3 lightDir, float3 viewDir, float3 halfVec, float3 normal, float roughness)
+float geometricSmithSchlick(float3 lightDir, float3 viewDir, float3 halfVec, float3 normal, float roughness)
 {
 	float k = sqrt( (2.f * pow(roughness,2.f)) * InvPI );
 	return GSchlick(lightDir, normal,k) * GSchlick(viewDir, normal,k) * rcp(4.f * dot(normal,viewDir) * dot(normal, lightDir));
 }
 
 
+
 //NDF
 float distributionBlinnPhong(float3 halfVec, float3 normal, float roughness)
 {
-	float a = max(0.0001f, 2.f * rcp(roughness * roughness) - 2);
-	float HdotN = min( saturate(dot(halfVec, normal)), 0.99999f );
-	return ((roughness + 2) * 0.5f ) * pow( HdotN, a) ;
+	float HdotN = min( saturate(dot(halfVec, normal)), 0.999999f );
+	return ((roughness + 2) * 0.5f ) * pow( HdotN, roughness) ;
 }
 
 float distributionTrowbridgeReitz(float3 halfVec, float3 normal, float roughness)
 {
 	float r2 = roughness*roughness;
-	float HdotN = min( saturate(dot(halfVec, normal)), 0.99999f );
+	float HdotN = min( saturate(dot(halfVec, normal)), 0.999999f );
 	return r2 / pow(pow( HdotN, 2) * (r2 - 1.f) + 1, 2);
 }
 
@@ -107,7 +119,7 @@ float3 lightingEquation(float3 albedo, float3 lightColor, float3 specular,float 
 	float3 halfVec = normalize(viewDir + lightDir);
 	
 	
-	float3 specularBrdf =  FRESNELSPECULAR(specular, lightDir, halfVec, roughness)*GEOMETRIC(lightDir, viewDir, halfVec, normal, roughness)*DISTRIBUTION(halfVec, normal, roughness)* saturate(dot(lightDir, normal));
+	float3 specularBrdf =  FRESNELSPECULAR(specular, lightDir, halfVec)*GEOMETRIC(lightDir, viewDir, halfVec, normal, roughness)*DISTRIBUTION(halfVec, normal, roughness)* saturate(dot(lightDir, normal));
 	float3 diffuseBrdf =(1.f - luminance(specular) ) * DIFFUSE(albedo, normal,lightDir);
 	
 	

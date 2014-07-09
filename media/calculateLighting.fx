@@ -105,7 +105,8 @@ float3 calculateShadingDirectionalLight(float3 pos, float3 camDir, GBufferSample
 
 float3 calculateAmbientLighting(float3 pos, float3 camDir, GBufferSample sample) 
 {
-	return fresnelSchlickSpecularWithRoughness(sample.specular.rgb, camDir, sample.normal, sample.specular.a) * sample.environment.rgb * sample.environment.a;
+
+	return fresnelSchlickSpecularWithRoughness(sample.specular.rgb, camDir, sample.normal, sample.specular.a) * sample.environment.rgb * sample.specular.rgb /** sample.environment.a*/;
 }
 
 float3 calculateShading(float2 threadIdXY, GBufferSample sample)

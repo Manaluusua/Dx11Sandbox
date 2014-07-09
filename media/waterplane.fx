@@ -9,7 +9,7 @@ SamplerState samLinear
 
 //shader impl and uniforms
 static const float3 waterColor = float3(0.5f,0.5f,0.5f);
-static const float4 specular = float4( 0.02037f, 0.02037f, 0.02037f,0.1f);
+static const float4 specular = float4( 0.3, 0.3, 0.3,0.1f);
 
 static const float offsetRefl = 0.05;
 static const float offsetRefr = 0.0;
@@ -279,7 +279,7 @@ PS_GBUFFER_OUTPUT PS_DEFERRED( PS_INPUT_DEFERRED input)
 	output.color = float4(colorRefr * (1.f - f) * waterColor, 1.f);
 	output.normal.rgb = packNormal(normal);
 	output.specular = specular;
-	output.environment = float4( colorRefl, 0.f );
+	output.environment = float4( colorRefl, 1.f );
     return output;
 }
 

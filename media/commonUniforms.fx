@@ -8,6 +8,8 @@ cbuffer basicSceneInfo
 	float time;
 };
 
+TextureCube environmentTex; 
+
 cbuffer objectInfo
 {
 	float3	sunDirection;
@@ -22,3 +24,5 @@ struct PS_GBUFFER_OUTPUT
 	float4 specular: SV_Target2;
 	float4 environment: SV_Target3;
 };
+
+const int max_mip_level = 10; 
