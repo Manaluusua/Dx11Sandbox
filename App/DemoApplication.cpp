@@ -173,7 +173,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	float minHeight = 60.f;
 	D3DXVECTOR3 color;
 	D3DXVECTOR3 pos;
-	for (int i = 0; i < lightsGenerated; ++i){
+	/*for (int i = 0; i < lightsGenerated; ++i){
 		float rat = (static_cast<float>(i) / lightsGenerated);
 
 		float r = 0.1f + Dx11Sandbox::MathUtil::randomFloat() * 0.9f;
@@ -197,7 +197,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
 		l->setPosition(pos);
 		l->setLightId(i + 1);
 	}
-	
+	*/
 	createMaterialBalls(mngr);
 
 	//debug drawers
