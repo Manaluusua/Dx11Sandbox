@@ -58,8 +58,9 @@ float geometricSmithSchlick(float3 lightDir, float3 viewDir, float3 halfVec, flo
 //NDF
 float distributionBlinnPhong(float3 halfVec, float3 normal, float roughness)
 {
+	float shininess = (2.f * rcp(roughness*roughness) - 1.9f);
 	float HdotN = min( saturate(dot(halfVec, normal)), 0.999999f );
-	return ((roughness + 2) * 0.5f ) * pow( HdotN, roughness) ;
+	return ((shininess + 2) * 0.5f ) * pow( HdotN, shininess) ;
 }
 
 float distributionTrowbridgeReitz(float3 halfVec, float3 normal, float roughness)
