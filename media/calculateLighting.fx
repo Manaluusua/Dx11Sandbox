@@ -105,7 +105,7 @@ float3 calculateShadingDirectionalLight(float3 pos, float3 camDir, GBufferSample
 
 float3 calculateAmbientLighting(float3 pos, float3 camDir, GBufferSample sample) 
 {
-
+	//TODO: We would want to precalculate the integral of the BRDF over the lightdirections for given camera direction, normal and roughness and store them in a LUT but use this for now as an approximation.
 	return fresnelSchlickSpecularWithRoughness(sample.specular.rgb, camDir, sample.normal, sample.specular.a) * sample.environment.rgb * sample.specular.rgb /** sample.environment.a*/;
 }
 
