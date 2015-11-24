@@ -6,7 +6,7 @@
 
 namespace Dx11Sandbox
 {
-	CullableLight::CullableLight(CullableLightManager* mngr)
+	CullableLight::CullableLight(CullableObjectManager* mngr)
 		:m_bounds(-1.f, -1.f,-1.f, -1.f),	
 		m_cullingInformation(0),
 		m_mngr(mngr),

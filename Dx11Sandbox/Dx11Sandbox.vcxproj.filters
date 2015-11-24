@@ -162,6 +162,9 @@
     <ClCompile Include="BasicGeometry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CullableObjectManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Root.h">

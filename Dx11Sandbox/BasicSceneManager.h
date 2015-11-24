@@ -69,8 +69,7 @@ namespace Dx11Sandbox
 		virtual RenderCamera* createCamera();
 		virtual void destroyCamera(RenderCamera* camera);
         
-		virtual void calculateVisibleLightsForCamera(RenderCamera* cam, std::vector<Cullable*>& out);
-		virtual void calculateVisibleGeometryForCamera(RenderCamera* cam, std::vector<Cullable*>& out);
+		virtual void calculateVisibleObjectsForCamera(RenderCamera* cam, std::vector<Cullable*>& out);
 
 		virtual void cullObjectsToRenderQueues(RenderCamera* cam);
 
@@ -93,10 +92,8 @@ namespace Dx11Sandbox
 
         RenderBin    m_RenderBin;
 
-		CullableGeometryManager m_renderGeometryManager;
-		CullableLightManager m_lightManager;
-        std::vector<Cullable*> m_cachedVisibleLightsList;
-		std::vector<Cullable*> m_cachedVisibleGeometryList;
+		CullableObjectManager m_cullableObjectManager;
+		std::vector<Cullable*> m_cachedVisibleObjectsList;
 		std::vector<DebugDrawer*> m_debugDrawList;
         
 		std::set<EnvironmentChangedListeners*> m_environmentListeners;

@@ -61,12 +61,12 @@ namespace Dx11Sandbox
 
 	CullableGeometry* BasicSceneManager::createCullableGeometry()
 	{
-		return m_renderGeometryManager.create();
+		return m_cullableObjectManager.create<CullableGeometry>();
 	}
 
 	CullableLight* BasicSceneManager::createLight()
 	{
-		return m_lightManager.create();
+		return m_cullableObjectManager.create<CullableLight>();
 	}
 
 
@@ -196,8 +196,7 @@ namespace Dx11Sandbox
 	void BasicSceneManager::destroyWorld()
     {
         clearRenderQueues();
-		m_renderGeometryManager.destroyAll();
-		m_lightManager.destroyAll();
+		m_cullableObjectManager.destroyAll();
 
 		for(unsigned int i = 0; i  < m_cameras.size(); ++i)
 		{
@@ -272,18 +271,13 @@ namespace Dx11Sandbox
 
     }
 
-	void BasicSceneManager::calculateVisibleLightsForCamera(RenderCamera* cam, std::vector<Cullable*>& out)
+	void BasicSceneManager::calculateVisibleObjectsForCamera(RenderCamera* cam, std::vector<Cullable*>& out)
 	{
-		//addlights
-		std::map<RenderLayer, CullDataAllocator*>* cullDataPools = &m_lightManager.GetCullDataAllocators();
+		
+		std::map<RenderLayer, CullDataAllocator*>* cullDataPools = &m_cullableObjectManager.GetCullDataAllocators();
 		cullObjectsFromPools(*cullDataPools, cam, out);
 	}
-	void BasicSceneManager::calculateVisibleGeometryForCamera(RenderCamera* cam, std::vector<Cullable*>& out)
-	{
-		//add geometry
-		std::map<RenderLayer, CullDataAllocator*>* cullDataPools = &m_renderGeometryManager.GetCullDataAllocators();
-		cullObjectsFromPools(*cullDataPools, cam, out);
-	}
+	
 
 
 	void BasicSceneManager::cullObjectsToRenderQueues(RenderCamera* cam)
@@ -291,13 +285,12 @@ namespace Dx11Sandbox
 		
 
         clearRenderQueues();
-		m_cachedVisibleGeometryList.clear();
-		m_cachedVisibleLightsList.clear();
+		m_cachedVisibleObjectsList.clear();
 
 		cam->startedCulling();
 
-		calculateVisibleGeometryForCamera(cam, m_cachedVisibleGeometryList);
-		calculateVisibleLightsForCamera(cam, m_cachedVisibleLightsList);
+		calculateVisibleObjectsForCamera(cam, m_cachedVisibleObjectsList);
+
 		addCachedObjectsToRenderBins();
 		
     }
@@ -332,18 +325,9 @@ namespace Dx11Sandbox
 
 	void BasicSceneManager::addCachedObjectsToRenderBins()
 	{
-		
-
-		for (UINT i = 0; i < m_cachedVisibleGeometryList.size(); ++i)
+		for (UINT i = 0; i < m_cachedVisibleObjectsList.size(); ++i)
 		{
-			m_cachedVisibleGeometryList[i]->passedCulling(&m_RenderBin);
+			m_cachedVisibleObjectsList[i]->passedCulling(&m_RenderBin);
 		}
-
-		for (UINT i = 0; i < m_cachedVisibleLightsList.size(); ++i)
-		{
-			m_cachedVisibleLightsList[i]->passedCulling(&m_RenderBin);
-		}
-
-		
 	}
 }

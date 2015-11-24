@@ -176,6 +176,7 @@
     <ClCompile Include="CommonUtilities.cpp" />
     <ClCompile Include="Compositor.cpp" />
     <ClCompile Include="Cullable.cpp" />
+    <ClCompile Include="CullableObjectManager.cpp" />
     <ClCompile Include="CullData.cpp" />
     <ClCompile Include="DebugDrawer.cpp" />
     <ClCompile Include="DebugDrawLights.cpp" />

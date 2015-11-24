@@ -46,8 +46,7 @@ namespace Dx11Sandbox
 		virtual RenderCamera* createCamera() = 0;
 		virtual void destroyCamera(RenderCamera* camera) = 0;
 
-		virtual void calculateVisibleLightsForCamera(RenderCamera* cam, std::vector<Cullable*>& out) = 0;
-		virtual void calculateVisibleGeometryForCamera(RenderCamera* cam, std::vector<Cullable*>& out) = 0;
+		virtual void calculateVisibleObjectsForCamera(RenderCamera* cam, std::vector<Cullable*>& out) = 0;
 
 		virtual void cullObjectsToRenderQueues(RenderCamera* cam) = 0;
 

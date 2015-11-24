@@ -8,7 +8,7 @@
 
 namespace Dx11Sandbox
 {
-	CullableGeometry::CullableGeometry(CullableGeometryManager* mngr)
+	CullableGeometry::CullableGeometry(CullableObjectManager* mngr)
 		:m_bounds(-1.f, -1.f,-1.f, -1.f),	
 		m_cullingInformation(0),
 		m_mngr(mngr)	

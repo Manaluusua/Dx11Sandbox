@@ -8,19 +8,17 @@
 
 namespace Dx11Sandbox
 {
-	template<class T>
+
 	class CullableObjectManager;
-	class CullableGeometry;
 	class CullData;
 	class Mesh;
 	class Material;
 
-	typedef CullableObjectManager<CullableGeometry> CullableGeometryManager;
 
 	class CullableGeometry : public BasicGeometry, public Cullable
 	{
 		
-		friend class CullableObjectManager<CullableGeometry>;
+		friend class CullableObjectManager;
 
 	public:
 
@@ -38,7 +36,7 @@ namespace Dx11Sandbox
 
 	protected:
 
-		CullableGeometry(CullableGeometryManager* mngr);
+		CullableGeometry(CullableObjectManager* mngr);
 		virtual ~CullableGeometry();
 
 		void acquireCullData();
@@ -51,7 +49,7 @@ namespace Dx11Sandbox
 
 		D3DXVECTOR4 m_bounds;
 		CullData** m_cullingInformation;
-		CullableGeometryManager* m_mngr;
+		CullableObjectManager* m_mngr;
 		
 		
 	};

@@ -6,16 +6,14 @@
 
 namespace Dx11Sandbox
 {
-	template<class T>
-	class CullableObjectManager;
-	class CullableLight;
-	class CullData;
 
-	typedef CullableObjectManager<CullableLight> CullableLightManager;
+	class CullableObjectManager;
+
+	class CullData;
 
 	class CullableLight: public Light, public Cullable
 	{
-		friend class CullableObjectManager<CullableLight>;
+		friend class CullableObjectManager;
 	public:
 		virtual void passedCulling(RenderPrimitiveGatherer *gatherer);
 
@@ -32,12 +30,12 @@ namespace Dx11Sandbox
 		void calculateBoundsForLight(D3DXVECTOR4& bounds) const;
 		
 
-		CullableLight(CullableLightManager* mngr);
+		CullableLight(CullableObjectManager* mngr);
 		virtual ~CullableLight(void);
 
 		D3DXVECTOR4 m_bounds;
 		CullData** m_cullingInformation;
-		CullableLightManager* m_mngr;
+		CullableObjectManager* m_mngr;
 		UINT m_lightId;
 	};
 
