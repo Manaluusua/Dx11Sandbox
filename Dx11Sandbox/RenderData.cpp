@@ -1,6 +1,4 @@
 #include "RenderData.h"
-#include "Mesh.h"
-#include "Material.h"
 
 namespace Dx11Sandbox
 {
@@ -17,36 +15,5 @@ namespace Dx11Sandbox
 	{
 	}
 
-
-	void RenderData::setWorldMatrix(const D3DXMATRIX& matrix)
-	{
-		m_worldMatrix = matrix;
-	}
-
-	const D3DXMATRIX& RenderData::getWorldMatrix() const
-	{
-		return m_worldMatrix;
-	}
-
-
-	void RenderData::setMesh(Mesh* m)
-	{
-		m_mesh = m;
-	}
-
-	void RenderData::setMaterial(Material* mat)
-	{
-		m_material = mat;
-	}
-
-	RCObjectPtr<Material> RenderData::getMaterial()
-	{
-		return m_material;
-	}
-
-	RCObjectPtr<Mesh> RenderData::getMesh()
-	{
-		return m_mesh;
-	}
 
 }

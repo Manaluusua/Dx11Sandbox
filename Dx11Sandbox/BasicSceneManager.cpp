@@ -10,7 +10,7 @@
 #include "BasicBinHandler.h"
 #include "Frustum.h"
 #include "CullData.h"
-#include "SIMDCuller.h"
+#include "Culler.h"
 #include "BasicForwardRenderer.h"
 #include "DeferredRenderer.h"
 #include "EnvironmentInfo.h"
@@ -22,8 +22,7 @@ namespace Dx11Sandbox
 	BasicSceneManager::BasicSceneManager(Root* root)
         :m_root(root),
         m_RenderBin( new BasicBinHandler() ),
-        m_renderContext(),
-        m_culler(new SIMDCuller())
+        m_renderContext()
     {
 		setEnvironmentDeltaTime(0);
 		setEnvironmentTime(0);
@@ -313,7 +312,7 @@ namespace Dx11Sandbox
 			{
 
 				CullDataPool &objects = cullDataPool->getDynamicPoolVector(i);
-				m_culler->cull(frust, objects, out);
+				Dx11Sandbox::CullUtility::cull(frust, objects, out);
 			}
 
 			

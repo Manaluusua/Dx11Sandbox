@@ -205,15 +205,15 @@
     <ClCompile Include="RenderBin.cpp" />
     <ClCompile Include="RenderCamera.cpp" />
     <ClCompile Include="RenderContext.cpp" />
-    <ClCompile Include="RenderData.cpp" />
     <ClCompile Include="CullableGeometry.cpp" />
+    <ClCompile Include="RenderData.cpp" />
     <ClCompile Include="Root.cpp" />
     <ClCompile Include="BasicSceneManager.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderIncludeHandler.cpp" />
     <ClCompile Include="ShadowCPUBuffer.cpp" />
-    <ClCompile Include="SIMDCuller.cpp" />
+    <ClCompile Include="Culler.cpp" />
     <ClCompile Include="TerrainBinHandler.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />

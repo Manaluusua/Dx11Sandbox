@@ -98,9 +98,6 @@ namespace Dx11Sandbox
         
 		std::set<EnvironmentChangedListeners*> m_environmentListeners;
 
-
-        RCObjectPtr<Culler> m_culler;
-
         RenderCamera* m_mainCamera;
 
         Root* m_root;

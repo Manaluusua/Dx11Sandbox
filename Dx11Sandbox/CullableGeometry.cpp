@@ -69,8 +69,8 @@ namespace Dx11Sandbox
 		D3DXVECTOR3 center = m_bounds;
 		D3DXVECTOR4 boundsWorld;
 		D3DXVec3Transform(&boundsWorld, &center, &m_renderData.getWorldMatrix());
-		boundsWorld.w = calculateWorldSpaceRadius(m_bounds.w) * 0.9f;;
-
+		boundsWorld.w = calculateWorldSpaceRadius(m_bounds.w);
+		m_renderData.setWorldBounds(m_bounds);
 		(*m_cullingInformation)->boundingSphere = boundsWorld;
 	}
 
