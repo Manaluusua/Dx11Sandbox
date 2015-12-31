@@ -218,9 +218,6 @@
     <ClInclude Include="Culler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SIMDCuller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RCObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>

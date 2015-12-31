@@ -13,7 +13,7 @@ namespace Dx11Sandbox
 	template <typename CullData> class AllocationUnit;
 	template <typename CullData> class PoolVector;
 
-	namespace CullUtility
+	namespace Culler
 	{
 		void cull(const Frustum& frusta, const std::vector<RenderData*>&in, std::vector<RenderData*>& out);
 		void cull(const Frustum& frusta, const PoolVector<AllocationUnit<CullData> > &in, std::vector<Cullable*>& out);

@@ -154,18 +154,20 @@ namespace Dx11Sandbox
 
         m_mainCamera->setProjectionPerspective(D3DX_PI / 3, aspectRatio, 0.1f, 800.0f);
 
+		float vpw = static_cast<FLOAT>(pBackBufferSurfaceDesc->Width);
+		float vph = static_cast<FLOAT>(pBackBufferSurfaceDesc->Height);
 		//setup new viewport
 		D3D11_VIEWPORT vp;
 		vp.MinDepth = 0.f;
 		vp.MaxDepth = 1.f;
-		vp.Width = pBackBufferSurfaceDesc->Width;
-		vp.Height = pBackBufferSurfaceDesc->Height;
+		vp.Width = vpw;
+		vp.Height = vph;
 		vp.TopLeftX = 0;
 		vp.TopLeftY = 0;
 
 		m_renderContext.setDefaultViewport(&vp);
 
-		setEnvironmentScreenDimension(pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height);
+		setEnvironmentScreenDimension(vpw, vph);
 
         
 		for( auto iter = m_environmentListeners.begin(); iter != m_environmentListeners.end(); ++iter)
@@ -312,7 +314,7 @@ namespace Dx11Sandbox
 			{
 
 				CullDataPool &objects = cullDataPool->getDynamicPoolVector(i);
-				Dx11Sandbox::CullUtility::cull(frust, objects, out);
+				Dx11Sandbox::Culler::cull(frust, objects, out);
 			}
 
 			

@@ -270,7 +270,6 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderIncludeHandler.h" />
     <ClInclude Include="ShadowCPUBuffer.h" />
-    <ClInclude Include="SIMDCuller.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="GeometryBinHandler.h" />
     <ClInclude Include="CullData.h" />

@@ -26,7 +26,6 @@ namespace Dx11Sandbox
     class RenderContext;
     class SceneManager;
     class Frustum;
-    class Culler;
 	class DebugDrawer;
     
     
