@@ -94,40 +94,46 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(DXSDK_DIR)Include;..\Dx11Sandbox;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\Dx11Sandbox;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\Temp</IntDir>
+    <ExcludePath>$(VC_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x86);</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <IncludePath>$(DXSDK_DIR)Include;..\Dx11Sandbox;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\Dx11Sandbox;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\Temp</IntDir>
+    <ExcludePath>$(VC_IncludePath);$(MSBuildToolsPath);$(MSBuildFrameworkToolsPath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_ARM);</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(DXSDK_DIR)Include;..\Dx11Sandbox;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(DXSDK_DIR)Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\Dx11Sandbox;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\Temp</IntDir>
+    <ExcludePath>$(VC_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x64);</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(DXSDK_DIR)Include;..\Dx11Sandbox;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\Dx11Sandbox;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\Temp</IntDir>
+    <ExcludePath>$(VC_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x86);</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <IncludePath>$(DXSDK_DIR)Include;..\Dx11Sandbox;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\Dx11Sandbox;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\Temp</IntDir>
+    <ExcludePath>$(VC_IncludePath);$(MSBuildToolsPath);$(MSBuildFrameworkToolsPath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_ARM);</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(DXSDK_DIR)Include;..\Dx11Sandbox;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(DXSDK_DIR)Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\Dx11Sandbox;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\Temp</IntDir>
+    <ExcludePath>$(VC_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x64);</ExcludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
