@@ -6,6 +6,7 @@
 #include "MaterialManager.h"
 #include "MeshUtility.h"
 #include "MeshManager.h"
+#include "TextureCache.h"
 #include "Mesh.h"
 #include "BasicBinHandler.h"
 #include "Frustum.h"
@@ -54,7 +55,7 @@ namespace Dx11Sandbox
 		TextureManager::destroyInstance();
         MaterialManager::destroyInstance();
         MeshManager::destroyInstance();
-		
+		TextureCache::destroyInstance();
 		
     }
 
@@ -123,7 +124,7 @@ namespace Dx11Sandbox
 	void BasicSceneManager::destroyCamera(RenderCamera* camera){
 		if(camera == 0) return;
 
-		for(unsigned int i = 0; i < m_cameras.size(); ++i)
+		for(size_t i = 0; i < m_cameras.size(); ++i)
 		{
 			if(m_cameras[i] == camera){
 				m_cameras.erase(m_cameras.begin() + i );
@@ -262,8 +263,7 @@ namespace Dx11Sandbox
 		for( unsigned int i = 0; i < m_cameras.size(); ++i)
 		{
 			RenderCamera* cam = m_cameras[i];
-			cullObjectsToRenderQueues(cam);
-			cam->render(m_RenderBin, &m_renderContext);
+			renderCamera(cam);
 				
 		}
 
@@ -271,6 +271,13 @@ namespace Dx11Sandbox
 		drawDebug();
 
     }
+
+
+	void BasicSceneManager::renderCamera(RenderCamera* cam)
+	{
+		cullObjectsToRenderQueues(cam);
+		cam->render(m_RenderBin, &m_renderContext);
+	}
 
 	void BasicSceneManager::calculateVisibleObjectsForCamera(RenderCamera* cam, std::vector<Cullable*>& out)
 	{

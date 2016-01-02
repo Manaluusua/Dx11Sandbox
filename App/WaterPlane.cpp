@@ -95,12 +95,12 @@ void WaterPlane::initializeRenderTargets(ID3D11Device *device, Dx11Sandbox::RCOb
 {
 
 	int texWidth = resolution;
-	int texHeight = ( 1.f / Dx11Sandbox::EnvironmentInfo::getScreenAspectRatio() ) * texWidth;
+	int texHeight = static_cast<int>(( 1.f / Dx11Sandbox::EnvironmentInfo::getScreenAspectRatio() ) * texWidth);
 
 	waterplaneViewport.MaxDepth = 1.f;
 	waterplaneViewport.MinDepth = 0.f;
-	waterplaneViewport.Height = texHeight;
-	waterplaneViewport.Width = texWidth;
+	waterplaneViewport.Height = static_cast<FLOAT>(texHeight);
+	waterplaneViewport.Width = static_cast<FLOAT>(texWidth);
 	waterplaneViewport.TopLeftY = 0;
 	waterplaneViewport.TopLeftX = 0;
 

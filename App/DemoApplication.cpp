@@ -173,7 +173,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	float minHeight = 60.f;
 	D3DXVECTOR3 color;
 	D3DXVECTOR3 pos;
-	for (int i = 0; i < lightsGenerated; ++i){
+	for (unsigned int i = 0; i < lightsGenerated; ++i){
 		float rat = (static_cast<float>(i) / lightsGenerated);
 
 		float r = 0.1f + Dx11Sandbox::MathUtil::randomFloat() * 0.9f;
@@ -186,8 +186,8 @@ void DemoApplication::createWorld(SceneManager* mngr)
 		float circleRad = circleRadMin + (circleRadMax - circleRadMin)*Dx11Sandbox::MathUtil::randomFloat();
 		float lightRad = lightRadMin + (lightRadMax - lightRadMin)*Dx11Sandbox::MathUtil::randomFloat();
 
-		pos.x = std::cos(2 * Dx11Sandbox::MathUtil::PI * rat) * circleRad;
-		pos.z = std::sin(2 * Dx11Sandbox::MathUtil::PI * rat) * circleRad;
+		pos.x = std::cos(2.f * Dx11Sandbox::MathUtil::PI * rat) * circleRad;
+		pos.z = std::sin(2.f * Dx11Sandbox::MathUtil::PI * rat) * circleRad;
 		pos.y = minHeight + (maxHeight - minHeight) * Dx11Sandbox::MathUtil::randomFloat();
 
 		l = m_mngr->createLight();

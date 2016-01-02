@@ -88,7 +88,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LibraryPath>$(LibraryPath)</LibraryPath>
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>$(ProjectName)Debug</TargetName>
+    <TargetName>$(ProjectName)d</TargetName>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\Temp</IntDir>
   </PropertyGroup>
@@ -216,6 +216,7 @@
     <ClCompile Include="Culler.cpp" />
     <ClCompile Include="TerrainBinHandler.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureCache.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
@@ -278,6 +279,7 @@
     <ClInclude Include="BasicSceneManager.h" />
     <ClInclude Include="TerrainBinHandler.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureCache.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="VertexBuffer.h" />

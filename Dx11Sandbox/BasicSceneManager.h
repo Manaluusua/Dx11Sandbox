@@ -70,7 +70,7 @@ namespace Dx11Sandbox
         
 		virtual void calculateVisibleObjectsForCamera(RenderCamera* cam, std::vector<Cullable*>& out);
 
-		virtual void cullObjectsToRenderQueues(RenderCamera* cam);
+		virtual void renderCamera(RenderCamera* cam);
 
     protected:
 		virtual void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc);
@@ -80,6 +80,7 @@ namespace Dx11Sandbox
         
 		void drawDebug();
 
+		void cullObjectsToRenderQueues(RenderCamera* cam) ;
 		void cullObjectsFromPools(std::map<RenderLayer, CullDataAllocator*>& pools, RenderCamera* cam, std::vector<Cullable*>& out);
 		void addCachedObjectsToRenderBins();
 

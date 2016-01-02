@@ -3,7 +3,7 @@
 #include "RenderContext.h"
 
 #include "TextureManager.h"
-
+#include "TextureCache.h"
 
 namespace Dx11Sandbox
 {
@@ -77,6 +77,8 @@ namespace Dx11Sandbox
 		Texture* refl = TextureManager::singleton()->createTexture("GBUFFER_ENVIRONMENT");
 		refl->createResource(m_context->getDevice(), m_bufferWidth, m_bufferHeight, true, D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE, DXGI_FORMAT_R32G32B32A32_FLOAT);
 
+		Texture* depth = m_context->getDefaultDepthStencilTexture();
+
 		m_textures[ALBEDO] = albedo;
 		m_textures[NORMAL] = normal;
 		m_textures[SPECULAR] = specular;
@@ -87,6 +89,14 @@ namespace Dx11Sandbox
 		m_renderTargets[SPECULAR] = specular->getRenderTargetView();
 		m_renderTargets[ENVIRONMENT] = refl->getRenderTargetView();
 
+		//add to cache
+		TextureCache* cache = TextureCache::singleton();
+		cache->setCachedTextures(TextureCache::GALBEDO, &albedo, 1);
+		cache->setCachedTextures(TextureCache::GNORMAL, &normal, 1);
+		cache->setCachedTextures(TextureCache::GSPECULAR, &specular, 1);
+		cache->setCachedTextures(TextureCache::GENVIRONMENT, &refl, 1);
+		cache->setCachedTextures(TextureCache::SCENEDEPTH, &depth, 1);
+		
 		m_isAllocated = true;
 	}
 
