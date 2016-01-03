@@ -14,7 +14,7 @@ namespace Dx11Sandbox
 
 	
 
-	void Light::setColor( const D3DXVECTOR3& color )
+	void Light::setColor( const Vec3& color )
 	{
 		m_lightDefinition.colorInvRad.x = color.x;
 		m_lightDefinition.colorInvRad.y = color.y;
@@ -22,12 +22,12 @@ namespace Dx11Sandbox
 		lightParametersChanged();
 	}
 
-	const D3DXVECTOR4& Light::getColor() const
+	const Vec4& Light::getColor() const
 	{
 		return m_lightDefinition.colorInvRad;
 	}
 
-	void Light::setPosition(const D3DXVECTOR3& pos)
+	void Light::setPosition(const Vec3& pos)
 	{
 		
 		m_lightDefinition.posRad.x = pos.x;
@@ -36,12 +36,12 @@ namespace Dx11Sandbox
 		lightParametersChanged();
 	}
 
-	const D3DXVECTOR4& Light::getPosition() const
+	const Vec4& Light::getPosition() const
 	{
 		return m_lightDefinition.posRad;
 	}
 
-	void Light::setDirection(const D3DXVECTOR3& dir)
+	void Light::setDirection(const Vec3& dir)
 	{
 		
 		m_lightDefinition.dirAng.x = dir.x;
@@ -49,7 +49,7 @@ namespace Dx11Sandbox
 		m_lightDefinition.dirAng.z = dir.z;
 		lightParametersChanged();
 	}
-	const D3DXVECTOR4& Light::getDirection() const
+	const Vec4& Light::getDirection() const
 	{
 		return m_lightDefinition.dirAng;
 	}

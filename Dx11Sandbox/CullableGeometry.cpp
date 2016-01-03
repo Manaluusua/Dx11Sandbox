@@ -38,7 +38,7 @@ namespace Dx11Sandbox
 		}
 	}
 
-	void CullableGeometry::setWorldMatrix(const D3DXMATRIX& matrix)
+	void CullableGeometry::setWorldMatrix(const Mat4x4& matrix)
 	{
 		m_renderData.setWorldMatrix(matrix);
 		updateCullData();
@@ -66,11 +66,10 @@ namespace Dx11Sandbox
 		if(m_cullingInformation == 0) return;
 
 		//calculate world space bounds
-		D3DXVECTOR3 center = m_bounds;
-		D3DXVECTOR4 boundsWorld;
-		D3DXVec3Transform(&boundsWorld, &center, &m_renderData.getWorldMatrix());
+		Vec3 center(m_bounds.x, m_bounds.y, m_bounds.z);
+		Vec4 boundsWorld;
+		transformVec3Point(center, m_renderData.getWorldMatrix(), center);
 		boundsWorld.w = calculateWorldSpaceRadius(m_bounds.w);
-		m_renderData.setWorldBounds(m_bounds);
 		(*m_cullingInformation)->boundingSphere = boundsWorld;
 	}
 
@@ -79,23 +78,11 @@ namespace Dx11Sandbox
 	{
 		if (localRadius <= 0.f) return localRadius;
 		float lenSqr = 0.f;
-		D3DXVECTOR3 local;
-		D3DXVECTOR3 world;
+		Vec3 s(localRadius, localRadius, localRadius);
+		transformVec3Direction(s, m_renderData.getWorldMatrix(), s);
 
-		for (int i = 0; i < 3; ++i){
-			local.x = i == 0 ? localRadius : 0.f;
-			local.y = i == 1 ? localRadius : 0.f;
-			local.z = i == 2 ? localRadius : 0.f;
+		return sqrtf(max(max(s.x, s.y), s.z));
 
-			D3DXVec3TransformNormal(&world, &local, &m_renderData.getWorldMatrix());
-
-			float lqsr = D3DXVec3LengthSq(&world);
-			if (lqsr <= lenSqr) continue;
-			lenSqr = lqsr;
-
-		}
-		return sqrtf(lenSqr);
-		
 	}
 
 	void CullableGeometry::destroy()
@@ -103,9 +90,10 @@ namespace Dx11Sandbox
 		m_mngr->destroy(this);
 	}
 
-	void CullableGeometry::setBoundingSphere(const D3DXVECTOR4& bounds)
+	void CullableGeometry::setBoundingSphere(const Vec4& bounds)
 	{
 		m_bounds = bounds;
+		m_renderData.setWorldBounds(m_bounds);
 		updateCullData();
 	}
 

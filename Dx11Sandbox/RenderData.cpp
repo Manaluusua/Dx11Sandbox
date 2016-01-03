@@ -7,7 +7,7 @@ namespace Dx11Sandbox
 		:m_mesh(0),
 		m_material(0)
 	{
-		D3DXMatrixIdentity(&m_worldMatrix);
+		matMakeIdentity(m_worldMatrix);
 	}
 
 

@@ -20,10 +20,10 @@ namespace Dx11Sandbox
     {
        
 
-        D3DXQuaternionIdentity(&m_orientation);
-        D3DXMatrixIdentity(&m_viewMatrix);
-        D3DXMatrixIdentity(&m_projMatrix);
-        D3DXMatrixIdentity(&m_reflMatrix);
+        quatMakeIdentity(m_orientation);
+        matMakeIdentity(m_viewMatrix);
+		matMakeIdentity(m_projMatrix);
+		matMakeIdentity(m_reflMatrix);
         
     }
 
@@ -47,7 +47,7 @@ namespace Dx11Sandbox
 		m_viewCacheValid = false;
 	}
 
-    const D3DXMATRIX* Camera::getProjectionMatrix()
+    const Mat4x4* Camera::getProjectionMatrix()
     {
 
 		if(!m_projectionCacheValid)
@@ -59,20 +59,12 @@ namespace Dx11Sandbox
     }
 
 
-    const D3DXMATRIX* Camera::getViewMatrix()
+	const Mat4x4* Camera::getViewMatrix()
     {
         if(!m_viewCacheValid)
         {
-            D3DXMATRIX rot;
-            D3DXMatrixIdentity(&m_viewMatrix);
-
-            D3DXVECTOR4 transl(m_translation,1);
-            D3DXMatrixRotationQuaternion(&rot, &m_orientation);
-
-            D3DXMatrixTranslation(&m_viewMatrix,transl.x, transl.y, transl.z);
-
-            m_viewMatrix *= rot;
-
+            matMakeIdentity(m_viewMatrix);
+			createTransformationTO(m_translation, m_orientation, m_viewMatrix);
             if(m_reflected)
             {
                 m_viewMatrix =  m_reflMatrix * m_viewMatrix;
@@ -88,9 +80,9 @@ namespace Dx11Sandbox
 	{
 		if(m_projectionType == PERSPECTIVE)
 		{
-			D3DXMatrixPerspectiveFovLH(&m_projMatrix, m_fovy, m_aspectRatio, m_near, m_far);
+			createPerspectiveProjLH(m_fovy, m_aspectRatio, m_near, m_far, m_projMatrix);
 		} else {
-			D3DXMatrixOrthoLH(&m_projMatrix, m_orthoSize, m_orthoSize * (1.f / m_aspectRatio), m_near, m_far); 
+			createOrthoProjLH(m_orthoSize, m_orthoSize * (1.f / m_aspectRatio), m_near, m_far, m_projMatrix);
 		}
 		
 		m_projectionCacheValid = true;
@@ -179,7 +171,7 @@ namespace Dx11Sandbox
 		return m_orthoSize;
 	}
 	
-	const D3DXVECTOR4& Camera::getClipPlane() const
+	const Vec4& Camera::getClipPlane() const
 	{
 		return m_clipPlane;
 	}
@@ -189,7 +181,7 @@ namespace Dx11Sandbox
 		return m_projectionType;
 	}
 
-	void Camera::setClipPlane(const D3DXVECTOR4& plane)
+	void Camera::setClipPlane(const Vec4& plane)
 	{
 		m_clipPlane = plane;
 	}
@@ -213,29 +205,29 @@ namespace Dx11Sandbox
         m_translation.z += -z;
     }
 
-    const D3DXVECTOR3&  Camera::getTranslation() const
+    const Vec3&  Camera::getTranslation() const
     {
         return m_translation;
     }
 
-    const D3DXQUATERNION& Camera::getOrientation() const
+    const Quat& Camera::getOrientation() const
     {
         return m_orientation;
     }
 
-	void Camera::setTranslation(const D3DXVECTOR3& translation)
+	void Camera::setTranslation(const Vec3& translation)
 	{
 		m_viewCacheValid = false;
 		m_translation = translation;
 	}
 
-	void Camera::addTranslation(const D3DXVECTOR3& translation)
+	void Camera::addTranslation(const Vec3& translation)
 	{
 		m_viewCacheValid = false;
 		m_translation += translation;
 	}
 
-	void Camera::setOrientation(const D3DXQUATERNION& orientation)
+	void Camera::setOrientation(const Quat& orientation)
 	{
 		m_viewCacheValid = false;
 		m_orientation = orientation;
@@ -245,53 +237,53 @@ namespace Dx11Sandbox
     {
         m_viewCacheValid = false;
         angle = -angle*0.5f;
-        m_orientation = D3DXQUATERNION(sin(angle)*x, sin(angle)*y, sin(angle)*z, cos(angle));
+		m_orientation = createQuat(sin(angle)*x, sin(angle)*y, sin(angle)*z, cos(angle));
     }
 
     void  Camera::addOrientation(FLOAT x, FLOAT y, FLOAT z, FLOAT angle)
     {
         m_viewCacheValid = false;
         angle = -angle*0.5f;
-        m_orientation *= D3DXQUATERNION(sin(angle)*x, sin(angle)*y, sin(angle)*z, cos(angle));
+		m_orientation = m_orientation * createQuat(sin(angle)*x, sin(angle)*y, sin(angle)*z, cos(angle));
     }
 
 
-    void Camera::lookAt(const D3DXVECTOR3& eye, const D3DXVECTOR3& at, const D3DXVECTOR3& up)
+	void Camera::lookAt(const Vec3& eye, const Vec3& at, const Vec3& up)
     {
-        D3DXVECTOR3 axisUp = up;
-        D3DXVECTOR3 axisTo = (at-eye);
+		Vec3 axisUp = up;
+		Vec3 axisTo = (at - eye);
         //check if up and  at - eye is perpendicular. If not, make them.
-        if( D3DXVec3Dot(&axisUp,&axisTo) != 0)
+        if( vecDotProduct(axisUp,axisTo) != 0)
         {
-            D3DXVECTOR3 temp;
-            D3DXVec3Cross(&temp, &axisUp, &axisTo);
-            D3DXVec3Cross(&axisUp, &axisTo, &temp);
+            Vec3 temp;
+			vecCrossProduct(axisUp, axisTo, temp);
+			vecCrossProduct(axisTo, temp, axisUp);
         }
-        D3DXVec3Normalize(&axisUp, &axisUp);
-        D3DXVec3Normalize(&axisTo, &axisTo);
+        vecNormalize(axisUp, axisUp);
+		vecNormalize(axisTo, axisTo);
 
-        D3DXMatrixIdentity(&m_viewMatrix);
-        D3DXMatrixLookAtLH(&m_viewMatrix,&eye,&at,&axisUp);
+        matMakeIdentity(m_viewMatrix);
+		createLookAtLH(eye, at, axisUp, m_viewMatrix);
 
         //calculate transforms
         m_translation = -eye;
-        D3DXVECTOR3 ref = D3DXVECTOR3(0,0,1);
-        D3DXVECTOR3 rotAxis;
-        D3DXVec3Cross(&rotAxis,&axisTo,&ref);
-        D3DXVec3Normalize(&rotAxis, &rotAxis);
+        Vec3 ref = Vec3(0.f,0.f,1.f);
+        Vec3 rotAxis;
+		vecCrossProduct(axisTo, ref, rotAxis);
+		vecNormalize(rotAxis, rotAxis);
         float angle;
         
 
-        angle = acos(D3DXVec3Dot( &ref, &axisTo ))*0.5f;
+        angle = acos(vecDotProduct( ref, axisTo ))*0.5f;
 
-        m_orientation = D3DXQUATERNION(sin(angle)*rotAxis.x, sin(angle)*rotAxis.y, sin(angle)*rotAxis.z, cos(angle));
+        m_orientation = createQuat(sin(angle)*rotAxis.x, sin(angle)*rotAxis.y, sin(angle)*rotAxis.z, cos(angle));
 
         //check if up vector is still "up"
-        
-        D3DXVECTOR3 rotatedUp = MathUtil::rotateVec3ByQuat(&axisUp, &m_orientation);
-        if(D3DXVec3Dot(&rotatedUp,&up)<0)
+		Vec3 rotatedUp;
+		rotateVecByQuat(axisUp, m_orientation, rotatedUp);
+        if(vecDotProduct(rotatedUp,up)<0)
         {
-            m_orientation = D3DXQUATERNION(axisTo.x*sin(MathUtil::PI*0.5f),axisTo.y*sin(MathUtil::PI*0.5f), axisTo.z*sin(MathUtil::PI*0.5f), cos(MathUtil::PI*0.5f)) * m_orientation;
+            m_orientation = createQuat(axisTo.x*sin(MathUtil::PI*0.5f),axisTo.y*sin(MathUtil::PI*0.5f), axisTo.z*sin(MathUtil::PI*0.5f), cos(MathUtil::PI*0.5f)) * m_orientation;
         }
 
 
@@ -301,45 +293,45 @@ namespace Dx11Sandbox
 	
     void Camera::moveCameraViewRelative(FLOAT x, FLOAT y, FLOAT z)
     {
-        D3DXVECTOR3 dir(0,0,1);
-        D3DXVECTOR3 up = m_up;
-        D3DXVECTOR3 right;
+        Vec3 dir(0,0,1);
+        Vec3 up = m_up;
+        Vec3 right;
 
-        D3DXQUATERNION conj;
-        D3DXQuaternionConjugate(&conj, &m_orientation);
+		Quat conj;
+		quatConjugate(m_orientation, conj);
         
-        dir = MathUtil::rotateVec3ByQuat(&dir,&conj);
-        up = MathUtil::rotateVec3ByQuat(&up,&conj);
-        D3DXVec3Cross(&right, &up, &dir);
+		rotateVecByQuat(dir, conj, dir);
+		rotateVecByQuat(up, conj, up);
+		vecCrossProduct(up, dir, right);
 
-        m_translation -= x*right + y*up + z*dir;
+        m_translation -= right*x + up*y + dir*z;
         m_viewCacheValid = false;
     }
 
     void Camera::rotateCameraViewRelative(FLOAT x, FLOAT y, FLOAT z)
     {
-        D3DXVECTOR3 dir(0,0,1);
-        D3DXVECTOR3 up(0,1,0);
-        D3DXVECTOR3 right;
+        Vec3 dir(0,0,1);
+        Vec3 up(0,1,0);
+        Vec3 right;
 
 
         
 
-        D3DXVec3Cross(&right, &up, &dir);
+		vecCrossProduct(up, dir, right);
 
-        D3DXQUATERNION xrot(right.x*sin(x*0.5f),right.y*sin(x*0.5f), right.z*sin(x*0.5f), cos(x*0.5f));
-        D3DXQUATERNION yrot(up.x*sin(y*0.5f),up.y*sin(y*0.5f), up.z*sin(y*0.5f), cos(y*0.5f));
-        D3DXQUATERNION zrot(dir.x*sin(z*0.5f),dir.y*sin(z*0.5f), dir.z*sin(z*0.5f), cos(z*0.5f));
+        Quat xrot = createQuat(right.x*sin(x*0.5f),right.y*sin(x*0.5f), right.z*sin(x*0.5f), cos(x*0.5f));
+		Quat yrot = createQuat(up.x*sin(y*0.5f), up.y*sin(y*0.5f), up.z*sin(y*0.5f), cos(y*0.5f));
+		Quat zrot = createQuat(dir.x*sin(z*0.5f), dir.y*sin(z*0.5f), dir.z*sin(z*0.5f), cos(z*0.5f));
 
         m_orientation =  yrot * m_orientation * xrot * zrot;
         m_viewCacheValid = false;
     }
 
 
-    void Camera::setReflectionPlane(D3DXVECTOR3& normal, float d)
+    void Camera::setReflectionPlane(Vec3& normal, float d)
     {
-        D3DXPLANE plane(normal.x, normal.y, normal.z, d);
-        D3DXMatrixReflect(&m_reflMatrix, &plane);
+        Vec4 plane(normal.x, normal.y, normal.z, d);
+		createReflection( plane, m_reflMatrix);
 
         
     }
@@ -354,7 +346,7 @@ namespace Dx11Sandbox
 
     void Camera::calculateFrustrum(Frustum* frustrum)
     {
-        D3DXMATRIX viewProj((*getViewMatrix()) * (*getProjectionMatrix()));
+        Mat4x4 viewProj((*getViewMatrix()) * (*getProjectionMatrix()));
         
 		Frustum::calculateFrustrumFromMatrix(viewProj, *frustrum);
     }

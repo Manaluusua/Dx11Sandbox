@@ -1,16 +1,16 @@
 #ifndef DX11SANDBOX_LIGHT_H
 #define DX11SANDBOX_LIGHT_H
 #include "CommonTypes.h"
-#include <d3dx9math.h>
+#include "CommonMath.h"
 
 namespace Dx11Sandbox
 {
 
 	struct LightDefinition {
-		UINT lightType;
-		D3DXVECTOR4 colorInvRad;
-		D3DXVECTOR4 posRad;
-		D3DXVECTOR4 dirAng;
+		uint32_t lightType;
+		Vec4 colorInvRad;
+		Vec4 posRad;
+		Vec4 dirAng;
 	};
 
 	class Light
@@ -27,14 +27,14 @@ namespace Dx11Sandbox
 		Light(void);
 		virtual ~Light(void);
 
-		void setColor( const D3DXVECTOR3& color );
-		const D3DXVECTOR4& getColor() const;
+		void setColor( const Vec3& color );
+		const Vec4& getColor() const;
 
-		void setPosition(const D3DXVECTOR3& pos);
-		const D3DXVECTOR4& getPosition() const;
+		void setPosition(const Vec3& pos);
+		const Vec4& getPosition() const;
 
-		void setDirection(const D3DXVECTOR3& dir);
-		const D3DXVECTOR4& getDirection() const;
+		void setDirection(const Vec3& dir);
+		const Vec4& getDirection() const;
 
 		void setRadius(float radius);
 		float getRadius() const;

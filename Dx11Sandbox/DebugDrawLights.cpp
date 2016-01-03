@@ -52,15 +52,15 @@ namespace Dx11Sandbox
 		std::vector<Light*>& lightList = rb.getLights();
 		int visibleOmnis = 0;
 		
-		D3DXMATRIX wmatrix;
-		D3DXVECTOR4 color;
-		D3DXMatrixIdentity(&wmatrix);
+		Mat4x4 wmatrix;
+		Vec4 color;
+		matMakeIdentity(wmatrix);
 		ID3DX11EffectVectorVariable* colorVar = m_renderData->getMaterial()->getShader()->getEffect()->GetVariableByName("color")->AsVector();
 		for (unsigned int i = 0; i < lightList.size(); ++i){
 			if (lightList[i]->getLightType() != Light::OMNI) continue;
 			++visibleOmnis;
 			Light* omniLight = lightList[i];
-			const D3DXVECTOR4& p = omniLight->getPosition();
+			const Vec4& p = omniLight->getPosition();
 			wmatrix._11 = p.w;
 			wmatrix._22 = p.w;
 			wmatrix._33 = p.w;
@@ -69,7 +69,7 @@ namespace Dx11Sandbox
 			wmatrix._43 = p.z;
 			color = omniLight->getColor();
 			color.w = 1.f;
-			colorVar->SetFloatVector((float*)color);
+			colorVar->SetFloatVector((float*)(&color));
 			m_renderData->setWorldMatrix(wmatrix);
 			m_renderer->render(&m_renderData, 1);
 

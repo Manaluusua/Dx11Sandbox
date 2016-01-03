@@ -239,6 +239,7 @@
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="InputLayoutDescription.h" />
+    <ClInclude Include="CommonMath.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="LightListToStructuredData.h" />
     <ClInclude Include="RenderPrimitiveGatherer.h" />

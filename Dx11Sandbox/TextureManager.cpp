@@ -47,8 +47,8 @@ namespace Dx11Sandbox
         return 0;
     }
 
-	Texture* TextureManager::getOrCreateTextureFromFile(ID3D11Device* device, const string& filename, const string& texname, UINT cpuAccess,
-		D3D11_USAGE usage, UINT filter)
+	Texture* TextureManager::getOrCreateTextureFromFile(ID3D11Device* device, const string& filename, const string& texname, uint32_t cpuAccess,
+		D3D11_USAGE usage, uint32_t filter)
 	{
 		ResourceID id = stringToID(texname);
 		Texture* tex = getTexture(id);

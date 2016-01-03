@@ -6,6 +6,7 @@
 #include "EnvironmentInfo.h"
 #include "TextureManager.h"
 #include "Texture.h"
+#include "CommonMath.h"
 namespace Dx11Sandbox
 {
 
@@ -70,15 +71,15 @@ namespace Dx11Sandbox
 	Material* RenderContext::getBoundMaterial(){ return m_boundMaterial; }
 
 
-	void RenderContext::setCustomClipPlane(D3DXVECTOR4& plane){ m_customClipPlane = plane; }
-	const D3DXVECTOR4& RenderContext::getCustomClipPlane(){ return m_customClipPlane; }
+	void RenderContext::setCustomClipPlane(Vec4& plane){ m_customClipPlane = plane; }
+	const Vec4& RenderContext::getCustomClipPlane(){ return m_customClipPlane; }
 
 	Texture* RenderContext::getDefaultDepthStencilTexture()
 	{
 		return m_defaultDepthStencil;
 	}
 
-    void RenderContext::pushRenderTargets(UINT num, ID3D11RenderTargetView *const *renderTargetViews, ID3D11DepthStencilView *depthStencilView)
+    void RenderContext::pushRenderTargets(uint32_t num, ID3D11RenderTargetView *const *renderTargetViews, ID3D11DepthStencilView *depthStencilView)
     {
         
 		RenderTargetsState currentState;
@@ -104,7 +105,7 @@ namespace Dx11Sandbox
 		bindCurrentRenderTargetState();
 	}
 
-	void RenderContext::pushViewports(UINT viewportCount, D3D11_VIEWPORT* viewports)
+	void RenderContext::pushViewports(uint32_t viewportCount, D3D11_VIEWPORT* viewports)
 	{
 		ViewportState state;
 

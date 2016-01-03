@@ -1,25 +1,27 @@
 #ifndef DX11SANDBOX_MATHUTIL_H
 #define DX11SANDBOX_MATHUTIL_H
-#include <d3dx9math.h>
+#include "CommonMath.h"
 
 namespace Dx11Sandbox
 {
     namespace MathUtil
     {
-        const float PI = 3.14159265;
-        D3DXVECTOR3 rotateVec3ByQuat(const D3DXVECTOR3 *vec, const D3DXQUATERNION *quat);
+        const float PI = 3.14159265f;
 
-        void calculateOrthogonalVector(const D3DXVECTOR3& vec, D3DXVECTOR3& orthogonal);
+		
 
-		void calculateTangentAndBitangent(const D3DXVECTOR3& p1, const D3DXVECTOR3& p2, const D3DXVECTOR3& p3,
-			const D3DXVECTOR2 &t1, const D3DXVECTOR2 &t2, const D3DXVECTOR2 &t3, D3DXVECTOR3 &outTangent, D3DXVECTOR3 &outBitangent);
+        
+        void calculateOrthogonalVector(const Vec3& vec, Vec3& orthogonal);
 
-		void orthogonalizeAndNormalizeTangent(const D3DXVECTOR3 &tangent, const D3DXVECTOR3& normal, D3DXVECTOR3& tangentOut);
+		void calculateTangentAndBitangent(const Vec3& p1, const Vec3& p2, const Vec3& p3,
+			const Vec2 &t1, const Vec2 &t2, const Vec2 &t3, Vec3 &outTangent, Vec3 &outBitangent);
 
-		float calculateHandedness(const D3DXVECTOR3 &tangent, const D3DXVECTOR3& bitangent, const D3DXVECTOR3& normal);
+		void orthogonalizeAndNormalizeTangent(const Vec3 &tangent, const Vec3& normal, Vec3& tangentOut);
 
-		void calculateTangents(long vertexCount, const D3DXVECTOR3 *positions, const D3DXVECTOR3 *normals,
-			const D3DXVECTOR2 *texCoords, long trianglesCount, const UINT *indices, D3DXVECTOR4 *outTangents);
+		float calculateHandedness(const Vec3 &tangent, const Vec3& bitangent, const Vec3& normal);
+
+		void calculateTangents(long vertexCount, const Vec3 *positions, const Vec3 *normals,
+			const Vec2 *texCoords, long trianglesCount, const unsigned int *indices, Vec4 *outTangents);
 
 		
 

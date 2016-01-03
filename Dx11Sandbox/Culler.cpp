@@ -17,10 +17,10 @@ namespace Dx11Sandbox
 			{
 
 
-				const D3DXVECTOR4 &sphere1 = in[i]->getWorldBounds();
-				const D3DXVECTOR4 &sphere2 = in[min(i + 1, in.size() - 1)]->getWorldBounds();
+				const Vec4 &sphere1 = in[i]->getWorldBounds();
+				const Vec4 &sphere2 = in[min(i + 1, in.size() - 1)]->getWorldBounds();
 
-				UINT32 result = Frustum::cullSpheresSSE(simdFrust, sphere1, sphere2);
+				uint32_t result = Frustum::cullSpheresSSE(simdFrust, sphere1, sphere2);
 
 
 
@@ -48,10 +48,10 @@ namespace Dx11Sandbox
 			{
 
 
-				const D3DXVECTOR4 &sphere1 = (*in.vector)[i].data.boundingSphere;
-				const D3DXVECTOR4 &sphere2 = (*in.vector)[min(i + 1, maxSphereInd)].data.boundingSphere;
+				const Vec4 &sphere1 = (*in.vector)[i].data.boundingSphere;
+				const Vec4 &sphere2 = (*in.vector)[min(i + 1, maxSphereInd)].data.boundingSphere;
 
-				UINT32 result = Frustum::cullSpheresSSE(simdFrust, sphere1, sphere2);
+				uint32_t result = Frustum::cullSpheresSSE(simdFrust, sphere1, sphere2);
 
 
 

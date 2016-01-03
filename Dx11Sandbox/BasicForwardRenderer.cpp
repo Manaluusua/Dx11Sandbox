@@ -9,7 +9,6 @@
 #include "RenderCamera.h"
 #include "d3dx11effect.h"
 #include <D3D11.h>
-#include <d3dx9math.h>
 
 namespace Dx11Sandbox
 {
@@ -79,7 +78,7 @@ namespace Dx11Sandbox
         
         
 
-            for ( UINT passInd = 0; passInd < techDesc.Passes; ++passInd )
+            for ( uint32_t passInd = 0; passInd < techDesc.Passes; ++passInd )
             {
                 tech->GetPassByIndex(passInd)->Apply(0, context );
                 if(mesh->getIndexBuffer()->getIndexCount() > 0)

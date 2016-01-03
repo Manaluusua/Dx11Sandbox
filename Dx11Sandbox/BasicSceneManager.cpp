@@ -15,6 +15,7 @@
 #include "BasicForwardRenderer.h"
 #include "DeferredRenderer.h"
 #include "EnvironmentInfo.h"
+#include "MathUtil.h"
 #include "DebugDrawer.h"
 #include <algorithm>
 
@@ -153,7 +154,7 @@ namespace Dx11Sandbox
          // Setup the camera's projection parameters
         float aspectRatio = pBackBufferSurfaceDesc->Width / ( FLOAT )pBackBufferSurfaceDesc->Height;
 
-        m_mainCamera->setProjectionPerspective(D3DX_PI / 3, aspectRatio, 0.1f, 800.0f);
+		m_mainCamera->setProjectionPerspective(MathUtil::PI / 3, aspectRatio, 0.1f, 800.0f);
 
 		float vpw = static_cast<FLOAT>(pBackBufferSurfaceDesc->Width);
 		float vph = static_cast<FLOAT>(pBackBufferSurfaceDesc->Height);
@@ -333,7 +334,7 @@ namespace Dx11Sandbox
 
 	void BasicSceneManager::addCachedObjectsToRenderBins()
 	{
-		for (UINT i = 0; i < m_cachedVisibleObjectsList.size(); ++i)
+		for (uint32_t i = 0; i < m_cachedVisibleObjectsList.size(); ++i)
 		{
 			m_cachedVisibleObjectsList[i]->passedCulling(&m_RenderBin);
 		}

@@ -26,18 +26,18 @@ namespace Dx11Sandbox
 	{
 		m_indicesToDraw = count;
 	}
-	void Mesh::setIndicesToDrawOffest(UINT offset)
+	void Mesh::setIndicesToDrawOffest(uint32_t offset)
 	{
 		m_indexOffset = offset;
 	}
 
-	UINT Mesh::getIndicesToDrawCount() const
+	uint32_t Mesh::getIndicesToDrawCount() const
 	{
 		if (!m_indices.rawPtr()) return 0;
 
 		return m_indicesToDraw < 0 ? m_indices->getIndexCount() : m_indicesToDraw;
 	}
-	UINT Mesh::getIndicesToDrawOffset() const
+	uint32_t Mesh::getIndicesToDrawOffset() const
 	{
 
 		return m_indexOffset;
@@ -79,7 +79,7 @@ namespace Dx11Sandbox
 
 	}
 
-    void Mesh::createMeshFromBuffers(ID3D11Device* device,BYTE** vbuffers, BYTE* ibuffer, UINT numVertices, UINT numIndices,
+    void Mesh::createMeshFromBuffers(ID3D11Device* device,BYTE** vbuffers, BYTE* ibuffer, uint32_t numVertices, uint32_t numIndices,
 		DXGI_FORMAT indexFormat, const InputLayoutDescription& inputLayout)
     {
         
@@ -100,9 +100,9 @@ namespace Dx11Sandbox
     }
 
 
-	void Mesh::createVertexBuffer(ID3D11Device* device, BYTE** vbuffers, UINT numVertices, const InputLayoutDescription& inputLayout)
+	void Mesh::createVertexBuffer(ID3D11Device* device, BYTE** vbuffers, uint32_t numVertices, const InputLayoutDescription& inputLayout)
     {
-        UINT stride = 0;
+        uint32_t stride = 0;
         BYTE* vertexBuffer= 0;
 		m_inputLayout = inputLayout;
         if(numVertices>0)
@@ -119,12 +119,12 @@ namespace Dx11Sandbox
 
             vertexBuffer = new BYTE[stride*numVertices];
 
-            for(UINT i=0;i<numVertices;++i)
+            for(uint32_t i=0;i<numVertices;++i)
             {
-                UINT elemOffset = 0;
+                uint32_t elemOffset = 0;
                 for(int j=0;j<numBuffers;++j)
                 {
-					UINT elemSize = inputLayout.getElementByteWidth(j);
+					uint32_t elemSize = inputLayout.getElementByteWidth(j);
                     memcpy( &vertexBuffer[i*stride + elemOffset],  &vbuffers[j][i*elemSize], elemSize);
                     elemOffset += elemSize;
                 }
@@ -140,7 +140,7 @@ namespace Dx11Sandbox
 
     }
 
-    void Mesh::createIndexBuffer(ID3D11Device* device, BYTE* ibuffer, UINT numIndices, DXGI_FORMAT indexFormat)
+    void Mesh::createIndexBuffer(ID3D11Device* device, BYTE* ibuffer, uint32_t numIndices, DXGI_FORMAT indexFormat)
     {
 
         if(numIndices>0)
@@ -157,9 +157,9 @@ namespace Dx11Sandbox
         Mesh* boundMesh = context->getBoundMesh();
         if(!boundMesh || boundMesh->getVertexBuffer() != m_vertices.rawPtr())
         {
-            UINT stride = m_vertices->getStride();
-            UINT* strides = &stride;
-            UINT offsets[1];
+            uint32_t stride = m_vertices->getStride();
+            uint32_t* strides = &stride;
+            uint32_t offsets[1];
             offsets[0] = 0;
             ID3D11Buffer *buffers[1];
             buffers[0] = m_vertices->getBuffer();

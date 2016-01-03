@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 #include "RenderCamera.h"
 #include "CommonUtilities.h"
+#include "CommonMath.h"
 #include "RCObject.h"
 
 
@@ -25,14 +26,14 @@ public:
     struct WaveDefinition
     {
         WaveDefinition();
-        WaveDefinition(D3DXVECTOR2 dir,float amplitude, float waveLength, float speed);
-        D3DXVECTOR2 direction;
+        WaveDefinition(Dx11Sandbox::Vec2 dir,float amplitude, float waveLength, float speed);
+		Dx11Sandbox::Vec2 direction;
         float amplitude;
         float frequency;
         float phaseConstant;
     };
 
-    WaterPlane(Dx11Sandbox::SceneManager* mngr, ID3D11Device *device, const Dx11Sandbox::string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, float tesselationX, float tesselationY, int textureResolution);
+	WaterPlane(Dx11Sandbox::SceneManager* mngr, ID3D11Device *device, const Dx11Sandbox::string& name, Dx11Sandbox::Vec3 normal, float d, float extends1, float extends2, float tesselationX, float tesselationY, int textureResolution);
     ~WaterPlane(void);
 
 	virtual void cameraStartedRendering(Dx11Sandbox::RenderCamera& camera, Dx11Sandbox::RenderBin& renderbin, Dx11Sandbox::RenderContext* state); 
@@ -57,7 +58,7 @@ private:
 	void cleanupRefractionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sandbox::RenderContext* state);
 
     WaveDefinition m_waves[WATERPLANE_WAVECOUNT];
-    D3DXVECTOR3 m_normal;
+	Dx11Sandbox::Vec3 m_normal;
 
 	Dx11Sandbox::RenderCamera* m_reflectionCamera;
 	Dx11Sandbox::RenderCamera* m_refractionCamera;

@@ -116,9 +116,9 @@ void DemoApplication::createWorld(SceneManager* mngr)
 
     ID3D11Device* device = mngr->getRenderContext().getDevice();
     //camera
-    D3DXVECTOR3 vecEye( 0.0f, 90.0f, 60.0f );
-    D3DXVECTOR3 vecAt ( 0.0f, 88.0f, 70.0f );
-    D3DXVECTOR3 up (0.0f,1.0f,0.0f);
+    Dx11Sandbox::Vec3 vecEye( 0.0f, 90.0f, 60.0f );
+	Dx11Sandbox::Vec3 vecAt(0.0f, 88.0f, 70.0f);
+	Dx11Sandbox::Vec3 up(0.0f, 1.0f, 0.0f);
     cam->lookAt(vecEye, vecAt, up);
 
         
@@ -132,7 +132,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
     mesh = MeshUtility::createSkyBoxMesh(device, "skybox" + generateID());
 	mat = MaterialManager::singleton()->getOrCreateMaterial(device, "skybox.fx", "skybox", mesh->getInputLayout());
 	ro = mngr->createCullableGeometry();
-	ro->setBoundingSphere( D3DXVECTOR4( 0,0,0, FLT_MAX ) );
+	ro->setBoundingSphere(Dx11Sandbox::Vec4(0, 0, 0, FLT_MAX));
 	ro->getRenderData().setMaterial( mat );
 	ro->getRenderData().setMesh( mesh );
 	ro->setRenderQueue(RENDERQUEUE_SKYBOX);
@@ -151,14 +151,14 @@ void DemoApplication::createWorld(SceneManager* mngr)
 
     //waterplane
     Dx11Sandbox::string name("waterPlane1");
-	m_waterPlane = new WaterPlane(mngr,device, name,D3DXVECTOR3(0,1,0),-40,300,300,100,100, 512);
+	m_waterPlane = new WaterPlane(mngr,device, name,Dx11Sandbox::Vec3(0,1,0),-40,300,300,100,100, 512);
     
 	//lights
 	sun = m_mngr->createLight();
 	sun->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
-	sun->setColor(D3DXVECTOR3(0.2f,0.2f,0.2f));
-	D3DXVECTOR3 sunDir( 1.f, -1.f, 0.f );
-	D3DXVec3Normalize(&sunDir, &sunDir);
+	sun->setColor(Dx11Sandbox::Vec3(0.2f, 0.2f, 0.2f));
+	Dx11Sandbox::Vec3 sunDir(1.f, -1.f, 0.f);
+	Dx11Sandbox::vecNormalize(sunDir, sunDir);
 	sun->setDirection(sunDir);
 
 
@@ -171,8 +171,8 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	float circleRadMax = 800.f;
 	float maxHeight = 130.f;
 	float minHeight = 60.f;
-	D3DXVECTOR3 color;
-	D3DXVECTOR3 pos;
+	Dx11Sandbox::Vec3 color;
+	Dx11Sandbox::Vec3 pos;
 	for (unsigned int i = 0; i < lightsGenerated; ++i){
 		float rat = (static_cast<float>(i) / lightsGenerated);
 
@@ -227,8 +227,8 @@ void createMaterialBall(SceneManager* mngr,const string& albedoTex, const string
 	Material* mat = 0;
 	Mesh* mesh = 0;
 	CullableGeometry *ro;
-	D3DXMATRIX wmatrix;
-	D3DXMatrixIdentity(&wmatrix);
+	Dx11Sandbox::Mat4x4 wmatrix;
+	Dx11Sandbox::matMakeIdentity(wmatrix);
 
 	mesh = MeshUtility::createUnitSphere(device, 20,20);
 
@@ -241,7 +241,7 @@ void createMaterialBall(SceneManager* mngr,const string& albedoTex, const string
 	mat->setTexture("albedoTex", tex->getName());
 	tex = TextureManager::singleton()->getOrCreateTextureFromFile(device, specularTex, specularTex);
 	mat->setTexture("specularTex", tex->getName());
-	tex = Dx11Sandbox::TextureManager::singleton()->getOrCreateTextureFromFile(device, normalTex, normalTex, 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_NONE);
+	tex = Dx11Sandbox::TextureManager::singleton()->getOrCreateTextureFromFile(device, normalTex, normalTex, 0, D3D11_USAGE_DEFAULT, /*D3DX11_FILTER_NONE*/0);
 	mat->setTexture("normalTex", tex->getName());
 
 	wmatrix._11 = 10.f;
@@ -251,7 +251,7 @@ void createMaterialBall(SceneManager* mngr,const string& albedoTex, const string
 	wmatrix._42 = y;
 	wmatrix._43 = 0.f;
 	ro = mngr->createCullableGeometry();
-	ro->setBoundingSphere(D3DXVECTOR4(0, 0, 0, FLT_MAX));
+	ro->setBoundingSphere(Dx11Sandbox::Vec4(0, 0, 0, FLT_MAX));
 	ro->setWorldMatrix(wmatrix);
 	ro->getRenderData().setMaterial(mat);
 	ro->getRenderData().setMesh(mesh);
@@ -284,8 +284,8 @@ void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime
     m_time += fElapsedTime;
     handleInput(mngr,fElapsedTime, static_cast<float>( fTime ) );
 
-	D3DXVECTOR3 sunDir( std::cos( m_time ), -0.4f, std::sin( m_time ) );
-    D3DXVec3Normalize(&sunDir, &sunDir);
+	Dx11Sandbox::Vec3 sunDir(std::cos(m_time), -0.4f, std::sin(m_time));
+	Dx11Sandbox::vecNormalize(sunDir, sunDir);
 	sun->setDirection(sunDir);
 }
 
@@ -296,36 +296,36 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 
     //cam movement
     //keyboard
-    D3DXVECTOR3 mov(0,0,0);
+	Dx11Sandbox::Vec3 mov(0, 0, 0);
     float speed = 40;
     float mouseSens = 1;
 
     if(m_leftDown)
     {
-        mov += D3DXVECTOR3(-1,0,0)*speed*dt;
+        mov.x -= speed*dt;
     }
     if(m_rightDown)
     {
-        mov += D3DXVECTOR3(1,0,0)*speed*dt;
+        mov.x += speed*dt;
     }
     if(m_forwardDown)
     {
-        mov += D3DXVECTOR3(0,0,1)*speed*dt;
+        mov.z += speed*dt;
     }
     if(m_backwardDown)
     {
-        mov += D3DXVECTOR3(0,0,-1)*speed*dt;
+		mov.z -= speed*dt;
     }
     if(m_upDown)
     {
-        mov += D3DXVECTOR3(0,1,0)*speed*dt;
+		mov.y += speed*dt;
     }
     if(m_downDown)
     {
-        mov += D3DXVECTOR3(0,-1,0)*speed*dt;
+		mov.y -= speed*dt;
     }
 
-    if(mov!=D3DXVECTOR3(0,0,0))
+	if (Dx11Sandbox::vecLengthSqr(mov) > 0)
     {
         cam->moveCameraViewRelative(mov.x, mov.y, mov.z);
     }
@@ -336,7 +336,7 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 
 
     POINT mousePos;
-    D3DXVECTOR2 mousePosVec;
+	Dx11Sandbox::Vec2 mousePosVec;
 
 
 
@@ -344,8 +344,8 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
     {
 
         GetCursorPos( &mousePos );
-        mousePosVec = D3DXVECTOR2( static_cast<float>( mousePos.x ), static_cast<float>( mousePos.y ) );
-        if(m_lastMousePos == D3DXVECTOR2(-1,-1))
+		mousePosVec = Dx11Sandbox::Vec2(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+		if (m_lastMousePos == Dx11Sandbox::Vec2(-1, -1))
         {
             m_lastMousePos = mousePosVec;
         }else
@@ -355,15 +355,15 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
         }
     }else
     {
-        m_mouseDelta = D3DXVECTOR2(0,0);
-        m_lastMousePos = D3DXVECTOR2(-1,-1);
+		m_mouseDelta = Dx11Sandbox::Vec2(0, 0);
+		m_lastMousePos = Dx11Sandbox::Vec2(-1, -1);
     }
 
 
 
 
 
-    if(m_mouseDelta != D3DXVECTOR2(0,0))
+	if (Dx11Sandbox::vecLengthSqr(m_mouseDelta) > 0)
     {
         cam->rotateCameraViewRelative(-m_mouseDelta.y*mouseSens*m_mouseSensitivity ,-m_mouseDelta.x*mouseSens*m_mouseSensitivity, 0);
     }
@@ -390,16 +390,17 @@ void DemoApplication::objectBeingRendered(CullableGeometry* obj)
 
 
         //D3DXMATRIX *world;
-	const D3DXMATRIX *view = m_mngr->getMainCamera()->getViewMatrix();
-    const D3DXMATRIX *proj = m_mngr->getMainCamera()->getProjectionMatrix();
-    D3DXMATRIX viewProj =  (*view) * (*proj);
+	const Dx11Sandbox::Mat4x4 *view = m_mngr->getMainCamera()->getViewMatrix();
+	const Dx11Sandbox::Mat4x4 *proj = m_mngr->getMainCamera()->getProjectionMatrix();
+	Dx11Sandbox::Mat4x4 viewProj = (*view) * (*proj);
 
-        //temp
-    D3DXVECTOR4 sunDir( std::cos( m_time ), 0.f, std::sin( m_time ),0 );
-    D3DXVec4Normalize(&sunDir, &sunDir);
-    D3DXVECTOR4 sunCol(1.0f,1.f,1.f,0);
-    D3DXVECTOR3 transl = -(m_mngr->getMainCamera()->getTranslation());
-    D3DXVECTOR4 camPos(transl.x, transl.y, transl.z, 1);
+       //temp
+	Dx11Sandbox::Vec3 translation = m_mngr->getMainCamera()->getTranslation();
+	Dx11Sandbox::Vec4 sunDir(std::cos(m_time), 0.f, std::sin(m_time), 0);
+	Dx11Sandbox::vecNormalize(sunDir, sunDir);
+	Dx11Sandbox::Vec4 sunCol(1.0f, 1.f, 1.f, 0);
+	Dx11Sandbox::Vec4 transl(-translation.x, -translation.y, -translation.z,0.f);
+	Dx11Sandbox::Vec4 camPos(transl.x, transl.y, transl.z, 1);
 
     ID3DX11Effect* effect =  mat->getShader()->getEffect();
     ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("sceneInfo");

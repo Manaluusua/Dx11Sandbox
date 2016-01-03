@@ -1,8 +1,8 @@
 #ifndef DX11SANDBOX_CULLINFO_H
 #define DX11SANDBOX_CULLINFO_H
 #include "CommonTypes.h"
-#include <BaseTsd.h>
-#include <d3dx9math.h>
+#include "CommonMath.h"
+
 
 namespace Dx11Sandbox
 {
@@ -16,7 +16,7 @@ namespace Dx11Sandbox
         CullData();
         ~CullData();
 
-        D3DXVECTOR4 boundingSphere;
+		Vec4 boundingSphere;
         Cullable* object;
     };
 }

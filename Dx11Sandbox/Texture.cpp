@@ -36,8 +36,8 @@ namespace Dx11Sandbox
 		SAFE_RELEASE(m_uav);
 
 	}
-	void Texture::createResource(ID3D11Device* device, UINT texWidth, UINT texHeight, bool createViews,
-		UINT bindFlags, DXGI_FORMAT format,D3D11_USAGE usage, UINT arraySize, UINT cpuAccess)
+	void Texture::createResource(ID3D11Device* device, uint32_t texWidth, uint32_t texHeight, bool createViews,
+		uint32_t bindFlags, DXGI_FORMAT format,D3D11_USAGE usage, uint32_t arraySize, uint32_t cpuAccess)
 	{
 
 		destroyResourcesAndViews();
@@ -160,12 +160,12 @@ namespace Dx11Sandbox
 	}
 
     
-	void Texture::createResourceFromFile(ID3D11Device* device, const string& filepath, UINT cpuAccess, D3D11_USAGE usage, UINT filter)
+	void Texture::createResourceFromFile(ID3D11Device* device, const string& filepath, uint32_t cpuAccess, D3D11_USAGE usage, uint32_t filter)
     {
 		destroyResourcesAndViews();
         
-		
-		D3DX11_IMAGE_LOAD_INFO info;
+		//REFACTOR
+/*		D3DX11_IMAGE_LOAD_INFO info;
 		info.FirstMipLevel = 0;
 
         info.CpuAccessFlags = cpuAccess;
@@ -223,14 +223,14 @@ namespace Dx11Sandbox
             // we do not atm support other types of textures
             showErrorDialog("Tried to create a texture from file containing unsupported texture type");
             break;
-        }
+        }*/
     }
 
-	UINT Texture::getWidth() const
+	uint32_t Texture::getWidth() const
 	{
 		return m_texWidth;
 	}
-	UINT Texture::getHeight() const
+	uint32_t Texture::getHeight() const
 	{
 		return m_texHeight;
 	}
@@ -259,7 +259,7 @@ namespace Dx11Sandbox
 		return m_uav;
 	}
 
-    PixelBox* Texture::readPixelBoxFromTexture(UINT arrayIndex, UINT mipSlice, UINT mips)
+    PixelBox* Texture::readPixelBoxFromTexture(uint32_t arrayIndex, uint32_t mipSlice, uint32_t mips)
     {
 
         PixelBox* pixBox;
@@ -306,9 +306,9 @@ namespace Dx11Sandbox
                 UCHAR* texels = (UCHAR*)mappedTex.pData;
 
                 PixelBox::Pixel* pixels = pixBox->getPixels();
-                for( UINT row = 0; row < m_texHeight; row++ )
+                for( uint32_t row = 0; row < m_texHeight; row++ )
                 {
-                    for( UINT col = 0; col < m_texWidth; col++ )
+                    for( uint32_t col = 0; col < m_texWidth; col++ )
                     {
 
                         pixels[row*m_texWidth + col].r =  texels[row*mappedTex.RowPitch + col*4 + 0]; 

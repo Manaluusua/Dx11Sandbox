@@ -17,11 +17,11 @@ namespace Dx11Sandbox
         friend class TextureManager;
     public:
         
-		void createResource(ID3D11Device* device, UINT texWidth, UINT texHeight, bool createViews = true,
-			UINT bindFlags = D3D11_BIND_SHADER_RESOURCE, DXGI_FORMAT format = DXGI_FORMAT_R32G32B32A32_FLOAT,
-			D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT arraySize = 1, UINT cpuAccess = 0);
+		void createResource(ID3D11Device* device, uint32_t texWidth, uint32_t texHeight, bool createViews = true,
+			uint32_t bindFlags = D3D11_BIND_SHADER_RESOURCE, DXGI_FORMAT format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+			D3D11_USAGE usage = D3D11_USAGE_DEFAULT, uint32_t arraySize = 1, uint32_t cpuAccess = 0);
 
-		void createResourceFromFile(ID3D11Device* device, const string& filename, UINT cpuAccess = 0, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT filter = D3DX11_FILTER_POINT | D3DX11_FILTER_SRGB_IN);
+		void createResourceFromFile(ID3D11Device* device, const string& filename, uint32_t cpuAccess = 0, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, uint32_t filter =0 /*= D3DX11_FILTER_POINT | D3DX11_FILTER_SRGB_IN*/);
 
 		void createShaderResourceView(ID3D11Device* device, DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN, int mipLevels = 1);
 		void createRenderTargetView(ID3D11Device* device, DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN);
@@ -33,12 +33,12 @@ namespace Dx11Sandbox
 		ID3D11DepthStencilView* getDepthStencilView();
 		ID3D11UnorderedAccessView* getUnorderedAccessView();
 
-        PixelBox* readPixelBoxFromTexture(UINT arrayIndex=0, UINT mipSlice=0, UINT mips=1);
+        PixelBox* readPixelBoxFromTexture(uint32_t arrayIndex=0, uint32_t mipSlice=0, uint32_t mips=1);
 
 		ResourceID getName() const;
 
-		UINT getWidth() const;
-		UINT getHeight() const;
+		uint32_t getWidth() const;
+		uint32_t getHeight() const;
 
 	protected:
 		virtual ~Texture(void);
@@ -55,13 +55,13 @@ namespace Dx11Sandbox
 		ID3D11UnorderedAccessView* m_uav;
         ID3D11Resource *m_texture;
         DXGI_FORMAT m_format;
-        UINT m_cpuAccess;
+        uint32_t m_cpuAccess;
         D3D11_USAGE m_usage;
 
-        UINT m_texWidth;
-        UINT m_texHeight;
-        UINT m_texArraySize;
-        UINT m_flags;
+        uint32_t m_texWidth;
+        uint32_t m_texHeight;
+        uint32_t m_texArraySize;
+        uint32_t m_flags;
     };
 }
 

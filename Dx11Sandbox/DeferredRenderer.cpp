@@ -129,7 +129,6 @@ namespace Dx11Sandbox
 	{
 
 		D3DX11_TECHNIQUE_DESC techDesc;
-		D3DX11_PASS_DESC passDesc;
 
 		for (unsigned int i = 0; i < objectCount; ++i)
 		{
@@ -162,7 +161,7 @@ namespace Dx11Sandbox
 
 			
 
-			for (UINT passInd = 0; passInd < techDesc.Passes; ++passInd)
+			for (uint32_t passInd = 0; passInd < techDesc.Passes; ++passInd)
 			{
 				tech->GetPassByIndex(passInd)->Apply(0, context);
 				if (mesh->getIndexBuffer()->getIndexCount() > 0)
@@ -181,9 +180,8 @@ namespace Dx11Sandbox
 	{
 		
 		m_copyData->getMaterial()->setTexture("tex", m_lightingOutput->getName());
-		D3DXMATRIX mat = *m_cam->getViewMatrix() * *m_cam->getProjectionMatrix();
-		float det;
-		D3DXMatrixInverse(&mat,&det, &mat);
+		Mat4x4 mat = *m_cam->getViewMatrix() * *m_cam->getProjectionMatrix();
+		matInverse(mat, mat);
 		m_copyData->setWorldMatrix(mat);
 
 
@@ -213,16 +211,15 @@ namespace Dx11Sandbox
 		effect->GetVariableByName("lights")->AsShaderResource()->SetResource(m_lightBuffer.getResourceViewOfLightData());
 
 		//set misc data
-		const D3DXMATRIX *view = m_cam->getViewMatrix();
-		const D3DXMATRIX *proj = m_cam->getProjectionMatrix();
-		D3DXMATRIX invView;
-		float determinant;
-		D3DXMatrixInverse(&invView, &determinant, view);
+		const Mat4x4 *view = m_cam->getViewMatrix();
+		const Mat4x4 *proj = m_cam->getProjectionMatrix();
+		Mat4x4 invView;
+		matInverse(*view, invView);
 
-		D3DXVECTOR3 transl = -(m_cam->getTranslation());
-		D3DXVECTOR4 camPos(transl.x, transl.y, transl.z, 1);
+		Vec3 transl = -(m_cam->getTranslation());
+		Vec4 camPos(transl.x, transl.y, transl.z, 1);
 		float viewWidth = static_cast<float>(m_gbuffer->getWidth()), viewHeight = static_cast<float>(m_gbuffer->getHeight());
-		D3DXVECTOR4 viewDimensions(viewWidth, viewHeight, 1.f / viewWidth, 1.f / viewHeight);
+		Vec4 viewDimensions(viewWidth, viewHeight, 1.f / viewWidth, 1.f / viewHeight);
 
 		ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("misc");
 		ID3DX11EffectMatrixVariable* mat = buffer->GetMemberByName("invViewMat")->AsMatrix();

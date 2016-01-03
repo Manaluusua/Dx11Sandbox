@@ -12,16 +12,16 @@ namespace Dx11Sandbox
     public:
         IndexBuffer(void);
         IndexBuffer( ID3D11Device* device,void* indices,
-            DXGI_FORMAT indexFormat,UINT numIndices,bool makeShadowBuffer = true, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccess = 0);
-        IndexBuffer( DXGI_FORMAT format, UINT indexCount, ID3D11Buffer* buffer );
+            DXGI_FORMAT indexFormat,uint32_t numIndices,bool makeShadowBuffer = true, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, uint32_t cpuAccess = 0);
+        IndexBuffer( DXGI_FORMAT format, uint32_t indexCount, ID3D11Buffer* buffer );
         virtual ~IndexBuffer(void);
 
         bool allocate(ID3D11Device* device,void* indices,
-            DXGI_FORMAT indexFormat,UINT numIndices,D3D11_USAGE usage = D3D11_USAGE_DEFAULT, UINT cpuAccess = 0);
+            DXGI_FORMAT indexFormat,uint32_t numIndices,D3D11_USAGE usage = D3D11_USAGE_DEFAULT, uint32_t cpuAccess = 0);
 
         DXGI_FORMAT getFormat() const;
 
-        UINT getIndexCount() const;
+        uint32_t getIndexCount() const;
 
     private:
 
@@ -29,7 +29,7 @@ namespace Dx11Sandbox
         DISABLE_COPY( IndexBuffer )
 
         DXGI_FORMAT m_format;
-        UINT m_indexCount;
+        uint32_t m_indexCount;
     };
 
 
@@ -40,7 +40,7 @@ namespace Dx11Sandbox
             return m_format;
         }
 
-        inline UINT IndexBuffer::getIndexCount() const
+        inline uint32_t IndexBuffer::getIndexCount() const
         {
             return m_indexCount;
         }

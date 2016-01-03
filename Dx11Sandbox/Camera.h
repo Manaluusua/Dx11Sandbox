@@ -24,29 +24,29 @@ namespace Dx11Sandbox
         void setProjectionPerspective(FLOAT fovY, FLOAT aspectRatio, FLOAT nearDist, FLOAT farDist);
 		void setProjectionOrthographic(FLOAT size, FLOAT aspectRatio, FLOAT nearDist, FLOAT farDist);
 
-        const D3DXMATRIX* getProjectionMatrix();
-        const D3DXMATRIX* getViewMatrix();
+        const Mat4x4* getProjectionMatrix();
+		const Mat4x4* getViewMatrix();
     
         void setTranslation(FLOAT x, FLOAT y, FLOAT z);
-		void setTranslation(const D3DXVECTOR3& translation);
+		void setTranslation(const Vec3& translation);
         void addTranslation(FLOAT x, FLOAT y, FLOAT z);
-		void addTranslation(const D3DXVECTOR3& translation);
-        const D3DXVECTOR3& getTranslation() const;
+		void addTranslation(const Vec3& translation);
+        const Vec3& getTranslation() const;
 
-        const D3DXQUATERNION& getOrientation() const;
-		void setOrientation(const D3DXQUATERNION& orientation);
+        const Quat& getOrientation() const;
+		void setOrientation(const Quat& orientation);
         void setOrientation(FLOAT x, FLOAT y, FLOAT z, FLOAT angle);
         void addOrientation(FLOAT x, FLOAT y, FLOAT z, FLOAT angle);
 
-        void lookAt(const D3DXVECTOR3& eye, const D3DXVECTOR3& at,const D3DXVECTOR3& up);
+        void lookAt(const Vec3& eye, const Vec3& at,const Vec3& up);
 
         void moveCameraViewRelative(FLOAT x, FLOAT y, FLOAT z);
         void rotateCameraViewRelative(FLOAT x, FLOAT y, FLOAT z);
 
-        void setUp(D3DXVECTOR3& up){m_up = up;}
-        const D3DXVECTOR3& getUp() const{return m_up;}
+        void setUp(Vec3& up){m_up = up;}
+        const Vec3& getUp() const{return m_up;}
 
-        void setReflectionPlane(D3DXVECTOR3& normal, float d);
+        void setReflectionPlane(Vec3& normal, float d);
         void setReflectionEnabled(bool val);
 
         void setFOVY( FLOAT y );
@@ -56,8 +56,8 @@ namespace Dx11Sandbox
 		void setOrthographicSize(FLOAT size);
 		void setProjectionType(ProjectionType type);
 
-		const D3DXVECTOR4& getClipPlane() const;
-		void setClipPlane(const D3DXVECTOR4& plane);
+		const Vec4& getClipPlane() const;
+		void setClipPlane(const Vec4& plane);
 
 		virtual void copyCameraViewAndProjectionParameters(const Camera& other);
 
@@ -76,18 +76,17 @@ namespace Dx11Sandbox
 
 		void calculateProjection();
 
-        D3DXMATRIX m_viewMatrix;
-        D3DXMATRIX m_projMatrix;
+        Mat4x4 m_viewMatrix;
+		Mat4x4 m_projMatrix;
 
-        D3DXMATRIX m_reflMatrix;
+		Mat4x4 m_reflMatrix;
 
-		D3DXQUATERNION m_orientation;
+		Quat m_orientation;
+		Vec4 m_clipPlane;
+        Vec3 m_up;
+        Vec3 m_translation;
 
-        D3DXVECTOR3 m_up;
-
-        D3DXVECTOR3 m_translation;
-
-		D3DXVECTOR4 m_clipPlane;
+		
 
 		FLOAT m_fovy;
         FLOAT m_aspectRatio;

@@ -6,7 +6,7 @@
 Dx11Sandbox::Root* g_root = 0;
 
 //global function hooks for DXUT
-bool CALLBACK IsD3D11DeviceAcceptable( const CD3D11EnumAdapterInfo *AdapterInfo, UINT Output, const CD3D11EnumDeviceInfo *DeviceInfo,
+bool CALLBACK IsD3D11DeviceAcceptable( const CD3D11EnumAdapterInfo *AdapterInfo, uint32_t Output, const CD3D11EnumDeviceInfo *DeviceInfo,
                                     DXGI_FORMAT BackBufferFormat, bool bWindowed, void* pUserContext )
 {
     return g_root->IsD3D11DeviceAcceptable(AdapterInfo ,Output,DeviceInfo, BackBufferFormat, bWindowed, pUserContext);
@@ -68,7 +68,7 @@ void CALLBACK OnD3D11DestroyDevice( void* pUserContext )
 //--------------------------------------------------------------------------------------
 // Handle messages to the application
 //--------------------------------------------------------------------------------------
-LRESULT CALLBACK MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+LRESULT CALLBACK MsgProc( HWND hWnd, uint32_t uMsg, WPARAM wParam, LPARAM lParam,
                             bool* pbNoFurtherProcessing, void* pUserContext )
 {
     return g_root->MsgProc(hWnd, uMsg, wParam, lParam, pbNoFurtherProcessing, pUserContext);
@@ -78,7 +78,7 @@ LRESULT CALLBACK MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 //--------------------------------------------------------------------------------------
 // Handle key presses
 //--------------------------------------------------------------------------------------
-void CALLBACK OnKeyboard( UINT nChar, bool bKeyDown, bool bAltDown, void* pUserContext )
+void CALLBACK OnKeyboard( uint32_t nChar, bool bKeyDown, bool bAltDown, void* pUserContext )
 {
     g_root->OnKeyboard(nChar,bKeyDown, bAltDown, pUserContext);
 }
@@ -164,7 +164,7 @@ namespace Dx11Sandbox
     //--------------------------------------------------------------------------------------
     // Reject any D3D11 devices that aren't acceptable by returning false
     //-- ------------------------------------------------------------------------------------
-    bool Root::IsD3D11DeviceAcceptable(const CD3D11EnumAdapterInfo *AdapterInfo, UINT Output, const CD3D11EnumDeviceInfo *DeviceInfo,
+    bool Root::IsD3D11DeviceAcceptable(const CD3D11EnumAdapterInfo *AdapterInfo, uint32_t Output, const CD3D11EnumDeviceInfo *DeviceInfo,
                                        DXGI_FORMAT BackBufferFormat, bool bWindowed, void* pUserContext )
     {
         return true;
@@ -246,7 +246,7 @@ namespace Dx11Sandbox
     //--------------------------------------------------------------------------------------
     // Handle messages to the application
     //--------------------------------------------------------------------------------------
-    LRESULT Root::MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+    LRESULT Root::MsgProc( HWND hWnd, uint32_t uMsg, WPARAM wParam, LPARAM lParam,
                               bool* pbNoFurtherProcessing, void* pUserContext )
     {
         //m_application->handleWindowMessages(hWnd, uMsg, wParam, lParam,pbNoFurtherProcessing,pUserContext);
@@ -257,7 +257,7 @@ namespace Dx11Sandbox
     //--------------------------------------------------------------------------------------
     // Handle key presses
     //--------------------------------------------------------------------------------------
-    void Root::OnKeyboard( UINT nChar, bool bKeyDown, bool bAltDown, void* pUserContext )
+    void Root::OnKeyboard( uint32_t nChar, bool bKeyDown, bool bAltDown, void* pUserContext )
     {
         m_application->OnKeyboard(nChar, bKeyDown, bAltDown);
     }
@@ -282,7 +282,7 @@ namespace Dx11Sandbox
         return true;
     }
 
-    void Root::initialize(string windowName,UINT windowWidth,UINT windowHeight, D3D_FEATURE_LEVEL level, bool windowed)
+    void Root::initialize(string windowName,uint32_t windowWidth,uint32_t windowHeight, D3D_FEATURE_LEVEL level, bool windowed)
     {
        
         if(!m_application)

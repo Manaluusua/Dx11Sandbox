@@ -7,7 +7,7 @@ namespace Dx11Sandbox
 		m_translation(0.f, 0.f, 0.f),
 		m_cacheValid(false)
 	{
-		D3DXQuaternionIdentity(&m_orientation);
+		quatMakeIdentity(m_orientation);
 	}
 
 
@@ -35,58 +35,45 @@ namespace Dx11Sandbox
 		return *this;
 	}
 
-	void Transform::setScale(const D3DXVECTOR3& scale)
+	void Transform::setScale(const Vec3& scale)
 	{
 		if(m_scale == scale) return;
 		m_cacheValid = false;
 		m_scale = scale;
 	}
-	const D3DXVECTOR3& Transform::getScale() const
+	const Vec3& Transform::getScale() const
 	{
 		return m_scale;
 	}
 
-	void Transform::setTranslation(const D3DXVECTOR3& transl)
+	void Transform::setTranslation(const Vec3& transl)
 	{
-		if(m_translation == transl) return;
+		if (m_translation == transl) return;
 		m_cacheValid = false;
 		m_translation = transl;
 	}
-	const D3DXVECTOR3& Transform::getTranslation() const
+	const Vec3& Transform::getTranslation() const
 	{
 		return m_translation;
 	}
 
-	void Transform::setOrientation(const D3DXQUATERNION& orient)
+	void Transform::setOrientation(const Quat& orient)
 	{
 		if(m_orientation == orient) return;
 		m_cacheValid = false;
 		m_orientation = orient;
 	}
-	const D3DXQUATERNION& Transform::getOrientation() const
+	const Quat& Transform::getOrientation() const
 	{
 		return m_orientation;
 	}
 
-	const D3DXMATRIX& Transform::asMatrix() const
+	const Mat4x4& Transform::asMatrix() const
 	{
 		if(m_cacheValid) return m_cachedMatrix;
 
-		//calculate matrix
-		D3DXMATRIX rot;
-		
-		D3DXMatrixIdentity(&m_cachedMatrix);
-
-		D3DXMatrixScaling(&m_cachedMatrix, m_scale.x, m_scale.y, m_scale.z);
-        D3DXMatrixRotationQuaternion(&rot, &m_orientation);
-
-        m_cachedMatrix = m_cachedMatrix * rot;
-		m_cachedMatrix(3,0) = m_translation.x;
-		m_cachedMatrix(3,1) = m_translation.y;
-		m_cachedMatrix(3,2) = m_translation.z;
-
-
-		return m_cachedMatrix;
+		createTransformationOST(m_orientation, m_scale, m_translation, m_cachedMatrix);
 		m_cacheValid = true;
+		return m_cachedMatrix;
 	}
 }

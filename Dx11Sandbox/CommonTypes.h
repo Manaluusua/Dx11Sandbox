@@ -1,8 +1,10 @@
 #ifndef DX11SANDBOX_COMMONTYPES_H
 #define DX11SANDBOX_COMMONTYPES_H
 
-#include <string>
 #include <windows.h>
+#include <string>
+#include <stdint.h>
+
 namespace Dx11Sandbox
 {
 	//misc

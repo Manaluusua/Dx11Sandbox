@@ -21,22 +21,22 @@ namespace Dx11Sandbox
 
 		void destroy();
 
-		void setLightId(UINT id);
-		UINT getLightId();
+		void setLightId(uint32_t id);
+		uint32_t getLightId();
 
 	protected:
 		//calculate new bounds when light parameters change
 		virtual void lightParametersChanged();
-		void calculateBoundsForLight(D3DXVECTOR4& bounds) const;
+		void calculateBoundsForLight(Vec4& bounds) const;
 		
 
 		CullableLight(CullableObjectManager* mngr);
 		virtual ~CullableLight(void);
 
-		D3DXVECTOR4 m_bounds;
+		Vec4 m_bounds;
 		CullData** m_cullingInformation;
 		CullableObjectManager* m_mngr;
-		UINT m_lightId;
+		uint32_t m_lightId;
 	};
 
 };

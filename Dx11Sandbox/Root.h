@@ -12,7 +12,7 @@ namespace Dx11Sandbox
     class Application
     {
     public:
-        virtual void OnKeyboard( UINT nChar, bool bKeyDown, bool bAltDown)=0;
+        virtual void OnKeyboard( uint32_t nChar, bool bKeyDown, bool bAltDown)=0;
         virtual  void OnMouse( bool bLeftButtonDown, bool bRightButtonDown, bool bMiddleButtonDown,
                            bool bSideButton1Down, bool bSideButton2Down, int nMouseWheelDelta,
                            int xPos, int yPos )=0;
@@ -20,7 +20,7 @@ namespace Dx11Sandbox
         virtual void windowResized(ID3D11Device* pd3dDevice, IDXGISwapChain* pSwapChain, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc)=0;
         virtual void update(SceneManager* mngr,double fTime, float fElapsedTime)=0;
         virtual void shutDown(SceneManager* mngr)=0;
-        virtual void handleWindowMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
+        virtual void handleWindowMessages(HWND hWnd, uint32_t uMsg, WPARAM wParam, LPARAM lParam,
                               bool* pbNoFurtherProcessing, void* pUserContext )=0;
     };
 	
@@ -36,7 +36,7 @@ namespace Dx11Sandbox
 
 
         //callbacks from DXUT
-        bool CALLBACK IsD3D11DeviceAcceptable( const CD3D11EnumAdapterInfo *AdapterInfo, UINT Output, const CD3D11EnumDeviceInfo *DeviceInfo,
+        bool CALLBACK IsD3D11DeviceAcceptable( const CD3D11EnumAdapterInfo *AdapterInfo, uint32_t Output, const CD3D11EnumDeviceInfo *DeviceInfo,
                                        DXGI_FORMAT BackBufferFormat, bool bWindowed, void* pUserContext);
 
         bool ModifyDeviceSettings( DXUTDeviceSettings* pDeviceSettings, void* pUserContext );
@@ -47,8 +47,8 @@ namespace Dx11Sandbox
                                   double fTime, float fElapsedTime, void* pUserContext );
         void OnD3D11ReleasingSwapChain( void* pUserContext );
         void OnD3D11DestroyDevice( void* pUserContext );
-        LRESULT MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing, void* pUserContext );
-        void OnKeyboard( UINT nChar, bool bKeyDown, bool bAltDown, void* pUserContext );
+        LRESULT MsgProc( HWND hWnd, uint32_t uMsg, WPARAM wParam, LPARAM lParam, bool* pbNoFurtherProcessing, void* pUserContext );
+        void OnKeyboard( uint32_t nChar, bool bKeyDown, bool bAltDown, void* pUserContext );
         void OnMouse( bool bLeftButtonDown, bool bRightButtonDown, bool bMiddleButtonDown,
                               bool bSideButton1Down, bool bSideButton2Down, int nMouseWheelDelta,
                               int xPos, int yPos, void* pUserContext );
@@ -57,7 +57,7 @@ namespace Dx11Sandbox
                                           const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc, void* pUserContext );
         //
 
-        void initialize(string windowName,UINT windowWidth,UINT windowHeight, D3D_FEATURE_LEVEL level, bool windowed);
+        void initialize(string windowName,uint32_t windowWidth,uint32_t windowHeight, D3D_FEATURE_LEVEL level, bool windowed);
         int start();
         void setApplication(Application* app){m_application = app;}
 

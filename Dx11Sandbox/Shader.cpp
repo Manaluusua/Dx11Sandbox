@@ -104,7 +104,7 @@ namespace Dx11Sandbox
 		ShaderIncludeHandler includeHandler;
 
 		// Get the current working directory so we can restore it later
-		UINT nBytes = GetCurrentDirectory(MAX_PATH, workingPath);
+		uint32_t nBytes = GetCurrentDirectory(MAX_PATH, workingPath);
 		if (nBytes == MAX_PATH)
 		{
 			return E_FAIL;

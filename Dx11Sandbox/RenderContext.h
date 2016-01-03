@@ -8,8 +8,8 @@ struct ID3D11DeviceContext;
 struct ID3D11DepthStencilView;
 struct ID3D11RenderTargetView;
 */
+#include "CommonMath.h"
 #include <D3D11.h>
-#include <d3dx9math.h>
 #include <vector>
 
 namespace Dx11Sandbox
@@ -39,15 +39,15 @@ namespace Dx11Sandbox
 
 		Texture* getDefaultDepthStencilTexture();
 
-		void setCustomClipPlane(D3DXVECTOR4& plane);
-		const D3DXVECTOR4& getCustomClipPlane();
+		void setCustomClipPlane(Vec4& plane);
+		const Vec4& getCustomClipPlane();
 
 		void disableDepthStencil(bool val);
-		void pushRenderTargets(UINT num, ID3D11RenderTargetView *const *renderTargetViews, ID3D11DepthStencilView *depthStencilView);
+		void pushRenderTargets(uint32_t num, ID3D11RenderTargetView *const *renderTargetViews, ID3D11DepthStencilView *depthStencilView);
 		void popRenderTargets();
         
 		void setDefaultViewport(D3D11_VIEWPORT* viewport);
-		void pushViewports(UINT viewportCount, D3D11_VIEWPORT* viewports);
+		void pushViewports(uint32_t viewportCount, D3D11_VIEWPORT* viewports);
 		void popViewports();
 
         void clearState();
@@ -58,19 +58,19 @@ namespace Dx11Sandbox
 
 		struct RenderTargetsState
 		{
-			UINT numberOfBoundTargets;
+			uint32_t numberOfBoundTargets;
 			ID3D11RenderTargetView* renderTargets[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT];
 			ID3D11DepthStencilView* depthStencil;
 		};
 
 		struct ViewportState{
 			D3D11_VIEWPORT* viewports;
-			UINT viewportCount;
+			uint32_t viewportCount;
 		};
 
 		void bindCurrentRenderTargetState(bool bindDepthStencil = true);
 		void bindCurrentViewports();
-        D3DXVECTOR4 m_customClipPlane;
+        Vec4 m_customClipPlane;
 
 		std::vector<RenderTargetsState> m_boundStates;
 		std::vector<ViewportState> m_viewPortStates;

@@ -23,20 +23,20 @@ Helper functions for creating different kinds of simple meshes
 namespace Dx11Sandbox
 {
 
-	void calculateNormalTangentBitangentForPosition(int indexX, int indexY, int maxX, int maxY, D3DXVECTOR3 *positions, D3DXVECTOR3& outNormal, D3DXVECTOR3& outTangent, D3DXVECTOR3& outBitangent)
+	void calculateNormalTangentBitangentForPosition(int indexX, int indexY, int maxX, int maxY, Vec3 *positions, Vec3& outNormal, Vec3& outTangent, Vec3& outBitangent)
     {
         int startX = max(indexX-1,0);
         int endX = min(indexX+1,maxX-1);
         int startY = max(indexY-1,0);
         int endY = min(indexY+1,maxY-1);
 
-		D3DXVECTOR3 tangent = positions[indexY * maxX + endX] - positions[indexY * maxX + startX];
-		D3DXVECTOR3 bitangent = positions[endY * maxX + indexX] - positions[startY * maxX + indexX];
-        D3DXVECTOR3 normal;
-		D3DXVec3Cross(&normal, &bitangent, &tangent);
-        D3DXVec3Normalize(&normal, &normal);
-		D3DXVec3Normalize(&tangent, &tangent);
-		D3DXVec3Normalize(&bitangent, &bitangent);
+		Vec3 tangent = positions[indexY * maxX + endX] - positions[indexY * maxX + startX];
+		Vec3 bitangent = positions[endY * maxX + indexX] - positions[startY * maxX + indexX];
+		Vec3 normal;
+		vecCrossProduct(bitangent, tangent, normal);
+        vecNormalize(normal, normal);
+		vecNormalize(tangent, tangent);
+		vecNormalize(bitangent, bitangent);
 
 		outNormal = normal;
 		outTangent = tangent;
@@ -49,10 +49,10 @@ namespace Dx11Sandbox
         float heights[4];
         float temp,frac1 = map->getWidth()*x, frac2 = map->getHeight()*y;
 
-        UINT x1 = static_cast<UINT>( std::floor(frac1) );
-        UINT y1 = static_cast<UINT>( std::floor(frac2) );
-        UINT x2 = static_cast<UINT>( std::ceil(frac1) );
-        UINT y2 = static_cast<UINT>( std::ceil(frac2) );
+        uint32_t x1 = static_cast<uint32_t>( std::floor(frac1) );
+        uint32_t y1 = static_cast<uint32_t>( std::floor(frac2) );
+        uint32_t x2 = static_cast<uint32_t>( std::ceil(frac1) );
+        uint32_t y2 = static_cast<uint32_t>( std::ceil(frac2) );
 
         x2 = min(x2, map->getWidth()-1);
         y2 = min(y2, map->getHeight()-1);
@@ -93,9 +93,9 @@ namespace Dx11Sandbox
 		unsigned int indexCount = makeLineListInsteadOfTriangles ? ((1 + tesselationZenith) * tesselationAzimuth + tesselationZenith * tesselationAzimuth) * 2
 			: ((tesselationZenith-1) * 2 * tesselationAzimuth) * 3;
 
-		D3DXVECTOR3* positions = new D3DXVECTOR3[pointCount];
-		D3DXVECTOR3* normals = generateNormals ? new D3DXVECTOR3[pointCount] : 0;
-		D3DXVECTOR4* tangents = generateTangents ? new D3DXVECTOR4[pointCount] : 0;
+		Vec3* positions = new Vec3[pointCount];
+		Vec3* normals = generateNormals ? new Vec3[pointCount] : 0;
+		Vec4* tangents = generateTangents ? new Vec4[pointCount] : 0;
 		FLOAT* uvs = generateUVs ? new FLOAT[pointCount * 2] : 0;
 		UINT32* indices = new UINT32[indexCount];
 
@@ -116,7 +116,7 @@ namespace Dx11Sandbox
 
 				float currentAzimuthRatio = static_cast<float>(a) / (tesselationAzimuth);
 				float currentAzimuth = currentAzimuthRatio * azimuthMax;
-				D3DXVECTOR3 vec;
+				Vec3 vec;
 				float cosZ = cos(currentZenith);
 				float sinZ = sin(currentZenith);
 				float cosA = cos(currentAzimuth);
@@ -144,16 +144,16 @@ namespace Dx11Sandbox
 
 		if (generateTangents){
 			
-			D3DXVECTOR3* tan = new D3DXVECTOR3[pointCount];
-			D3DXVECTOR3* bitan = new D3DXVECTOR3[pointCount];
+			Vec3* tan = new Vec3[pointCount];
+			Vec3* bitan = new Vec3[pointCount];
 
 			for (unsigned int i = 0; i < pointCount; ++i){
-				tan[i] = D3DXVECTOR3(0.f, 0.f, 0.f);
-				bitan[i] = D3DXVECTOR3(0.f, 0.f, 0.f);
+				tan[i] = Vec3(0.f, 0.f, 0.f);
+				bitan[i] = Vec3(0.f, 0.f, 0.f);
 			}
 
 
-			D3DXVECTOR2* uvAsVec2 = reinterpret_cast<D3DXVECTOR2*>(uvs);
+			Vec2* uvAsVec2 = reinterpret_cast<Vec2*>(uvs);
 			for (unsigned int z = 0; z < (tesselationZenith - 1); ++z){
 				for (unsigned int a = 0; a < tesselationAzimuth; ++a){
 					UINT32 pointIndex1 = z * tesselationAzimuth + a;
@@ -161,20 +161,20 @@ namespace Dx11Sandbox
 					UINT32 pointIndex3 = ((z + 1) % tesselationZenith) * tesselationAzimuth + a;
 					UINT32 pointIndex4 = ((z + 1) % tesselationZenith) * tesselationAzimuth + (a + 1) % tesselationAzimuth;
 					//tri1
-					const D3DXVECTOR3& p1 = positions[pointIndex1];
-					const D3DXVECTOR3& p2 = positions[pointIndex2];
-					const D3DXVECTOR3& p3 = positions[pointIndex3];
-					const D3DXVECTOR3& p4 = positions[pointIndex4];
+					const Vec3& p1 = positions[pointIndex1];
+					const Vec3& p2 = positions[pointIndex2];
+					const Vec3& p3 = positions[pointIndex3];
+					const Vec3& p4 = positions[pointIndex4];
 
-					const D3DXVECTOR2& t1 = uvAsVec2[pointIndex1];
-					const D3DXVECTOR2& t2 = uvAsVec2[pointIndex2];
-					const D3DXVECTOR2& t3 = uvAsVec2[pointIndex3];
-					const D3DXVECTOR2& t4 = uvAsVec2[pointIndex4];
+					const Vec2& t1 = uvAsVec2[pointIndex1];
+					const Vec2& t2 = uvAsVec2[pointIndex2];
+					const Vec2& t3 = uvAsVec2[pointIndex3];
+					const Vec2& t4 = uvAsVec2[pointIndex4];
 
-					D3DXVECTOR3 tangent1;
-					D3DXVECTOR3 tangent2;
-					D3DXVECTOR3 bitangent1;
-					D3DXVECTOR3 bitangent2;
+					Vec3 tangent1;
+					Vec3 tangent2;
+					Vec3 bitangent1;
+					Vec3 bitangent2;
 
 					MathUtil::calculateTangentAndBitangent(p1, p4, p3, t1, t4, t3, tangent1, bitangent1);
 					MathUtil::calculateTangentAndBitangent(p4, p1, p2, t4, t1, t2, tangent2, bitangent2);
@@ -199,12 +199,12 @@ namespace Dx11Sandbox
 			}
 
 			for (unsigned int i = 0; i < pointCount; ++i){
-				const D3DXVECTOR3& normal = normals[i];
-				D3DXVECTOR3& tangent = tan[i];
-				D3DXVECTOR3& bitangent = bitan[i];
-				D3DXVECTOR3 newTangent;
+				const Vec3& normal = normals[i];
+				Vec3& tangent = tan[i];
+				Vec3& bitangent = bitan[i];
+				Vec3 newTangent;
 				MathUtil::orthogonalizeAndNormalizeTangent(tangent, normal, newTangent);
-				tangents[i] = D3DXVECTOR4(newTangent, MathUtil::calculateHandedness(tangent, bitangent, normal));
+				tangents[i] = Vec4(newTangent.x, newTangent.y, newTangent.z, MathUtil::calculateHandedness(tangent, bitangent, normal));
 
 			}
 
@@ -328,7 +328,7 @@ namespace Dx11Sandbox
     }
 
 
-	Mesh* MeshUtility::createQuad(ID3D11Device *device, const D3DXVECTOR3* corners, bool flipTextureCoordinatesX, bool flipTextureCoordinatesY)
+	Mesh* MeshUtility::createQuad(ID3D11Device *device, const Vec3* corners, bool flipTextureCoordinatesX, bool flipTextureCoordinatesY)
 	{
 		Mesh *mesh = MeshManager::singleton()->createMeshUnmanaged();
         if(!mesh) return 0;
@@ -355,7 +355,7 @@ namespace Dx11Sandbox
 	{
 
 
-		D3DXVECTOR3 corners[4];
+		Vec3 corners[4];
 		float depth = 0.2f;
 
 		float hw = w*0.5f;
@@ -363,7 +363,7 @@ namespace Dx11Sandbox
 
 		for (int i = 0; i < 4; ++i)
 		{
-			corners[i] = D3DXVECTOR3(x - hw + (i % 2) * w, y - hh + (i / 2) * h, depth);
+			corners[i] = Vec3(x - hw + (i % 2) * w, y - hh + (i / 2) * h, depth);
 		}
 		return createQuad(device, corners, flipTextureCoordinatesX, flipTextureCoordinatesY);
 
@@ -375,8 +375,8 @@ namespace Dx11Sandbox
         if(!mesh)
             return 0;
 
-        D3DXVECTOR3 positions[8];
-        D3DXVECTOR3 UV[8];
+        Vec3 positions[8];
+        Vec3 UV[8];
         UINT16 indices[36];
         BYTE* ptr[2];
 
@@ -469,7 +469,7 @@ namespace Dx11Sandbox
     }
 
 
-    CullableGeometry* MeshUtility::createFinitePlane(ID3D11Device *device,SceneManager* mngr, const string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, int tesselationFactorX, int tesselationFactorZ)
+    CullableGeometry* MeshUtility::createFinitePlane(ID3D11Device *device,SceneManager* mngr, const string& name, Vec3 normal, float d, float extends1, float extends2, int tesselationFactorX, int tesselationFactorZ)
     {
 
         assert( tesselationFactorX > 0 && tesselationFactorZ > 0 );
@@ -483,14 +483,14 @@ namespace Dx11Sandbox
         extends1 *= 0.5f;
         extends2 *= 0.5f;
 
-        D3DXVec3Normalize(&normal, &normal);
-        D3DXVECTOR3 vec1;
-        D3DXVECTOR3 vec2;
+        vecNormalize(normal, normal);
+        Vec3 vec1;
+        Vec3 vec2;
         MathUtil::calculateOrthogonalVector(normal, vec1);
-        D3DXVec3Cross(&vec2,&normal, &vec1);
+		vecCrossProduct( normal, vec1, vec2);
 
-        D3DXVec3Normalize(&vec1,&vec1);
-        D3DXVec3Normalize(&vec2,&vec2);
+		vecNormalize(vec1, vec1);
+		vecNormalize(vec2, vec2);
 
 		CullableGeometry* ro = mngr->createCullableGeometry();
         Mesh* mesh = MeshManager::singleton()->createMesh(name + "Mesh");
@@ -500,8 +500,8 @@ namespace Dx11Sandbox
         unsigned int i,j;
         float xx,zz;
 
-        D3DXVECTOR3 *positions = new D3DXVECTOR3[pointsX*pointsZ];
-        D3DXVECTOR3 *normals = new D3DXVECTOR3[pointsX*pointsZ];
+		Vec3 *positions = new Vec3[pointsX*pointsZ];
+		Vec3 *normals = new Vec3[pointsX*pointsZ];
         float* UV = new float[pointsX*pointsZ*2];
         BYTE* ptr[3];
 
@@ -523,9 +523,9 @@ namespace Dx11Sandbox
         {
             for(j=0u;j<pointsX;++j)
             {
-				D3DXVECTOR3 normal;
-				D3DXVECTOR3 tangent;
-				D3DXVECTOR3 bitangent;
+				Vec3 normal;
+				Vec3 tangent;
+				Vec3 bitangent;
 				calculateNormalTangentBitangentForPosition(j, i, pointsX, pointsZ, positions, normal, tangent, bitangent);
 				normals[i*pointsX + j] = normal;
                 UV[i*pointsX*2 + j*2] = ((float)(j))/tesselationFactorX;
@@ -538,7 +538,7 @@ namespace Dx11Sandbox
 
 		mesh->createVertexBuffer(device, ptr, pointsX*pointsZ, inputDescription);
 
-        UINT indicesCount = (tesselationFactorX)*(tesselationFactorZ)*6;
+        uint32_t indicesCount = (tesselationFactorX)*(tesselationFactorZ)*6;
         UINT32 *indices = new UINT32[indicesCount];
 
         int indicesX = pointsX-1;
@@ -676,9 +676,9 @@ namespace Dx11Sandbox
         float x, y, z;
         float xx,zz;
         unsigned int i,j;
-        D3DXVECTOR3 *positions = new D3DXVECTOR3[totalPointsX*totalPointsZ];
-        D3DXVECTOR3 *normals = new D3DXVECTOR3[totalPointsX*totalPointsZ];
-		D3DXVECTOR3 *tangents = new D3DXVECTOR3[totalPointsX*totalPointsZ];
+		Vec3 *positions = new Vec3[totalPointsX*totalPointsZ];
+		Vec3 *normals = new Vec3[totalPointsX*totalPointsZ];
+		Vec3 *tangents = new Vec3[totalPointsX*totalPointsZ];
         float* UV = new float[totalPointsX*totalPointsZ*2];
         BYTE* ptr[4];
 
@@ -696,7 +696,7 @@ namespace Dx11Sandbox
                 x = xx + offsetX;
                 z = zz + offsetZ;
                 y=getHeightForPosition(pixb, xx/scaleX,zz/scaleZ, scaleY);
-                positions[i*totalPointsX + j] = D3DXVECTOR3(x,y,z);
+				positions[i*totalPointsX + j] = Vec3(x, y, z);
             }
         }
 
@@ -707,9 +707,9 @@ namespace Dx11Sandbox
 			
             for(j=0,xx=0;j<totalPointsX;++j, xx+=segmentX)
             {
-				D3DXVECTOR3 normal;
-				D3DXVECTOR3 tangent;
-				D3DXVECTOR3 bitangent;
+				Vec3 normal;
+				Vec3 tangent;
+				Vec3 bitangent;
 				calculateNormalTangentBitangentForPosition(j, i, totalPointsX, totalPointsZ, positions, normal, tangent, bitangent);
 				normals[i*totalPointsX + j] = normal;
 				tangents[i*totalPointsX + j] = tangent;
@@ -727,7 +727,7 @@ namespace Dx11Sandbox
 
         terrainName = terrainName + "Indices";
 
-        UINT indicesCount = (tesselationFactor)*(tesselationFactor)*6;
+        uint32_t indicesCount = (tesselationFactor)*(tesselationFactor)*6;
         UINT32 *indices = new UINT32[indicesCount];
         unsigned int pwidth, pheight;
 
@@ -802,7 +802,7 @@ namespace Dx11Sandbox
     }
 
 
-    D3DXVECTOR4 MeshUtility::calculateBoundingSphereForPositions(const UINT32 *indices,UINT numIndices,const D3DXVECTOR3* positions)
+    Vec4 MeshUtility::calculateBoundingSphereForPositions(const UINT32 *indices,uint32_t numIndices,const Vec3* positions)
     {
         
         float minimum[3] = {FLT_MAX,FLT_MAX,FLT_MAX};
@@ -828,7 +828,7 @@ namespace Dx11Sandbox
 
         float len = sqrt(pow(maximum[0] - minimum[0],2) + pow(maximum[1] - minimum[1],2)  + pow(maximum[2] - minimum[2],2))*0.5f ;
 
-        D3DXVECTOR4 sphere((minimum[0] + maximum[0])*0.5f, (minimum[1] + maximum[1])*0.5f,(minimum[2] + maximum[2])*0.5f,len);
+        Vec4 sphere((minimum[0] + maximum[0])*0.5f, (minimum[1] + maximum[1])*0.5f,(minimum[2] + maximum[2])*0.5f,len);
 
         return sphere;
     }

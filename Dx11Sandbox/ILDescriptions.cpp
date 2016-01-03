@@ -30,7 +30,7 @@ namespace Dx11Sandbox
             }
         }
 
-        const UINT getElementCountForType(MESH_LAYOUT_TYPE type)
+        const uint32_t getElementCountForType(MESH_LAYOUT_TYPE type)
         {
             switch(type)
             {
@@ -52,7 +52,7 @@ namespace Dx11Sandbox
             }
         }
 
-        const UINT* getElementSizesForType(MESH_LAYOUT_TYPE type)
+        const uint32_t* getElementSizesForType(MESH_LAYOUT_TYPE type)
         {
             switch(type)
             {

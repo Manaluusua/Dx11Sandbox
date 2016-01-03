@@ -53,8 +53,8 @@ private:
 	DebugDrawTextureToScreen* m_debugDrawerTexture;
 	DebugDrawLights* m_debugDrawerLights;
 
-    D3DXVECTOR2 m_lastMousePos;
-    D3DXVECTOR2 m_mouseDelta;
+    Vec2 m_lastMousePos;
+    Vec2 m_mouseDelta;
 
 	float m_mouseSensitivity;
 

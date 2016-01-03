@@ -36,21 +36,21 @@ namespace Dx11Sandbox
 		void setPrimType(D3D11_PRIMITIVE_TOPOLOGY type);
 		D3D11_PRIMITIVE_TOPOLOGY getPrimType();
 
-        void createMeshFromBuffers(ID3D11Device* device,BYTE** vbuffers, BYTE* ibuffer, UINT numVertices, UINT numIndices,
+        void createMeshFromBuffers(ID3D11Device* device,BYTE** vbuffers, BYTE* ibuffer, uint32_t numVertices, uint32_t numIndices,
             DXGI_FORMAT indexFormat,const InputLayoutDescription& inputLayout);
 
-        void createVertexBuffer(ID3D11Device* device,BYTE** vbuffers, UINT numVertices, 
+        void createVertexBuffer(ID3D11Device* device,BYTE** vbuffers, uint32_t numVertices, 
 			const InputLayoutDescription& inputLayout);
 
-        void createIndexBuffer(ID3D11Device* device, BYTE* ibuffer, UINT numIndices,
+        void createIndexBuffer(ID3D11Device* device, BYTE* ibuffer, uint32_t numIndices,
             DXGI_FORMAT indexFormat);
 
 
 		void setIndicesToDrawCount(int count);
-		void setIndicesToDrawOffest(UINT offset);
+		void setIndicesToDrawOffest(uint32_t offset);
 
-		UINT getIndicesToDrawCount() const;
-		UINT getIndicesToDrawOffset() const;
+		uint32_t getIndicesToDrawCount() const;
+		uint32_t getIndicesToDrawOffset() const;
 
 		const InputLayoutDescription& getInputLayout() const;
 

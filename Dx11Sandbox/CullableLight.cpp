@@ -21,14 +21,14 @@ namespace Dx11Sandbox
 		setVisible(false);
 	}
 
-	UINT CullableLight::getLightId()
+	uint32_t CullableLight::getLightId()
 	{
 		return m_lightId;
 
 	}
 
 
-	void CullableLight::setLightId(UINT id)
+	void CullableLight::setLightId(uint32_t id)
 	{
 		m_lightId = id;
 	}
@@ -64,7 +64,7 @@ namespace Dx11Sandbox
 	
 	}
 
-	void CullableLight::calculateBoundsForLight(D3DXVECTOR4& bounds) const
+	void CullableLight::calculateBoundsForLight(Vec4& bounds) const
 	{
 		if (m_lightDefinition.lightType == DIRECTIONAL)
 		{
@@ -89,7 +89,7 @@ namespace Dx11Sandbox
 
 	void CullableLight::lightParametersChanged()
 	{
-		D3DXVECTOR4 newBounds;
+		Vec4 newBounds;
 		calculateBoundsForLight(newBounds);
 		if (newBounds == m_bounds) return;
 		m_bounds = newBounds;

@@ -10,7 +10,7 @@ namespace Dx11Sandbox
 
     }
 
-    void PixelBox::allocatePixelBox(UINT width,UINT height)
+    void PixelBox::allocatePixelBox(uint32_t width,uint32_t height)
     {
         m_width = width;
         m_height = height;

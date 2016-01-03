@@ -5,7 +5,7 @@
 #include "RCObject.h"
 #include "Mesh.h"
 #include "Material.h"
-#include <d3dx9math.h>
+#include "CommonMath.h"
 
 namespace Dx11Sandbox
 {
@@ -17,24 +17,24 @@ namespace Dx11Sandbox
 		~RenderData();
 		void setMesh(Mesh* mesh);
 		void setMaterial(Material* mat);
-		void setWorldMatrix(const D3DXMATRIX& matrix);
-		void setWorldBounds(const D3DXVECTOR4& bounds);
+		void setWorldMatrix(const Mat4x4& matrix);
+		void setWorldBounds(const Vec4& bounds);
 		
-		const D3DXMATRIX& getWorldMatrix() const;
-		const D3DXVECTOR4& getWorldBounds() const;
+		const Mat4x4& getWorldMatrix() const;
+		const Vec4& getWorldBounds() const;
 		RCObjectPtr<Material> getMaterial();
 		RCObjectPtr<Mesh> getMesh();
 
 	protected:
-		D3DXMATRIX m_worldMatrix;
-		D3DXVECTOR4 m_bounds;
+		Mat4x4 m_worldMatrix;
+		Vec4 m_bounds;
 		RCObjectPtr<Mesh> m_mesh;
         RCObjectPtr<Material> m_material;
 	};
 
 
 
-	inline void RenderData::setWorldMatrix(const D3DXMATRIX& matrix)
+	inline void RenderData::setWorldMatrix(const Mat4x4& matrix)
 	{
 		m_worldMatrix = matrix;
 	}
@@ -51,18 +51,18 @@ namespace Dx11Sandbox
 		m_material = mat;
 	}
 
-	inline void RenderData::setWorldBounds(const D3DXVECTOR4& bounds)
+	inline void RenderData::setWorldBounds(const Vec4& bounds)
 	{
 		m_bounds = bounds;
 	}
 
-	inline const D3DXMATRIX& RenderData::getWorldMatrix() const
+	inline const Mat4x4& RenderData::getWorldMatrix() const
 	{
 		return m_worldMatrix;
 	}
 
 
-	inline const D3DXVECTOR4& RenderData::getWorldBounds() const
+	inline const Vec4& RenderData::getWorldBounds() const
 	{
 		return m_bounds;
 	}

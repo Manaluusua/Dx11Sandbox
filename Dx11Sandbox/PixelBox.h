@@ -19,19 +19,19 @@ namespace Dx11Sandbox
 
         PixelBox();
         ~PixelBox();
-        void allocatePixelBox(UINT width,UINT height);
+        void allocatePixelBox(uint32_t width,uint32_t height);
 
         //only getters. Only way to set members on pixelbox is to use allocatePixelBox function
-        UINT getHeight() const {return m_height;}
-        UINT getWidth() const {return m_width;}
+        uint32_t getHeight() const {return m_height;}
+        uint32_t getWidth() const {return m_width;}
         Pixel* getPixels() {return m_pixels;}
 
         Pixel& getPixel(int x, int y) const;
 
     private:
         DISABLE_COPY(PixelBox)
-        UINT m_height;
-        UINT m_width;
+        uint32_t m_height;
+        uint32_t m_width;
         Pixel *m_pixels;
         
     };

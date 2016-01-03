@@ -45,17 +45,17 @@ namespace Dx11Sandbox
 
 	void BasicMaterialPropertiesSetter::setSceneInfoUniforms(RenderData* object, Material* mat)
 	{
-		D3DXMATRIX invWorld;
+		Mat4x4 invWorld;
 		float det;
-		const D3DXMATRIX *view = m_cam->getViewMatrix();
-		const D3DXMATRIX *proj = m_cam->getProjectionMatrix();
-		const D3DXMATRIX& world = object->getWorldMatrix();
-		D3DXMatrixInverse(&invWorld, &det, &world);
-		D3DXMATRIX worldviewProj = world * (*view) * (*proj);
+		const Mat4x4 *view = m_cam->getViewMatrix();
+		const Mat4x4 *proj = m_cam->getProjectionMatrix();
+		const Mat4x4& world = object->getWorldMatrix();
+		matInverse(world, invWorld);
+		Mat4x4 worldviewProj = world * (*view) * (*proj);
 
-		D3DXVECTOR3 transl = -(m_cam->getTranslation());
-		D3DXVECTOR4 camPos(transl.x, transl.y, transl.z, 1);
-		const D3DXVECTOR4& clip = m_cam->getClipPlane();
+		Vec3 transl = -(m_cam->getTranslation());
+		Vec4 camPos(transl.x, transl.y, transl.z, 1);
+		const Vec4& clip = m_cam->getClipPlane();
 
 		ID3DX11Effect* effect = mat->getShader()->getEffect();
 		ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("basicSceneInfo");

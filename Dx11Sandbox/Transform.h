@@ -1,7 +1,7 @@
 #ifndef DX11SANDBOX_TRANSFORM_H
 #define DX11SANDBOX_TRANSFORM_H
 
-#include <d3dx9math.h>
+#include "CommonMath.h"
 namespace Dx11Sandbox
 {
 	class Transform
@@ -14,23 +14,23 @@ namespace Dx11Sandbox
 
 		Transform& operator=(const Transform& other);
 
-		void setScale(const D3DXVECTOR3& scale);
-		const D3DXVECTOR3& getScale() const;
+		void setScale(const Vec3& scale);
+		const Vec3& getScale() const;
 
-		void setTranslation(const D3DXVECTOR3& transl);
-		const D3DXVECTOR3& getTranslation() const;
+		void setTranslation(const Vec3& transl);
+		const Vec3& getTranslation() const;
 
-		void setOrientation(const D3DXQUATERNION& orient);
-		const D3DXQUATERNION& getOrientation() const;
+		void setOrientation(const Quat& orient);
+		const Quat& getOrientation() const;
 
-		const D3DXMATRIX& asMatrix() const;
+		const Mat4x4& asMatrix() const;
 
 	private:
-		D3DXVECTOR3 m_scale;
-		D3DXVECTOR3 m_translation;
-		D3DXQUATERNION m_orientation;
+		Vec3 m_scale;
+		Vec3 m_translation;
+		Quat m_orientation;
 
-		mutable D3DXMATRIX m_cachedMatrix;
+		mutable Mat4x4 m_cachedMatrix;
 		mutable bool m_cacheValid;
 
 	};

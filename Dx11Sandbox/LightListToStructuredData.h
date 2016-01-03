@@ -3,9 +3,8 @@
 
 #include "RCObjectPtr.h"
 #include "ReleasePtr.h"
-#include <d3dx9math.h>
+#include <stdint.h>
 #include <vector>
-#include <minwindef.h>
 struct ID3D11ShaderResourceView;
 
 namespace Dx11Sandbox
@@ -27,7 +26,7 @@ namespace Dx11Sandbox
 
 	private:
 
-		void createBuffer(RenderContext* rc,UINT structSize, UINT structCount);
+		void createBuffer(RenderContext* rc,uint32_t structSize, uint32_t structCount);
 		void copyLightsToBuffer(RenderContext* rc, std::vector<Light*>* lights);
 
 		RCObjectPtr<GPUBuffer> m_buffer;

@@ -7,7 +7,6 @@
 #include "IndexBuffer.h"
 #include "Material.h"
 #include <D3D11.h>
-#include <d3dx9math.h>
 #include "d3dx11effect.h"
 #include "Camera.h"
 #include "CullableGeometry.h"

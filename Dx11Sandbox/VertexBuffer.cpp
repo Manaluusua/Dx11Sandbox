@@ -11,7 +11,7 @@ namespace Dx11Sandbox
     {
     }
 
-    VertexBuffer::VertexBuffer(ID3D11Device* device, void* vertices, UINT stride,  UINT numVertices, bool makeShadowBuffer,D3D11_USAGE usage, UINT cpuAccess ,
+    VertexBuffer::VertexBuffer(ID3D11Device* device, void* vertices, uint32_t stride,  uint32_t numVertices, bool makeShadowBuffer,D3D11_USAGE usage, uint32_t cpuAccess ,
             bool createSOBuffer)
             :
             m_stride( 0 ),
@@ -24,20 +24,20 @@ namespace Dx11Sandbox
         allocate( device, vertices, stride, numVertices, usage, cpuAccess, createSOBuffer );
     }
 
-    VertexBuffer::VertexBuffer( UINT stride, UINT vertexCount, ID3D11Buffer* buffer )
+    VertexBuffer::VertexBuffer( uint32_t stride, uint32_t vertexCount, ID3D11Buffer* buffer )
         :ShadowCPUBuffer( buffer ),
         m_stride( stride ),
         m_vertexCount( vertexCount )
     {
     }
 
-    bool VertexBuffer::allocate(ID3D11Device* device, void* vertices, UINT stride, UINT numVertices,D3D11_USAGE usage, UINT cpuAccess ,
+    bool VertexBuffer::allocate(ID3D11Device* device, void* vertices, uint32_t stride, uint32_t numVertices,D3D11_USAGE usage, uint32_t cpuAccess ,
             bool createSOBuffer)
     {
 		m_stride = 0;
 		m_vertexCount = 0;
 
-		UINT binding = createSOBuffer ? D3D11_BIND_STREAM_OUTPUT : D3D11_BIND_VERTEX_BUFFER; 
+		uint32_t binding = createSOBuffer ? D3D11_BIND_STREAM_OUTPUT : D3D11_BIND_VERTEX_BUFFER; 
 		bool res = allocateBuffer(device, vertices, stride*numVertices, binding, usage, cpuAccess);
 		if (res){
 			m_vertexCount = numVertices;

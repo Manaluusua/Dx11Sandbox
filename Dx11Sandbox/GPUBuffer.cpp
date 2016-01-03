@@ -21,7 +21,7 @@ namespace Dx11Sandbox
     }
 
 
-    void GPUBuffer::copyDataFromBuffer( ID3D11DeviceContext* context, GPUBuffer* buffer, UINT offsetInBytes  )
+    void GPUBuffer::copyDataFromBuffer( ID3D11DeviceContext* context, GPUBuffer* buffer, uint32_t offsetInBytes  )
     {
         if( !m_buffer || !buffer )
             return;
@@ -42,7 +42,7 @@ namespace Dx11Sandbox
       
      }
 
-    void GPUBuffer::setDataFromCPUBuffer( ID3D11DeviceContext* context, void* buffer, UINT size )
+    void GPUBuffer::setDataFromCPUBuffer( ID3D11DeviceContext* context, void* buffer, uint32_t size )
     {
         if( !m_buffer || !buffer )
             return;
@@ -80,7 +80,7 @@ namespace Dx11Sandbox
     }
 
 
-	bool GPUBuffer::allocateBuffer(ID3D11Device* device, void* data, unsigned int sizeInBytes, UINT bindFlags, D3D11_USAGE usage, UINT cpuAccess, UINT miscFlags, UINT structByteStride)
+	bool GPUBuffer::allocateBuffer(ID3D11Device* device, void* data, unsigned int sizeInBytes, uint32_t bindFlags, D3D11_USAGE usage, uint32_t cpuAccess, uint32_t miscFlags, uint32_t structByteStride)
 	{
 		if (m_buffer)
 		{

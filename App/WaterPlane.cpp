@@ -23,17 +23,17 @@ WaterPlane::WaveDefinition::WaveDefinition()
 
 }
 
-WaterPlane::WaveDefinition::WaveDefinition(D3DXVECTOR2 dir,float amplitude, float waveLength, float speed)
+WaterPlane::WaveDefinition::WaveDefinition(Dx11Sandbox::Vec2 dir, float amplitude, float waveLength, float speed)
     :direction(dir),
     amplitude(amplitude),
     frequency(1*2/waveLength),
     phaseConstant(speed*frequency)
 {
-    D3DXVec2Normalize(&direction,&direction);
+	Dx11Sandbox::vecNormalize(direction, direction);
 }
 
 
-WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, const Dx11Sandbox::string& name, D3DXVECTOR3 normal, float d, float extends1, float extends2, float tesselationX, float tesselationY, int textureResolution)
+WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr, ID3D11Device *device, const Dx11Sandbox::string& name, Dx11Sandbox::Vec3 normal, float d, float extends1, float extends2, float tesselationX, float tesselationY, int textureResolution)
 {
 
 	const float clipPlaneOffset = 1.f;
@@ -51,7 +51,7 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 	initializeRenderTargets(device, mat, name,  textureResolution);
 
 	Dx11Sandbox::string normalTexName = "waterplanenormalmap";
-	m_normalMap = Dx11Sandbox::TextureManager::singleton()->getOrCreateTextureFromFile(device, "water.jpg", normalTexName, 0, D3D11_USAGE_DEFAULT, D3DX11_FILTER_NONE);
+	m_normalMap = Dx11Sandbox::TextureManager::singleton()->getOrCreateTextureFromFile(device, "water.jpg", normalTexName, 0, D3D11_USAGE_DEFAULT, /*D3DX11_FILTER_NONE*/0);
 	mat->setTexture("normalmap", m_normalMap->getName());
     
     m_normal = normal;
@@ -59,16 +59,16 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 
 
     //some wave values
-    m_waves[0] = WaveDefinition(D3DXVECTOR2(1.f,0.8f),1.f,50.f,15.f);
-    m_waves[1] = WaveDefinition(D3DXVECTOR2(0.f,1.f),1.4f,20.f,8.f);
-    m_waves[2] = WaveDefinition(D3DXVECTOR2(0.7f,0.7f),0.7f,30.f,18.f);
+	m_waves[0] = WaveDefinition(Dx11Sandbox::Vec2(1.f, 0.8f), 1.f, 50.f, 15.f);
+	m_waves[1] = WaveDefinition(Dx11Sandbox::Vec2(0.f, 1.f), 1.4f, 20.f, 8.f);
+	m_waves[2] = WaveDefinition(Dx11Sandbox::Vec2(0.7f, 0.7f), 0.7f, 30.f, 18.f);
     
     setupWaves();
 	
 	m_reflectionCamera = m_mngr->createCamera();
 	m_reflectionCamera->setReflectionPlane(m_normal,m_d);
 	m_reflectionCamera->setReflectionEnabled(true);
-	D3DXVECTOR4 clipplane(m_normal, m_d + clipPlaneOffset);
+	Dx11Sandbox::Vec4 clipplane(m_normal.x, m_normal.y, m_normal.z, m_d + clipPlaneOffset);
 	m_reflectionCamera->setClipPlane(clipplane);
 	m_reflectionCamera->setRenderMask(Dx11Sandbox::RENDERLAYER_DEFAULT_OPAQUE | Dx11Sandbox::RENDERLAYER_SKYBOX | Dx11Sandbox::RENDERLAYER_LIGHTPASS);
 	m_reflectionCamera->addRenderListener(this);
@@ -76,7 +76,7 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr,ID3D11Device *device, con
 	
 	
 	m_refractionCamera = m_mngr->createCamera();
-	clipplane = D3DXVECTOR4(-m_normal, -m_d + clipPlaneOffset);
+	clipplane = Dx11Sandbox::Vec4(-m_normal.x, -m_normal.y, -m_normal.z, -m_d + clipPlaneOffset);
 	m_refractionCamera->setClipPlane(clipplane);
 	m_refractionCamera->setRenderMask(Dx11Sandbox::RENDERLAYER_DEFAULT_OPAQUE | Dx11Sandbox::RENDERLAYER_SKYBOX | Dx11Sandbox::RENDERLAYER_LIGHTPASS);
 	m_refractionCamera->addRenderListener(this);
@@ -138,7 +138,7 @@ void WaterPlane::setupWaves()
 {
 	ID3DX11Effect* effect =  m_renderObject->getRenderData().getMaterial()->getShader()->getEffect();
     ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("waveDefinitions");
-    D3DXMATRIX matrix;
+    Dx11Sandbox::Mat4x4 matrix;
     matrix._11 = m_waves[0].direction.x;
     matrix._12 = m_waves[0].direction.y;
     matrix._13 = m_waves[0].frequency;
@@ -161,7 +161,7 @@ void WaterPlane::setupWaves()
 
     if(buffer->IsValid())
     {
-        buffer->GetMemberByName("waves")->AsMatrix()->SetMatrix((float*)matrix);
+        buffer->GetMemberByName("waves")->AsMatrix()->SetMatrix((float*)&matrix);
     }
 }
 
@@ -246,17 +246,17 @@ void WaterPlane::setupReflectionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sa
     Dx11Sandbox::ReleasePtr<ID3D11RasterizerState> original( originalRS, false), cw( newRS, false );
     ic->RSSetState(cw);
 
-	const D3DXMATRIX *viewRefl = camera.getViewMatrix();
+	const Dx11Sandbox::Mat4x4 *viewRefl = camera.getViewMatrix();
 
-    const D3DXMATRIX *proj = camera.getProjectionMatrix();
+	const Dx11Sandbox::Mat4x4 *proj = camera.getProjectionMatrix();
 
-    D3DXMATRIX viewProjRefl =  (*viewRefl) * (*proj);
+	Dx11Sandbox::Mat4x4 viewProjRefl = Dx11Sandbox::operator*((*viewRefl), (*proj));
 
     //set proj matrices to waterplane
     ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("waterPlaneInfo");
     if(buffer->IsValid())
     {
-        buffer->GetMemberByName("reflectionViewProj")->AsMatrix()->SetMatrix((float*)viewProjRefl);
+        buffer->GetMemberByName("reflectionViewProj")->AsMatrix()->SetMatrix((float*)&viewProjRefl);
     }
 
 
@@ -301,15 +301,15 @@ void WaterPlane::setupRefractionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sa
 	state->pushRenderTargets(1, views, m_depthStencil->getDepthStencilView());
     state->getImmediateContext()->ClearDepthStencilView(m_depthStencil->getDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0);
   
-    const D3DXMATRIX *viewRefr = camera.getViewMatrix();
-    const D3DXMATRIX *proj = camera.getProjectionMatrix();
-    D3DXMATRIX viewProjRefr =  (*viewRefr) * (*proj);
+    const Dx11Sandbox::Mat4x4 *viewRefr = camera.getViewMatrix();
+	const Dx11Sandbox::Mat4x4* proj = camera.getProjectionMatrix();
+	Dx11Sandbox::Mat4x4 viewProjRefr = Dx11Sandbox::operator*((*viewRefr), (*proj));
 
     //set proj matrices to waterplane
     ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("waterPlaneInfo");
     if(buffer->IsValid())
     {
-        buffer->GetMemberByName("refractionViewProj")->AsMatrix()->SetMatrix((float*)viewProjRefr);
+        buffer->GetMemberByName("refractionViewProj")->AsMatrix()->SetMatrix((float*)&viewProjRefr);
     }
 
 }

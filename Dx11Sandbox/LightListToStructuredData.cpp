@@ -21,9 +21,9 @@ namespace Dx11Sandbox
 	void LightListToStructuredData::setupFromLightList(RenderContext* rc, std::vector<Light*>* lights)
 	{
 		if (!lights || !rc) return;
-		UINT lightCount = lights->size();
-		UINT lightStructSize = sizeof(LightDefinition);
-		UINT byteCount = lightCount * lightStructSize;
+		uint32_t lightCount = lights->size();
+		uint32_t lightStructSize = sizeof(LightDefinition);
+		uint32_t byteCount = lightCount * lightStructSize;
 
 		if (m_buffer->getByteCount() < byteCount){
 			createBuffer(rc,lightStructSize, lightCount);
@@ -32,7 +32,7 @@ namespace Dx11Sandbox
 		copyLightsToBuffer(rc, lights);
 	}
 
-	void LightListToStructuredData::createBuffer(RenderContext* rc, UINT structSize, UINT structCount)
+	void LightListToStructuredData::createBuffer(RenderContext* rc, uint32_t structSize, uint32_t structCount)
 	{
 		m_buffer->allocateBuffer(rc->getDevice(), 0, structSize * structCount, D3D11_BIND_SHADER_RESOURCE, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, D3D11_RESOURCE_MISC_BUFFER_STRUCTURED, structSize);
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -63,7 +63,7 @@ namespace Dx11Sandbox
 		}
 
 		char* dataPtr = reinterpret_cast<char*>(mappedResource.pData);
-		UINT structSize = sizeof(LightDefinition);
+		uint32_t structSize = sizeof(LightDefinition);
 
 		for (unsigned int i = 0; i < lights->size(); ++i){
 			Light* l = (*lights)[i];

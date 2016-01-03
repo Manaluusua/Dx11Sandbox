@@ -4,7 +4,7 @@
 #include "BasicGeometry.h"
 #include "Cullable.h"
 
-#include <d3dx9math.h>
+#include "CommonMath.h"
 
 namespace Dx11Sandbox
 {
@@ -22,9 +22,9 @@ namespace Dx11Sandbox
 
 	public:
 
-		virtual void setWorldMatrix(const D3DXMATRIX& matrix);
+		virtual void setWorldMatrix(const Mat4x4& matrix);
 
-		void setBoundingSphere(const D3DXVECTOR4& bounds); 
+		void setBoundingSphere(const Vec4& bounds); 
         virtual void setRenderMask(RenderLayer mask);
 
 		void setVisible(bool value);
@@ -47,7 +47,7 @@ namespace Dx11Sandbox
 
 		DISABLE_COPY(CullableGeometry);
 
-		D3DXVECTOR4 m_bounds;
+		Vec4 m_bounds;
 		CullData** m_cullingInformation;
 		CullableObjectManager* m_mngr;
 		
