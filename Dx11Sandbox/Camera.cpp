@@ -47,7 +47,7 @@ namespace Dx11Sandbox
 		m_viewCacheValid = false;
 	}
 
-    const Mat4x4* Camera::getProjectionMatrix()
+    const Matrix* Camera::getProjectionMatrix()
     {
 
 		if(!m_projectionCacheValid)
@@ -59,7 +59,7 @@ namespace Dx11Sandbox
     }
 
 
-	const Mat4x4* Camera::getViewMatrix()
+	const Matrix* Camera::getViewMatrix()
     {
         if(!m_viewCacheValid)
         {
@@ -244,7 +244,7 @@ namespace Dx11Sandbox
     {
         m_viewCacheValid = false;
         angle = -angle*0.5f;
-		m_orientation = m_orientation * createQuat(sin(angle)*x, sin(angle)*y, sin(angle)*z, cos(angle));
+		m_orientation = multiplyQuat(m_orientation, createQuat(sin(angle)*x, sin(angle)*y, sin(angle)*z, cos(angle)));
     }
 
 
@@ -283,7 +283,7 @@ namespace Dx11Sandbox
 		rotateVecByQuat(axisUp, m_orientation, rotatedUp);
         if(vecDotProduct(rotatedUp,up)<0)
         {
-            m_orientation = createQuat(axisTo.x*sin(MathUtil::PI*0.5f),axisTo.y*sin(MathUtil::PI*0.5f), axisTo.z*sin(MathUtil::PI*0.5f), cos(MathUtil::PI*0.5f)) * m_orientation;
+            m_orientation = multiplyQuat(createQuat(axisTo.x*sin(MathUtil::PI*0.5f),axisTo.y*sin(MathUtil::PI*0.5f), axisTo.z*sin(MathUtil::PI*0.5f), cos(MathUtil::PI*0.5f)), m_orientation);
         }
 
 
@@ -323,7 +323,7 @@ namespace Dx11Sandbox
 		Quat yrot = createQuat(up.x*sin(y*0.5f), up.y*sin(y*0.5f), up.z*sin(y*0.5f), cos(y*0.5f));
 		Quat zrot = createQuat(dir.x*sin(z*0.5f), dir.y*sin(z*0.5f), dir.z*sin(z*0.5f), cos(z*0.5f));
 
-        m_orientation =  yrot * m_orientation * xrot * zrot;
+        m_orientation =  multiplyQuat(multiplyQuat(multiplyQuat(yrot, m_orientation), xrot), zrot);
         m_viewCacheValid = false;
     }
 
@@ -346,7 +346,7 @@ namespace Dx11Sandbox
 
     void Camera::calculateFrustrum(Frustum* frustrum)
     {
-        Mat4x4 viewProj((*getViewMatrix()) * (*getProjectionMatrix()));
+        Matrix viewProj((*getViewMatrix()) * (*getProjectionMatrix()));
         
 		Frustum::calculateFrustrumFromMatrix(viewProj, *frustrum);
     }

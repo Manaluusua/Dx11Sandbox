@@ -138,7 +138,7 @@ void WaterPlane::setupWaves()
 {
 	ID3DX11Effect* effect =  m_renderObject->getRenderData().getMaterial()->getShader()->getEffect();
     ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("waveDefinitions");
-    Dx11Sandbox::Mat4x4 matrix;
+    Dx11Sandbox::Matrix4x4 matrix;
     matrix._11 = m_waves[0].direction.x;
     matrix._12 = m_waves[0].direction.y;
     matrix._13 = m_waves[0].frequency;
@@ -246,11 +246,11 @@ void WaterPlane::setupReflectionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sa
     Dx11Sandbox::ReleasePtr<ID3D11RasterizerState> original( originalRS, false), cw( newRS, false );
     ic->RSSetState(cw);
 
-	const Dx11Sandbox::Mat4x4 *viewRefl = camera.getViewMatrix();
+	const Dx11Sandbox::Matrix *viewRefl = camera.getViewMatrix();
 
-	const Dx11Sandbox::Mat4x4 *proj = camera.getProjectionMatrix();
+	const Dx11Sandbox::Matrix *proj = camera.getProjectionMatrix();
 
-	Dx11Sandbox::Mat4x4 viewProjRefl = Dx11Sandbox::operator*((*viewRefl), (*proj));
+	Dx11Sandbox::Matrix viewProjRefl = (*viewRefl) * (*proj);
 
     //set proj matrices to waterplane
     ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("waterPlaneInfo");
@@ -301,9 +301,9 @@ void WaterPlane::setupRefractionCamera(Dx11Sandbox::RenderCamera& camera, Dx11Sa
 	state->pushRenderTargets(1, views, m_depthStencil->getDepthStencilView());
     state->getImmediateContext()->ClearDepthStencilView(m_depthStencil->getDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0, 0);
   
-    const Dx11Sandbox::Mat4x4 *viewRefr = camera.getViewMatrix();
-	const Dx11Sandbox::Mat4x4* proj = camera.getProjectionMatrix();
-	Dx11Sandbox::Mat4x4 viewProjRefr = Dx11Sandbox::operator*((*viewRefr), (*proj));
+    const Dx11Sandbox::Matrix *viewRefr = camera.getViewMatrix();
+	const Dx11Sandbox::Matrix* proj = camera.getProjectionMatrix();
+	Dx11Sandbox::Matrix viewProjRefr = (*viewRefr) * (*proj);
 
     //set proj matrices to waterplane
     ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("waterPlaneInfo");

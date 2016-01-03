@@ -22,7 +22,7 @@ namespace Dx11Sandbox
 
 	public:
 
-		virtual void setWorldMatrix(const Mat4x4& matrix);
+		virtual void setWorldMatrix(const Matrix& matrix);
 
 		void setBoundingSphere(const Vec4& bounds); 
         virtual void setRenderMask(RenderLayer mask);

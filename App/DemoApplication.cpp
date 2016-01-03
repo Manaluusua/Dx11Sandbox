@@ -227,7 +227,7 @@ void createMaterialBall(SceneManager* mngr,const string& albedoTex, const string
 	Material* mat = 0;
 	Mesh* mesh = 0;
 	CullableGeometry *ro;
-	Dx11Sandbox::Mat4x4 wmatrix;
+	Dx11Sandbox::Matrix wmatrix;
 	Dx11Sandbox::matMakeIdentity(wmatrix);
 
 	mesh = MeshUtility::createUnitSphere(device, 20,20);
@@ -244,12 +244,10 @@ void createMaterialBall(SceneManager* mngr,const string& albedoTex, const string
 	tex = Dx11Sandbox::TextureManager::singleton()->getOrCreateTextureFromFile(device, normalTex, normalTex, 0, D3D11_USAGE_DEFAULT, /*D3DX11_FILTER_NONE*/0);
 	mat->setTexture("normalTex", tex->getName());
 
-	wmatrix._11 = 10.f;
-	wmatrix._22 = 10.f;
-	wmatrix._33 = 10.f;
-	wmatrix._41 = x;
-	wmatrix._42 = y;
-	wmatrix._43 = 0.f;
+	Dx11Sandbox::Vec3 scale(10.f, 10.f, 10.f);
+	Dx11Sandbox::Vec3 transl(x, y, 0.f);
+	Dx11Sandbox::createTransformationST(scale, transl, wmatrix);
+	
 	ro = mngr->createCullableGeometry();
 	ro->setBoundingSphere(Dx11Sandbox::Vec4(0, 0, 0, FLT_MAX));
 	ro->setWorldMatrix(wmatrix);
@@ -390,9 +388,9 @@ void DemoApplication::objectBeingRendered(CullableGeometry* obj)
 
 
         //D3DXMATRIX *world;
-	const Dx11Sandbox::Mat4x4 *view = m_mngr->getMainCamera()->getViewMatrix();
-	const Dx11Sandbox::Mat4x4 *proj = m_mngr->getMainCamera()->getProjectionMatrix();
-	Dx11Sandbox::Mat4x4 viewProj = (*view) * (*proj);
+	const Dx11Sandbox::Matrix *view = m_mngr->getMainCamera()->getViewMatrix();
+	const Dx11Sandbox::Matrix *proj = m_mngr->getMainCamera()->getProjectionMatrix();
+	Dx11Sandbox::Matrix viewProj = (*view) * (*proj);
 
        //temp
 	Dx11Sandbox::Vec3 translation = m_mngr->getMainCamera()->getTranslation();

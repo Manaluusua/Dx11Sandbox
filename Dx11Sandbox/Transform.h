@@ -23,14 +23,14 @@ namespace Dx11Sandbox
 		void setOrientation(const Quat& orient);
 		const Quat& getOrientation() const;
 
-		const Mat4x4& asMatrix() const;
+		const Matrix& asMatrix() const;
 
 	private:
 		Vec3 m_scale;
 		Vec3 m_translation;
 		Quat m_orientation;
 
-		mutable Mat4x4 m_cachedMatrix;
+		mutable Matrix m_cachedMatrix;
 		mutable bool m_cacheValid;
 
 	};

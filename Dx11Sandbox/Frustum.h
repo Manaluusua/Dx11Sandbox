@@ -22,8 +22,8 @@ namespace Dx11Sandbox
         };
 
 		static uint32_t cullSpheresSSE(Frustum::SIMDFrustrum& frust,  const Vec4& sphere1, const Vec4& sphere2 );
-		static void calculateFrustrumFromMatrix(const Mat4x4 &matrix, Frustum& outfrust);
-		static void calculateMatrixFromFrustrum(const Frustum& frust, Mat4x4 &matrix);
+		static void calculateFrustrumFromMatrix(const Matrix &mat, Frustum& outfrust);
+		static void calculateMatrixFromFrustrum(const Frustum& frust, Matrix &matrix);
 
 
         Frustum();

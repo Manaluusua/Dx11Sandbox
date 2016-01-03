@@ -68,7 +68,7 @@ namespace Dx11Sandbox
 		return m_orientation;
 	}
 
-	const Mat4x4& Transform::asMatrix() const
+	const Matrix& Transform::asMatrix() const
 	{
 		if(m_cacheValid) return m_cachedMatrix;
 

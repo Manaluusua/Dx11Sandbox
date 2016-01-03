@@ -24,8 +24,8 @@ namespace Dx11Sandbox
         void setProjectionPerspective(FLOAT fovY, FLOAT aspectRatio, FLOAT nearDist, FLOAT farDist);
 		void setProjectionOrthographic(FLOAT size, FLOAT aspectRatio, FLOAT nearDist, FLOAT farDist);
 
-        const Mat4x4* getProjectionMatrix();
-		const Mat4x4* getViewMatrix();
+        const Matrix* getProjectionMatrix();
+		const Matrix* getViewMatrix();
     
         void setTranslation(FLOAT x, FLOAT y, FLOAT z);
 		void setTranslation(const Vec3& translation);
@@ -76,10 +76,10 @@ namespace Dx11Sandbox
 
 		void calculateProjection();
 
-        Mat4x4 m_viewMatrix;
-		Mat4x4 m_projMatrix;
+        Matrix m_viewMatrix;
+		Matrix m_projMatrix;
 
-		Mat4x4 m_reflMatrix;
+		Matrix m_reflMatrix;
 
 		Quat m_orientation;
 		Vec4 m_clipPlane;

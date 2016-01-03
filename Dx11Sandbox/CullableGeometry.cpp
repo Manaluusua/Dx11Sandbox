@@ -38,7 +38,7 @@ namespace Dx11Sandbox
 		}
 	}
 
-	void CullableGeometry::setWorldMatrix(const Mat4x4& matrix)
+	void CullableGeometry::setWorldMatrix(const Matrix& matrix)
 	{
 		m_renderData.setWorldMatrix(matrix);
 		updateCullData();

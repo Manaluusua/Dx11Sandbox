@@ -17,16 +17,16 @@ namespace Dx11Sandbox
 		~RenderData();
 		void setMesh(Mesh* mesh);
 		void setMaterial(Material* mat);
-		void setWorldMatrix(const Mat4x4& matrix);
+		void setWorldMatrix(const Matrix& matrix);
 		void setWorldBounds(const Vec4& bounds);
 		
-		const Mat4x4& getWorldMatrix() const;
+		const Matrix& getWorldMatrix() const;
 		const Vec4& getWorldBounds() const;
 		RCObjectPtr<Material> getMaterial();
 		RCObjectPtr<Mesh> getMesh();
 
 	protected:
-		Mat4x4 m_worldMatrix;
+		Matrix m_worldMatrix;
 		Vec4 m_bounds;
 		RCObjectPtr<Mesh> m_mesh;
         RCObjectPtr<Material> m_material;
@@ -34,7 +34,7 @@ namespace Dx11Sandbox
 
 
 
-	inline void RenderData::setWorldMatrix(const Mat4x4& matrix)
+	inline void RenderData::setWorldMatrix(const Matrix& matrix)
 	{
 		m_worldMatrix = matrix;
 	}
@@ -56,7 +56,7 @@ namespace Dx11Sandbox
 		m_bounds = bounds;
 	}
 
-	inline const Mat4x4& RenderData::getWorldMatrix() const
+	inline const Matrix& RenderData::getWorldMatrix() const
 	{
 		return m_worldMatrix;
 	}

@@ -180,7 +180,7 @@ namespace Dx11Sandbox
 	{
 		
 		m_copyData->getMaterial()->setTexture("tex", m_lightingOutput->getName());
-		Mat4x4 mat = *m_cam->getViewMatrix() * *m_cam->getProjectionMatrix();
+		Matrix mat = *m_cam->getViewMatrix() * *m_cam->getProjectionMatrix();
 		matInverse(mat, mat);
 		m_copyData->setWorldMatrix(mat);
 
@@ -211,9 +211,9 @@ namespace Dx11Sandbox
 		effect->GetVariableByName("lights")->AsShaderResource()->SetResource(m_lightBuffer.getResourceViewOfLightData());
 
 		//set misc data
-		const Mat4x4 *view = m_cam->getViewMatrix();
-		const Mat4x4 *proj = m_cam->getProjectionMatrix();
-		Mat4x4 invView;
+		const Matrix *view = m_cam->getViewMatrix();
+		const Matrix *proj = m_cam->getProjectionMatrix();
+		Matrix invView;
 		matInverse(*view, invView);
 
 		Vec3 transl = -(m_cam->getTranslation());

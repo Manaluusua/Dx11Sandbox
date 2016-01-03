@@ -11,8 +11,12 @@ namespace Dx11Sandbox
     {
     }
 
-	void Frustum::calculateFrustrumFromMatrix(const Mat4x4 &matrix, Frustum& outfrust)
+	void Frustum::calculateFrustrumFromMatrix(const Matrix &mat, Frustum& outfrust)
 	{
+		Matrix4x4 matrix;
+		matrixToMatrix4x4(mat, matrix);
+
+
 		outfrust.rightPlane.x = matrix._14 - matrix._11;
 		outfrust.rightPlane.y = matrix._24 - matrix._21;
 		outfrust.rightPlane.z = matrix._34 - matrix._31;
@@ -51,7 +55,7 @@ namespace Dx11Sandbox
 		planeNormalize(outfrust.farPlane, outfrust.farPlane);
 
 	}
-	void Frustum::calculateMatrixFromFrustrum(const Frustum& frust, Mat4x4 &matrix)
+	void Frustum::calculateMatrixFromFrustrum(const Frustum& frust, Matrix &matrix)
 	{
 
 	}

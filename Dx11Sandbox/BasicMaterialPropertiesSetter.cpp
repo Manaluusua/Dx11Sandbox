@@ -45,13 +45,13 @@ namespace Dx11Sandbox
 
 	void BasicMaterialPropertiesSetter::setSceneInfoUniforms(RenderData* object, Material* mat)
 	{
-		Mat4x4 invWorld;
+		Matrix invWorld;
 		float det;
-		const Mat4x4 *view = m_cam->getViewMatrix();
-		const Mat4x4 *proj = m_cam->getProjectionMatrix();
-		const Mat4x4& world = object->getWorldMatrix();
+		const Matrix *view = m_cam->getViewMatrix();
+		const Matrix *proj = m_cam->getProjectionMatrix();
+		const Matrix& world = object->getWorldMatrix();
 		matInverse(world, invWorld);
-		Mat4x4 worldviewProj = world * (*view) * (*proj);
+		Matrix worldviewProj = world * (*view) * (*proj);
 
 		Vec3 transl = -(m_cam->getTranslation());
 		Vec4 camPos(transl.x, transl.y, transl.z, 1);
