@@ -5,7 +5,7 @@
 #include <vector>
 #include "CommonUtilities.h"
 
-class ID3D11Device;
+struct ID3D11Device;
 
 
 namespace Dx11Sandbox

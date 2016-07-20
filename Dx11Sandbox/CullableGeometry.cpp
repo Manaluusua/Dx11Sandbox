@@ -66,10 +66,10 @@ namespace Dx11Sandbox
 		if(m_cullingInformation == 0) return;
 
 		//calculate world space bounds
-		Vec3 center(m_bounds.x, m_bounds.y, m_bounds.z);
+		Vec3 center(m_bounds[0], m_bounds[1], m_bounds[2]);
 		Vec4 boundsWorld;
 		transformVec3Point(center, m_renderData.getWorldMatrix(), center);
-		boundsWorld.w = calculateWorldSpaceRadius(m_bounds.w);
+		boundsWorld[3] = calculateWorldSpaceRadius(m_bounds[3]);
 		(*m_cullingInformation)->boundingSphere = boundsWorld;
 	}
 
@@ -81,7 +81,7 @@ namespace Dx11Sandbox
 		Vec3 s(localRadius, localRadius, localRadius);
 		transformVec3Direction(s, m_renderData.getWorldMatrix(), s);
 
-		return sqrtf(max(max(s.x, s.y), s.z));
+		return sqrtf(max(max(s[0], s[1]), s[2]));
 
 	}
 

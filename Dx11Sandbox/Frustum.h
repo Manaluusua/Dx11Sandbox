@@ -1,6 +1,7 @@
 #ifndef DX11SANDBOX_FRUSTRUM_H
 #define DX11SANDBOX_FRUSTRUM_H
 #include "CommonMath.h"
+#include "CommonTypes.h"
 #include <xmmintrin.h>
 namespace Dx11Sandbox
 {
@@ -55,20 +56,20 @@ namespace Dx11Sandbox
 		__m128 res1;
 		__m128 res2;
 
-		__m128 vec1_xxxx = _mm_set1_ps(sphere1.x);
-		__m128 vec1_yyyy = _mm_set1_ps(sphere1.y);
-		__m128 vec1_zzzz = _mm_set1_ps(sphere1.z);
-		__m128 vec1_rrrr = _mm_set1_ps(-sphere1.w);
+		__m128 vec1_xxxx = _mm_set1_ps(sphere1[0]);
+		__m128 vec1_yyyy = _mm_set1_ps(sphere1[1]);
+		__m128 vec1_zzzz = _mm_set1_ps(sphere1[2]);
+		__m128 vec1_rrrr = _mm_set1_ps(-sphere1[3]);
     
-		__m128 vec2_xxxx = _mm_set1_ps(sphere2.x);
-		__m128 vec2_yyyy = _mm_set1_ps(sphere2.y);
-		__m128 vec2_zzzz = _mm_set1_ps(sphere2.z);
-		__m128 vec2_rrrr = _mm_set1_ps(-sphere2.w);
+		__m128 vec2_xxxx = _mm_set1_ps(sphere2[0]);
+		__m128 vec2_yyyy = _mm_set1_ps(sphere2[1]);
+		__m128 vec2_zzzz = _mm_set1_ps(sphere2[2]);
+		__m128 vec2_rrrr = _mm_set1_ps(-sphere2[3]);
 
-		__m128 vec12_xxxx = _mm_set_ps(sphere1.x, sphere1.x, sphere2.x, sphere2.x);
-		__m128 vec12_yyyy = _mm_set_ps(sphere1.y, sphere1.y, sphere2.y, sphere2.y);
-		__m128 vec12_zzzz = _mm_set_ps(sphere1.z, sphere1.z, sphere2.z, sphere2.z);
-		__m128 vec12_rrrr = _mm_set_ps(-sphere1.w, -sphere1.w, -sphere2.w, -sphere2.w);
+		__m128 vec12_xxxx = _mm_set_ps(sphere1[0], sphere1[0], sphere2[0], sphere2[0]);
+		__m128 vec12_yyyy = _mm_set_ps(sphere1[1], sphere1[1], sphere2[1], sphere2[1]);
+		__m128 vec12_zzzz = _mm_set_ps(sphere1[2], sphere1[2], sphere2[2], sphere2[2]);
+		__m128 vec12_rrrr = _mm_set_ps(-sphere1[3], -sphere1[3], -sphere2[3], -sphere2[3]);
 
 		__m128 zero = _mm_set1_ps(0.0f);
 

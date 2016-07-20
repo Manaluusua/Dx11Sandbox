@@ -158,7 +158,7 @@ void DemoApplication::createWorld(SceneManager* mngr)
 	sun->setLightType(Dx11Sandbox::Light::DIRECTIONAL);
 	sun->setColor(Dx11Sandbox::Vec3(0.2f, 0.2f, 0.2f));
 	Dx11Sandbox::Vec3 sunDir(1.f, -1.f, 0.f);
-	Dx11Sandbox::vecNormalize(sunDir, sunDir);
+	gmtl::normalize(sunDir);
 	sun->setDirection(sunDir);
 
 
@@ -283,7 +283,7 @@ void DemoApplication::update(SceneManager* mngr,double fTime, float fElapsedTime
     handleInput(mngr,fElapsedTime, static_cast<float>( fTime ) );
 
 	Dx11Sandbox::Vec3 sunDir(std::cos(m_time), -0.4f, std::sin(m_time));
-	Dx11Sandbox::vecNormalize(sunDir, sunDir);
+	gmtl::normalize(sunDir);
 	sun->setDirection(sunDir);
 }
 
@@ -323,7 +323,7 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 		mov.y -= speed*dt;
     }
 
-	if (Dx11Sandbox::vecLengthSqr(mov) > 0)
+	if (gmtl::lengthSquared(mov) > 0)
     {
         cam->moveCameraViewRelative(mov.x, mov.y, mov.z);
     }
@@ -361,7 +361,7 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 
 
 
-	if (Dx11Sandbox::vecLengthSqr(m_mouseDelta) > 0)
+	if (gmtl::lengthSquared(m_mouseDelta) > 0)
     {
         cam->rotateCameraViewRelative(-m_mouseDelta.y*mouseSens*m_mouseSensitivity ,-m_mouseDelta.x*mouseSens*m_mouseSensitivity, 0);
     }

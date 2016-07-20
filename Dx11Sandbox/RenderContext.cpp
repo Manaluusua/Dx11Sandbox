@@ -143,7 +143,7 @@ namespace Dx11Sandbox
 		m_defaultViewport.TopLeftY = viewport->TopLeftY;
 		m_defaultViewport.Width = viewport->Width;
 
-		createDepthStencil(m_defaultViewport.Width, m_defaultViewport.Height);
+		createDepthStencil((int)m_defaultViewport.Width, (int)m_defaultViewport.Height);
 
 	}
 

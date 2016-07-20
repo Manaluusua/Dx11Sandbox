@@ -1,112 +1,72 @@
 #ifndef DX11SANDBOX_COMMONMATH_H
 #define DX11SANDBOX_COMMONMATH_H
 
-#include <DirectXMath.h>
+#include <gmtl/Vec.h>
+#include <gmtl/VecOps.h>
+#include <gmtl/Matrix.h>
+#include <gmtl/MatrixOps.h>
+#include <gmtl/Quat.h>
+#include <gmtl/QuatOps.h>
+
+using namespace gmtl;
 
 namespace Dx11Sandbox
 {
-	//TODO: Create proper types that properly hides the DirectXMaths underlying Simd types
-	typedef DirectX::XMFLOAT2 Vec2;
-	typedef DirectX::XMFLOAT3 Vec3;
-	typedef DirectX::XMFLOAT4 Vec4;
-	typedef DirectX::XMMATRIX Matrix;
-	typedef DirectX::XMFLOAT4X4 Matrix4x4;
-	typedef DirectX::XMVECTOR Quat;
-	typedef DirectX::XMVECTOR SimdVec;
 
+	//TODO: Create proper types
+	typedef gmtl::Vec2f Vec2;
+	typedef gmtl::Vec3f Vec3;
+	typedef gmtl::Vec4f Vec4;
+	typedef gmtl::Matrix44f Matrix;
+	typedef gmtl::Quatf Quat;
 
-
-	//vec operators
-	inline void vecCrossProduct(const Vec3& v1, const Vec3& v2, Vec3& out)
-	{
-
-	}
-
-	inline void vecNormalize(const Vec2& v, Vec2& out)
-	{
-
-	}
-
-	inline void vecNormalize(const Vec3& v, Vec3& out)
-	{
-
-	}
-
-	inline void vecNormalize(const Vec4& v, Vec4& out)
-	{
-
-	}
-
-	inline float vecLengthSqr(const Vec2& v)
-	{
-
-	}
-	inline float vecLengthSqr(const Vec3& v)
-	{
-
-	}
-	inline float vecLengthSqr(const Vec4& v)
-	{
-
-	}
-
-	inline float vecDotProduct(const Vec3& v1, const Vec3 v2)
-	{
-
-	}
 
 	//mat operators
 	inline void matMakeIdentity(Matrix& mat)
 	{
-
+		mat = gmtl::MAT_IDENTITY44F;
 	}
 
-	inline void matMakeIdentity(Matrix4x4& mat)
-	{
-
-	}
 
 	inline void matInverse(const Matrix& in, Matrix& out)
 	{
-
+		out = in;
+		gmtl::invert(out);
 	}
 
-	inline void matrix4x4ToMatrix(const Matrix4x4& in, Matrix& out)
-	{
 
-	}
-
-	inline void matrixToMatrix4x4(const Matrix& in, Matrix4x4& out)
-	{
-
-	}
 
 	
 
 	//quat operators
 	inline void quatMakeIdentity(Quat& quat)
 	{
-
+		quat = gmtl::QUAT_IDENTITYF;
 	}
 
-	inline Quat createQuat(Vec3& axis, float angle)
+	inline Quat createQuatFromAxisAngle(float x, float y, float z, float angle)
+	{
+		float sinAngle = sin(angle / 2);
+
+		return Quat(sinAngle * x, sinAngle * y, sinAngle * z, cos(angle / 2));
+	}
+
+	inline Quat createQuatFromAxisAngle(const Vec3& axis, float angle)
+	{
+		return createQuatFromAxisAngle(axis[0], axis[1], axis[2], angle);
+	}
+
+	inline Quat multiplyQuat(const Quat& a, const Quat& b)
 	{
 
 	}
 
-	inline Quat createQuat(float x, float y, float z, float w)
-	{
-
-	}
-
-	inline Quat multiplyQuat(const Quat& m1, const Quat& m2)
-	{
-
-	}
+	
 
 	inline void quatConjugate(const Quat& q, Quat& conj)
 	{
-
+		conj = q;
+		gmtl::conj(conj);
 	}
 
 
@@ -130,6 +90,16 @@ namespace Dx11Sandbox
 	inline void rotateVecByQuat(const Vec3& vec, const Quat& quat, Vec3& out)
 	{
 
+		Vec3 v(quat[0], quat[1], quat[2]);
+		float s = quat[3];
+
+		Vec3 temp;
+		cross(temp, v, vec);
+
+		
+		out = 2.0f * dot(v, vec) * v
+			+ (s*s - dot(v, v)) * vec
+			+ 2.0f * s * temp;
 	}
 
 
@@ -185,162 +155,10 @@ namespace Dx11Sandbox
 
 	}
 
-	
 
 	
 
-
-
-	//operator overloads to make the new types act more like the old D3DX* types
-	inline bool operator==(const Vec2& v1, const Vec2& v2)
-	{
-
-	}
-
-	inline bool operator==(const Vec3& v1, const Vec3& v2)
-	{
-
-	}
-
-	inline bool operator==(const Vec4& v1, const Vec4& v2)
-	{
-
-	}
-
-	inline bool operator==(const Quat& v1, const Quat& v2)
-	{
-
-	}
-
-	inline Vec2 operator-(const Vec2& v1)
-	{
-
-	}
-
-	inline Vec3 operator-(const Vec3& v1)
-	{
-
-	}
-
-	inline Vec4 operator-(const Vec4& v1)
-	{
-
-	}
-
-
-	inline Vec2 operator+(const Vec2& v1, const Vec2& v2)
-	{
-
-	}
-
-	inline Vec3 operator+(const Vec3& v1, const Vec3& v2)
-	{
-
-	}
-
-	inline Vec4 operator+(const Vec4& v1, const Vec4& v2)
-	{
-
-	}
-
-	inline Vec2 operator-(const Vec2& v1, const Vec2& v2)
-	{
-
-	}
-
-	inline Vec3 operator-(const Vec3& v1, const Vec3& v2)
-	{
-
-	}
-
-	inline Vec4 operator-(const Vec4& v1, const Vec4& v2)
-	{
-
-	}
-
-	inline void operator+=(Vec2& v1, const Vec2& v2)
-	{
-
-	}
-
-	inline void operator+=(Vec3& v1, const Vec3& v2)
-	{
-
-	}
-
-	inline void operator+=(Vec4& v1, const Vec4& v2)
-	{
-
-	}
-
-	inline void operator-=(Vec2& v1, const Vec2& v2)
-	{
-
-	}
-
-	inline void operator-=(Vec3& v1, const Vec3& v2)
-	{
-
-	}
-
-	inline void operator-=(Vec4& v1, const Vec4& v2)
-	{
-
-	}
-
-	inline Vec2 operator*(const Vec2& v1, float s)
-	{
-
-	}
-
-	inline Vec3 operator*(const Vec3& v1, float s)
-	{
-
-	}
-
-	inline Vec4 operator*(const Vec4& v1, float s)
-	{
-
-	}
-
 	
-
-	//Vector register operations
-	namespace SimdOperations
-	{
-
-		inline void vecToSimdVec(const Vec3& in, SimdVec& out)
-		{
-
-		}
-
-		inline void simdVecToVec(const SimdVec& in, Vec3& out)
-		{
-
-		}
-
-		inline void vecToSimdVec(const Vec4& in, SimdVec& out)
-		{
-
-		}
-
-		inline void simdVecToVec(const SimdVec& in, Vec4& out)
-		{
-
-		}
-
-		inline void matToSimdMat(const Matrix4x4& in, Matrix& out)
-		{
-
-		}
-
-		inline void simdMatToMat(const Matrix& in, Matrix4x4& out)
-		{
-
-		}
-
-	}
-
 }
 
 #endif

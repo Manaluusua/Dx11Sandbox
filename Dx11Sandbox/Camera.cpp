@@ -192,17 +192,17 @@ namespace Dx11Sandbox
     void  Camera::setTranslation(FLOAT x, FLOAT y, FLOAT z)
     {
         m_viewCacheValid = false;
-        m_translation.x = -x;
-        m_translation.y = -y;
-        m_translation.z = -z;
+        m_translation[0] = -x;
+        m_translation[1] = -y;
+        m_translation[2] = -z;
 
     }
     void  Camera::addTranslation(FLOAT x, FLOAT y, FLOAT z)
     {
         m_viewCacheValid = false;
-        m_translation.x += -x;
-        m_translation.y += -y;
-        m_translation.z += -z;
+        m_translation[0] += -x;
+        m_translation[1] += -y;
+        m_translation[2] += -z;
     }
 
     const Vec3&  Camera::getTranslation() const
@@ -237,14 +237,14 @@ namespace Dx11Sandbox
     {
         m_viewCacheValid = false;
         angle = -angle*0.5f;
-		m_orientation = createQuat(sin(angle)*x, sin(angle)*y, sin(angle)*z, cos(angle));
+		m_orientation = createQuatFromAxisAngle(x, y, z, angle);
     }
 
     void  Camera::addOrientation(FLOAT x, FLOAT y, FLOAT z, FLOAT angle)
     {
         m_viewCacheValid = false;
         angle = -angle*0.5f;
-		m_orientation = multiplyQuat(m_orientation, createQuat(sin(angle)*x, sin(angle)*y, sin(angle)*z, cos(angle)));
+		m_orientation = multiplyQuat(m_orientation, createQuatFromAxisAngle(x, y, z, angle));
     }
 
 
@@ -253,14 +253,14 @@ namespace Dx11Sandbox
 		Vec3 axisUp = up;
 		Vec3 axisTo = (at - eye);
         //check if up and  at - eye is perpendicular. If not, make them.
-        if( vecDotProduct(axisUp,axisTo) != 0)
+        if( dot(axisUp,axisTo) != 0)
         {
             Vec3 temp;
-			vecCrossProduct(axisUp, axisTo, temp);
-			vecCrossProduct(axisTo, temp, axisUp);
+			cross(temp, axisUp, axisTo);
+			cross(axisUp, axisTo, temp);
         }
-        vecNormalize(axisUp, axisUp);
-		vecNormalize(axisTo, axisTo);
+        normalize(axisUp);
+		normalize(axisTo);
 
         matMakeIdentity(m_viewMatrix);
 		createLookAtLH(eye, at, axisUp, m_viewMatrix);
@@ -269,21 +269,21 @@ namespace Dx11Sandbox
         m_translation = -eye;
         Vec3 ref = Vec3(0.f,0.f,1.f);
         Vec3 rotAxis;
-		vecCrossProduct(axisTo, ref, rotAxis);
-		vecNormalize(rotAxis, rotAxis);
+		cross(rotAxis, axisTo, ref);
+		normalize(rotAxis);
         float angle;
         
 
-        angle = acos(vecDotProduct( ref, axisTo ))*0.5f;
+        angle = acos(dot( ref, axisTo ))*0.5f;
 
-        m_orientation = createQuat(sin(angle)*rotAxis.x, sin(angle)*rotAxis.y, sin(angle)*rotAxis.z, cos(angle));
+		m_orientation = createQuatFromAxisAngle(rotAxis, angle);
 
         //check if up vector is still "up"
 		Vec3 rotatedUp;
 		rotateVecByQuat(axisUp, m_orientation, rotatedUp);
-        if(vecDotProduct(rotatedUp,up)<0)
+        if(dot(rotatedUp,up)<0)
         {
-            m_orientation = multiplyQuat(createQuat(axisTo.x*sin(MathUtil::PI*0.5f),axisTo.y*sin(MathUtil::PI*0.5f), axisTo.z*sin(MathUtil::PI*0.5f), cos(MathUtil::PI*0.5f)), m_orientation);
+			m_orientation = multiplyQuat(createQuatFromAxisAngle(axisTo, MathUtil::PI), m_orientation);
         }
 
 
@@ -302,7 +302,7 @@ namespace Dx11Sandbox
         
 		rotateVecByQuat(dir, conj, dir);
 		rotateVecByQuat(up, conj, up);
-		vecCrossProduct(up, dir, right);
+		cross(right, up, dir);
 
         m_translation -= right*x + up*y + dir*z;
         m_viewCacheValid = false;
@@ -317,11 +317,11 @@ namespace Dx11Sandbox
 
         
 
-		vecCrossProduct(up, dir, right);
+		cross(right,up, dir);
 
-        Quat xrot = createQuat(right.x*sin(x*0.5f),right.y*sin(x*0.5f), right.z*sin(x*0.5f), cos(x*0.5f));
-		Quat yrot = createQuat(up.x*sin(y*0.5f), up.y*sin(y*0.5f), up.z*sin(y*0.5f), cos(y*0.5f));
-		Quat zrot = createQuat(dir.x*sin(z*0.5f), dir.y*sin(z*0.5f), dir.z*sin(z*0.5f), cos(z*0.5f));
+		Quat xrot = createQuatFromAxisAngle(right, x);
+		Quat yrot = createQuatFromAxisAngle(up, y);
+		Quat zrot = createQuatFromAxisAngle(dir, z);
 
         m_orientation =  multiplyQuat(multiplyQuat(multiplyQuat(yrot, m_orientation), xrot), zrot);
         m_viewCacheValid = false;
@@ -330,7 +330,7 @@ namespace Dx11Sandbox
 
     void Camera::setReflectionPlane(Vec3& normal, float d)
     {
-        Vec4 plane(normal.x, normal.y, normal.z, d);
+        Vec4 plane(normal[0], normal[1], normal[2], d);
 		createReflection( plane, m_reflMatrix);
 
         

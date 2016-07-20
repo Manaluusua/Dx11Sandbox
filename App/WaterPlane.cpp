@@ -29,7 +29,8 @@ WaterPlane::WaveDefinition::WaveDefinition(Dx11Sandbox::Vec2 dir, float amplitud
     frequency(1*2/waveLength),
     phaseConstant(speed*frequency)
 {
-	Dx11Sandbox::vecNormalize(direction, direction);
+
+	gmtl::normalize(direction);
 }
 
 
@@ -68,7 +69,7 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr, ID3D11Device *device, co
 	m_reflectionCamera = m_mngr->createCamera();
 	m_reflectionCamera->setReflectionPlane(m_normal,m_d);
 	m_reflectionCamera->setReflectionEnabled(true);
-	Dx11Sandbox::Vec4 clipplane(m_normal.x, m_normal.y, m_normal.z, m_d + clipPlaneOffset);
+	Dx11Sandbox::Vec4 clipplane(m_normal[0], m_normal[1], m_normal[2], m_d + clipPlaneOffset);
 	m_reflectionCamera->setClipPlane(clipplane);
 	m_reflectionCamera->setRenderMask(Dx11Sandbox::RENDERLAYER_DEFAULT_OPAQUE | Dx11Sandbox::RENDERLAYER_SKYBOX | Dx11Sandbox::RENDERLAYER_LIGHTPASS);
 	m_reflectionCamera->addRenderListener(this);
@@ -76,7 +77,7 @@ WaterPlane::WaterPlane(Dx11Sandbox::SceneManager* mngr, ID3D11Device *device, co
 	
 	
 	m_refractionCamera = m_mngr->createCamera();
-	clipplane = Dx11Sandbox::Vec4(-m_normal.x, -m_normal.y, -m_normal.z, -m_d + clipPlaneOffset);
+	clipplane = Dx11Sandbox::Vec4(-m_normal[0], -m_normal[1], -m_normal[2], -m_d + clipPlaneOffset);
 	m_refractionCamera->setClipPlane(clipplane);
 	m_refractionCamera->setRenderMask(Dx11Sandbox::RENDERLAYER_DEFAULT_OPAQUE | Dx11Sandbox::RENDERLAYER_SKYBOX | Dx11Sandbox::RENDERLAYER_LIGHTPASS);
 	m_refractionCamera->addRenderListener(this);
@@ -138,26 +139,26 @@ void WaterPlane::setupWaves()
 {
 	ID3DX11Effect* effect =  m_renderObject->getRenderData().getMaterial()->getShader()->getEffect();
     ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("waveDefinitions");
-    Dx11Sandbox::Matrix4x4 matrix;
-    matrix._11 = m_waves[0].direction.x;
-    matrix._12 = m_waves[0].direction.y;
-    matrix._13 = m_waves[0].frequency;
-    matrix._14 = m_waves[0].amplitude;
+	Dx11Sandbox::Matrix matrix;
+    matrix[0][0] = m_waves[0].direction[0];
+    matrix[0][1] = m_waves[0].direction[1];
+	matrix[0][2] = m_waves[0].frequency;
+	matrix[0][3] = m_waves[0].amplitude;
 
-    matrix._21 = m_waves[1].direction.x;
-    matrix._22 = m_waves[1].direction.y;
-    matrix._23 = m_waves[1].frequency;
-    matrix._24 = m_waves[1].amplitude;
+    matrix[1][0] = m_waves[1].direction[0];
+    matrix[1][1] = m_waves[1].direction[1];
+    matrix[1][2] = m_waves[1].frequency;
+    matrix[1][3] = m_waves[1].amplitude;
 
-    matrix._31 = m_waves[2].direction.x;
-    matrix._32 = m_waves[2].direction.y;
-    matrix._33 = m_waves[2].frequency;
-    matrix._34 = m_waves[2].amplitude;
+    matrix[2][0] = m_waves[2].direction[0];
+    matrix[2][1] = m_waves[2].direction[1];
+    matrix[2][2] = m_waves[2].frequency;
+    matrix[2][3] = m_waves[2].amplitude;
 
-    matrix._41 = m_waves[0].phaseConstant;
-    matrix._42 = m_waves[1].phaseConstant;
-    matrix._43 = m_waves[2].phaseConstant;
-    matrix._44 = 0;
+    matrix[3][0] = m_waves[0].phaseConstant;
+    matrix[3][1] = m_waves[1].phaseConstant;
+    matrix[3][2] = m_waves[2].phaseConstant;
+    matrix[3][3] = 0;
 
     if(buffer->IsValid())
     {

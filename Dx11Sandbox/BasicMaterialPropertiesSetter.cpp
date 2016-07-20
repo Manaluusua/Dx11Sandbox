@@ -46,7 +46,6 @@ namespace Dx11Sandbox
 	void BasicMaterialPropertiesSetter::setSceneInfoUniforms(RenderData* object, Material* mat)
 	{
 		Matrix invWorld;
-		float det;
 		const Matrix *view = m_cam->getViewMatrix();
 		const Matrix *proj = m_cam->getProjectionMatrix();
 		const Matrix& world = object->getWorldMatrix();
@@ -54,7 +53,7 @@ namespace Dx11Sandbox
 		Matrix worldviewProj = world * (*view) * (*proj);
 
 		Vec3 transl = -(m_cam->getTranslation());
-		Vec4 camPos(transl.x, transl.y, transl.z, 1);
+		Vec4 camPos(transl[0], transl[1], transl[2], 1);
 		const Vec4& clip = m_cam->getClipPlane();
 
 		ID3DX11Effect* effect = mat->getShader()->getEffect();

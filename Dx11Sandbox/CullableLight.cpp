@@ -69,10 +69,10 @@ namespace Dx11Sandbox
 		if (m_lightDefinition.lightType == DIRECTIONAL)
 		{
 
-			bounds.x = 0.f;
-			bounds.y = 0.f;
-			bounds.z = 0.f;
-			bounds.w = FLT_MAX;
+			bounds[0] = 0.f;
+			bounds[1] = 0.f;
+			bounds[2] = 0.f;
+			bounds[3] = FLT_MAX;
 		}
 		else if (m_lightDefinition.lightType == OMNI)
 		{

@@ -217,7 +217,7 @@ namespace Dx11Sandbox
 		matInverse(*view, invView);
 
 		Vec3 transl = -(m_cam->getTranslation());
-		Vec4 camPos(transl.x, transl.y, transl.z, 1);
+		Vec4 camPos(transl[0], transl[1], transl[2], 1);
 		float viewWidth = static_cast<float>(m_gbuffer->getWidth()), viewHeight = static_cast<float>(m_gbuffer->getHeight());
 		Vec4 viewDimensions(viewWidth, viewHeight, 1.f / viewWidth, 1.f / viewHeight);
 

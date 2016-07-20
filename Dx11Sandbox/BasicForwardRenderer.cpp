@@ -45,7 +45,7 @@ namespace Dx11Sandbox
 	void BasicForwardRenderer::render(RenderData** objects, unsigned int objectCount)
 	{
         D3DX11_TECHNIQUE_DESC techDesc;
-        D3DX11_PASS_DESC passDesc;
+
 
         for( unsigned int i = 0; i < objectCount; ++i )
         {

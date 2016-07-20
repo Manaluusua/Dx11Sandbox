@@ -184,7 +184,7 @@ namespace Dx11Sandbox
 
 	void BasicSceneManager::initialize(ID3D11Device* pd3dDevice, const DXGI_SURFACE_DESC* pBackBufferSurfaceDesc)
     {
-		setEnvironmentScreenDimension(pBackBufferSurfaceDesc->Width, pBackBufferSurfaceDesc->Height);
+		setEnvironmentScreenDimension(static_cast<float>(pBackBufferSurfaceDesc->Width), static_cast<float>(pBackBufferSurfaceDesc->Height));
 
 		
 

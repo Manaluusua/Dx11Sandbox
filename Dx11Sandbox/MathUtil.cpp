@@ -14,36 +14,36 @@ namespace Dx11Sandbox
         void calculateOrthogonalVector(const Vec3& vec, Vec3& orthogonal)
         {
             
-        float smallest = std::abs(vec.x);
+        float smallest = std::abs(vec[0]);
         int smallestInd = 0;
 
-        if(std::abs(vec.y) < smallest)
+        if(std::abs(vec[1]) < smallest)
         {
-            smallest = std::abs(vec.y);
+            smallest = std::abs(vec[1]);
             smallestInd = 1;
         }
 
-        if(std::abs(vec.z) < smallest)
+        if(std::abs(vec[2]) < smallest)
         {
-            smallest = std::abs(vec.z);
+            smallest = std::abs(vec[2]);
             smallestInd = 2;
         }
 
         if(smallestInd == 0)
         {
-            orthogonal.x = 0;
-            orthogonal.y = -vec.z;
-            orthogonal.z = vec.y;
+            orthogonal[0] = 0;
+            orthogonal[1] = -vec[2];
+            orthogonal[2] = vec[1];
         }else if(smallestInd == 1)
         {
-            orthogonal.x = -vec.z;
-            orthogonal.y = 0;
-            orthogonal.z = vec.x;
+            orthogonal[0] = -vec[2];
+            orthogonal[1] = 0;
+            orthogonal[2] = vec[0];
         }else if(smallestInd == 2)
         {
-            orthogonal.x = -vec.y;
-            orthogonal.y = vec.x;
-            orthogonal.z = 0;
+            orthogonal[0] = -vec[1];
+            orthogonal[1] = vec[0];
+            orthogonal[2] = 0;
         }
 
 
@@ -61,29 +61,29 @@ namespace Dx11Sandbox
 			Vec2 dt1 = t2 - t1;
 			Vec2 dt2 = t3 - t1;
 
-			float denom = dt1.x * dt2.y - dt2.x * dt1.y;
+			float denom = dt1[0] * dt2[1] - dt2[0] * dt1[1];
 			float r = denom == 0.f ? 0.f : 1.f / denom;
 
-			outTangent = Vec3((dt2.y * dp1.x - dt1.y * dp2.x) * r, (dt2.y * dp1.y - dt1.y * dp2.y) * r,
-				(dt2.y * dp1.z - dt1.y * dp2.z) * r);
-			outBitangent = Vec3((dt1.x * dp2.x - dt2.x * dp1.x) * r, (dt1.x * dp2.y - dt2.x * dp1.y) * r,
-			(dt1.x * dp2.z - dt2.x * dp1.z) * r);
+			outTangent = Vec3((dt2[1] * dp1[0] - dt1[1] * dp2[0]) * r, (dt2[1] * dp1[1] - dt1[1] * dp2[1]) * r,
+				(dt2[1] * dp1[2] - dt1[1] * dp2[2]) * r);
+			outBitangent = Vec3((dt1[0] * dp2[0] - dt2[0] * dp1[0]) * r, (dt1[0] * dp2[1] - dt2[0] * dp1[1]) * r,
+			(dt1[0] * dp2[2] - dt2[0] * dp1[2]) * r);
 
 		}
 
 		void orthogonalizeAndNormalizeTangent(const Vec3 &tangent, const Vec3& normal, Vec3& tangentOut){
-			float d = vecDotProduct(normal, tangent);
+			float d = dot(normal, tangent);
 			
 			Vec3 newTangent = tangent - (normal * d);
-			vecNormalize(newTangent, newTangent);
+			normalize(newTangent);
 			tangentOut = newTangent;
 			
 		}
 
 		float calculateHandedness(const Vec3 &tangent, const Vec3& bitangent, const Vec3& normal){
 			Vec3 crossProd;
-			vecCrossProduct(normal, tangent, crossProd);
-			return vecDotProduct(crossProd, bitangent) < 0 ? -1.f : 1.f;
+			cross(crossProd, normal, tangent);
+			return dot(crossProd, bitangent) < 0 ? -1.f : 1.f;
 			
 		}
 
@@ -94,7 +94,7 @@ namespace Dx11Sandbox
 			Vec3* tangents = new Vec3[vertexCount];
 			Vec3* bitangents = new Vec3[vertexCount];
 
-			for (unsigned int i = 0; i < vertexCount; ++i){
+			for (long i = 0; i < vertexCount; ++i){
 				tangents[i] = Vec3(0.f, 0.f, 0.f);
 				bitangents[i] = Vec3(0.f, 0.f, 0.f);
 			}
@@ -141,7 +141,7 @@ namespace Dx11Sandbox
 				Vec3& bitangent = bitangents[i];
 				Vec3 newTangent;
 				orthogonalizeAndNormalizeTangent(tangent, normal, newTangent);
-				outTangents[i] = Vec4(newTangent.x, newTangent.y, newTangent.z, calculateHandedness(tangent, bitangent, normal));
+				outTangents[i] = Vec4(newTangent[0], newTangent[1], newTangent[2], calculateHandedness(tangent, bitangent, normal));
 			}
 
 			delete[] tangents;

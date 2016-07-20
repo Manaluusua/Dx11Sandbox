@@ -33,10 +33,11 @@ namespace Dx11Sandbox
 		Vec3 tangent = positions[indexY * maxX + endX] - positions[indexY * maxX + startX];
 		Vec3 bitangent = positions[endY * maxX + indexX] - positions[startY * maxX + indexX];
 		Vec3 normal;
-		vecCrossProduct(bitangent, tangent, normal);
-        vecNormalize(normal, normal);
-		vecNormalize(tangent, tangent);
-		vecNormalize(bitangent, bitangent);
+
+		cross(normal, bitangent, tangent);
+		normalize(normal);
+		normalize(tangent);
+		normalize(bitangent);
 
 		outNormal = normal;
 		outTangent = tangent;
@@ -121,9 +122,9 @@ namespace Dx11Sandbox
 				float sinZ = sin(currentZenith);
 				float cosA = cos(currentAzimuth);
 				float sinA = sin(currentAzimuth);
-				vec.x = sinZ * cosA;
-				vec.y = cosZ;
-				vec.z = sinZ * sinA;
+				vec[0] = sinZ * cosA;
+				vec[1] = cosZ;
+				vec[2] = sinZ * sinA;
 				positions[pointIndex] = vec;
 
 				if (generateUVs){
@@ -204,7 +205,7 @@ namespace Dx11Sandbox
 				Vec3& bitangent = bitan[i];
 				Vec3 newTangent;
 				MathUtil::orthogonalizeAndNormalizeTangent(tangent, normal, newTangent);
-				tangents[i] = Vec4(newTangent.x, newTangent.y, newTangent.z, MathUtil::calculateHandedness(tangent, bitangent, normal));
+				tangents[i] = Vec4(newTangent[0], newTangent[1], newTangent[2], MathUtil::calculateHandedness(tangent, bitangent, normal));
 
 			}
 
@@ -385,37 +386,37 @@ namespace Dx11Sandbox
         ptr[0] = (BYTE*)positions;
         ptr[1] = (BYTE*)UV;
 
-        positions[0].x = -1.0f;UV[0].x = -1.f;
-        positions[0].y = -1.0f;UV[0].y = -1.f;
-        positions[0].z = 1.0f;UV[0].z = 1.f;
+        positions[0][0] = -1.0f;UV[0][0] = -1.f;
+        positions[0][1] = -1.0f;UV[0][1] = -1.f;
+        positions[0][2] = 1.0f;UV[0][2] = 1.f;
         
-        positions[1].x = 1.0f;UV[1].x = 1.0f;
-        positions[1].y = -1.0f;UV[1].y = -1.0f;
-        positions[1].z = 1.0f;UV[1].z = 1.0f;
+        positions[1][0] = 1.0f;UV[1][0] = 1.0f;
+        positions[1][1] = -1.0f;UV[1][1] = -1.0f;
+        positions[1][2] = 1.0f;UV[1][2] = 1.0f;
         
-        positions[2].x = 1.0f;UV[2].x = 1.0f;
-        positions[2].y = -1.0f;UV[2].y = -1.0f;
-        positions[2].z = -1.0f;UV[2].z = -1.0f;
+        positions[2][0] = 1.0f;UV[2][0] = 1.0f;
+        positions[2][1] = -1.0f;UV[2][1] = -1.0f;
+        positions[2][2] = -1.0f;UV[2][2] = -1.0f;
         
-        positions[3].x = -1.0f;UV[3].x = -1.0f;
-        positions[3].y = -1.0f;UV[3].y = -1.0f;
-        positions[3].z = -1.0f;UV[3].z = -1.0f;
+        positions[3][0] = -1.0f;UV[3][0] = -1.0f;
+        positions[3][1] = -1.0f;UV[3][1] = -1.0f;
+        positions[3][2] = -1.0f;UV[3][2] = -1.0f;
 
-        positions[4].x = -1.0f;UV[4].x = -1.0f;
-        positions[4].y = 1.0f;UV[4].y = 1.0f;
-        positions[4].z = 1.0f;UV[4].z = 1.0f;
+        positions[4][0] = -1.0f;UV[4][0] = -1.0f;
+        positions[4][1] = 1.0f;UV[4][1] = 1.0f;
+        positions[4][2] = 1.0f;UV[4][2] = 1.0f;
 
-        positions[5].x = 1.0f;UV[5].x = 1.0f;
-        positions[5].y = 1.0f;UV[5].y = 1.0f;
-        positions[5].z = 1.0f;UV[5].z = 1.0f;
+        positions[5][0] = 1.0f;UV[5][0] = 1.0f;
+        positions[5][1] = 1.0f;UV[5][1] = 1.0f;
+        positions[5][2] = 1.0f;UV[5][2] = 1.0f;
 
-        positions[6].x = 1.0f;UV[6].x = 1.0f;
-        positions[6].y = 1.0f;UV[6].y = 1.0f;
-        positions[6].z = -1.0f;UV[6].z = -1.0f;
+        positions[6][0] = 1.0f;UV[6][0] = 1.0f;
+        positions[6][1] = 1.0f;UV[6][1] = 1.0f;
+        positions[6][2] = -1.0f;UV[6][2] = -1.0f;
 
-        positions[7].x = -1.0f;UV[7].x = -1.0f;
-        positions[7].y = 1.0f;UV[7].y = 1.0f;
-        positions[7].z = -1.0f;UV[7].z = -1.0f;
+        positions[7][0] = -1.0f;UV[7][0] = -1.0f;
+        positions[7][1] = 1.0f;UV[7][1] = 1.0f;
+        positions[7][2] = -1.0f;UV[7][2] = -1.0f;
 
 
         indices[0] = 2;
@@ -483,14 +484,14 @@ namespace Dx11Sandbox
         extends1 *= 0.5f;
         extends2 *= 0.5f;
 
-        vecNormalize(normal, normal);
+        normalize(normal);
         Vec3 vec1;
         Vec3 vec2;
         MathUtil::calculateOrthogonalVector(normal, vec1);
-		vecCrossProduct( normal, vec1, vec2);
+		cross(vec1, vec2, normal);
 
-		vecNormalize(vec1, vec1);
-		vecNormalize(vec2, vec2);
+		normalize(vec1);
+		normalize(vec2);
 
 		CullableGeometry* ro = mngr->createCullableGeometry();
         Mesh* mesh = MeshManager::singleton()->createMesh(name + "Mesh");

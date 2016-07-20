@@ -11,41 +11,39 @@ namespace Dx11Sandbox
     {
     }
 
-	void Frustum::calculateFrustrumFromMatrix(const Matrix &mat, Frustum& outfrust)
+	void Frustum::calculateFrustrumFromMatrix(const Matrix &matrix, Frustum& outfrust)
 	{
-		Matrix4x4 matrix;
-		matrixToMatrix4x4(mat, matrix);
+		
 
+		outfrust.rightPlane[0] = matrix[0][3] - matrix[0][0];
+		outfrust.rightPlane[1] = matrix[1][3] - matrix[1][0];
+		outfrust.rightPlane[2] = matrix[2][3] - matrix[2][0];
+		outfrust.rightPlane[3] = matrix[3][3] - matrix[3][0];
 
-		outfrust.rightPlane.x = matrix._14 - matrix._11;
-		outfrust.rightPlane.y = matrix._24 - matrix._21;
-		outfrust.rightPlane.z = matrix._34 - matrix._31;
-		outfrust.rightPlane.w = matrix._44 - matrix._41;
+		outfrust.leftPlane[0] = matrix[0][3] + matrix[0][0];
+		outfrust.leftPlane[1] = matrix[1][3] + matrix[1][0];
+		outfrust.leftPlane[2] = matrix[2][3] + matrix[2][0];
+		outfrust.leftPlane[3] = matrix[3][3] + matrix[3][0];
 
-		outfrust.leftPlane.x = matrix._14 + matrix._11;
-		outfrust.leftPlane.y = matrix._24 + matrix._21;
-		outfrust.leftPlane.z = matrix._34 + matrix._31;
-		outfrust.leftPlane.w = matrix._44 + matrix._41;
+		outfrust.topPlane[0] = matrix[0][3] - matrix[0][1];
+		outfrust.topPlane[1] = matrix[1][3] - matrix[1][1];
+		outfrust.topPlane[2] = matrix[2][3] - matrix[2][1];
+		outfrust.topPlane[3] = matrix[3][3] - matrix[3][1];
 
-		outfrust.topPlane.x = matrix._14 - matrix._12;
-		outfrust.topPlane.y = matrix._24 - matrix._22;
-		outfrust.topPlane.z = matrix._34 - matrix._32;
-		outfrust.topPlane.w = matrix._44 - matrix._42;
+		outfrust.bottomPlane[0] = matrix[0][3] + matrix[0][1];
+		outfrust.bottomPlane[1] = matrix[1][3] + matrix[1][1];
+		outfrust.bottomPlane[2] = matrix[2][3] + matrix[2][1];
+		outfrust.bottomPlane[3] = matrix[3][3] + matrix[3][1];
 
-		outfrust.bottomPlane.x = matrix._14 + matrix._12;
-		outfrust.bottomPlane.y = matrix._24 + matrix._22;
-		outfrust.bottomPlane.z = matrix._34 + matrix._32;
-		outfrust.bottomPlane.w = matrix._44 + matrix._42;
+		outfrust.nearPlane[0] = matrix[0][2];
+		outfrust.nearPlane[1] = matrix[1][2];
+		outfrust.nearPlane[2] = matrix[2][2];
+		outfrust.nearPlane[3] = matrix[3][2];
 
-		outfrust.nearPlane.x = matrix._13;
-		outfrust.nearPlane.y = matrix._23;
-		outfrust.nearPlane.z = matrix._33;
-		outfrust.nearPlane.w = matrix._43;
-
-		outfrust.farPlane.x = matrix._14 - matrix._13;
-		outfrust.farPlane.y = matrix._24 - matrix._23;
-		outfrust.farPlane.z = matrix._34 - matrix._33;
-		outfrust.farPlane.w = matrix._44 - matrix._43;
+		outfrust.farPlane[0] = matrix[0][3] - matrix[0][2];
+		outfrust.farPlane[1] = matrix[1][3] - matrix[1][2];
+		outfrust.farPlane[2] = matrix[2][3] - matrix[2][2];
+		outfrust.farPlane[3] = matrix[3][3] - matrix[3][2];
 
 		planeNormalize(outfrust.leftPlane, outfrust.leftPlane);
 		planeNormalize(outfrust.rightPlane, outfrust.rightPlane);
@@ -66,59 +64,59 @@ namespace Dx11Sandbox
 
 		__declspec(align(16)) float line[4];
 
-		line[0] = leftPlane.x;
-		line[1] = rightPlane.x;
-		line[2] = topPlane.x;
-		line[3] = bottomPlane.x;
+		line[0] = leftPlane[0];
+		line[1] = rightPlane[0];
+		line[2] = topPlane[0];
+		line[3] = bottomPlane[0];
 
 		out.x1x2x3x4 = _mm_load_ps(line);
 
-		line[0] = leftPlane.y;
-		line[1] = rightPlane.y;
-		line[2] = topPlane.y;
-		line[3] = bottomPlane.y;
+		line[0] = leftPlane[1];
+		line[1] = rightPlane[1];
+		line[2] = topPlane[1];
+		line[3] = bottomPlane[1];
 
 		out.y1y2y3y4 = _mm_load_ps(line);
 
-		line[0] = leftPlane.z;
-		line[1] = rightPlane.z;
-		line[2] = topPlane.z;
-		line[3] = bottomPlane.z;
+		line[0] = leftPlane[2];
+		line[1] = rightPlane[2];
+		line[2] = topPlane[2];
+		line[3] = bottomPlane[2];
 
 		out.z1z2z3z4 = _mm_load_ps(line);
 
-		line[0] = leftPlane.w;
-		line[1] = rightPlane.w;
-		line[2] = topPlane.w;
-		line[3] = bottomPlane.w;
+		line[0] = leftPlane[3];
+		line[1] = rightPlane[3];
+		line[2] = topPlane[3];
+		line[3] = bottomPlane[3];
 
 		out.d1d2d3d4 = _mm_load_ps(line);
 
-		line[0] = farPlane.x;
-		line[1] = nearPlane.x;
-		line[2] = farPlane.x;
-		line[3] = nearPlane.x;
+		line[0] = farPlane[0];
+		line[1] = nearPlane[0];
+		line[2] = farPlane[0];
+		line[3] = nearPlane[0];
 
 		out.x5x6x5x6 = _mm_load_ps(line);
 
-		line[0] = farPlane.y;
-		line[1] = nearPlane.y;
-		line[2] = farPlane.y;
-		line[3] = nearPlane.y;
+		line[0] = farPlane[1];
+		line[1] = nearPlane[1];
+		line[2] = farPlane[1];
+		line[3] = nearPlane[1];
 
 		out.y5y6y5y6 = _mm_load_ps(line);
 
-		line[0] = farPlane.z;
-		line[1] = nearPlane.z;
-		line[2] = farPlane.z;
-		line[3] = nearPlane.z;
+		line[0] = farPlane[2];
+		line[1] = nearPlane[2];
+		line[2] = farPlane[2];
+		line[3] = nearPlane[2];
 
 		out.z5z6z5z6 = _mm_load_ps(line);
 
-		line[0] = farPlane.w;
-		line[1] = nearPlane.w;
-		line[2] = farPlane.w;
-		line[3] = nearPlane.w;
+		line[0] = farPlane[3];
+		line[1] = nearPlane[3];
+		line[2] = farPlane[3];
+		line[3] = nearPlane[3];
 
 		out.d5d6d5d6 = _mm_load_ps(line);
 

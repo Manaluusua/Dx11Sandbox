@@ -9,6 +9,7 @@ struct ID3D11DepthStencilView;
 struct ID3D11RenderTargetView;
 */
 #include "CommonMath.h"
+#include "CommonTypes.h"
 #include <D3D11.h>
 #include <vector>
 

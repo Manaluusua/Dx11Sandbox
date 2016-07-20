@@ -134,7 +134,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\External\Effects11\Inc;..\External\Effects11;..\External\DXUT11\Optional;..\External\DXUT11\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\External\Effects11\Inc;..\External\Effects11;..\External\DXUT11\Optional;..\External\DXUT11\Core;..\External\gmtl-0.6.1\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -163,7 +163,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\External\Effects11\Inc;..\External\Effects11;..\External\DXUT11\Optional;..\External\DXUT11\Core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\External\Effects11\Inc;..\External\Effects11;..\External\DXUT11\Optional;..\External\DXUT11\Core;..\External\gmtl-0.6.1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
