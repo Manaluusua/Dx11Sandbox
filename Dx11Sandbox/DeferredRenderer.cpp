@@ -230,7 +230,7 @@ namespace Dx11Sandbox
 		mat->SetMatrix((float*)view);
 		buffer->GetMemberByName("camPos")->AsVector()->SetFloatVector((float*)&camPos);
 		buffer->GetMemberByName("screenDimensions")->AsVector()->SetFloatVector((float*)&viewDimensions);
-		buffer->GetMemberByName("lightCount")->AsScalar()->SetInt(m_lights->size());
+		buffer->GetMemberByName("lightCount")->AsScalar()->SetInt(static_cast<int>(m_lights->size()));
 		effect->GetTechniqueByIndex(0)->GetPassByIndex(0)->Apply(0, m_state->getImmediateContext());
 		
 	}

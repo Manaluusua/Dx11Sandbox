@@ -244,7 +244,7 @@ namespace Dx11Sandbox
     {
         m_viewCacheValid = false;
         angle = -angle*0.5f;
-		m_orientation = multiplyQuat(m_orientation, createQuatFromAxisAngle(x, y, z, angle));
+		m_orientation = multiplyQuat(m_orientation, createQuatFromAxisAngle(x, y, z, angle), m_orientation);
     }
 
 
@@ -283,7 +283,7 @@ namespace Dx11Sandbox
 		rotateVecByQuat(axisUp, m_orientation, rotatedUp);
         if(dot(rotatedUp,up)<0)
         {
-			m_orientation = multiplyQuat(createQuatFromAxisAngle(axisTo, MathUtil::PI), m_orientation);
+			m_orientation = multiplyQuat(createQuatFromAxisAngle(axisTo, MathUtil::PI), m_orientation, m_orientation);
         }
 
 
@@ -323,7 +323,7 @@ namespace Dx11Sandbox
 		Quat yrot = createQuatFromAxisAngle(up, y);
 		Quat zrot = createQuatFromAxisAngle(dir, z);
 
-        m_orientation =  multiplyQuat(multiplyQuat(multiplyQuat(yrot, m_orientation), xrot), zrot);
+		m_orientation = multiplyQuat(multiplyQuat(multiplyQuat(yrot, m_orientation, m_orientation), xrot, m_orientation), zrot, m_orientation);
         m_viewCacheValid = false;
     }
 

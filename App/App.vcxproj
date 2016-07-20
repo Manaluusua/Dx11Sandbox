@@ -95,42 +95,42 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>..\Dx11Sandbox;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Core\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Optional\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\Effects11\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\Temp</IntDir>
     <ExcludePath>$(VC_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x86);</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <IncludePath>..\Dx11Sandbox;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Core\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Optional\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\Effects11\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\Temp</IntDir>
     <ExcludePath>$(VC_IncludePath);$(MSBuildToolsPath);$(MSBuildFrameworkToolsPath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_ARM);</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>..\Dx11Sandbox;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Core\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Optional\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\Effects11\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\Temp</IntDir>
     <ExcludePath>$(VC_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x64);</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>..\Dx11Sandbox;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Core\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Optional\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\Effects11\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\Temp</IntDir>
     <ExcludePath>$(VC_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x86);</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <IncludePath>..\Dx11Sandbox;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Core\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Optional\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\Effects11\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\Temp</IntDir>
     <ExcludePath>$(VC_IncludePath);$(MSBuildToolsPath);$(MSBuildFrameworkToolsPath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_ARM);</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>..\Dx11Sandbox;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Core\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Optional\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\Effects11\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\Temp</IntDir>
     <ExcludePath>$(VC_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x64);</ExcludePath>
@@ -165,7 +165,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Dx11Sandboxd.lib;d3dx11d.lib;d3dx9d.lib;dxerr.lib;dxguid.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies);DXUT.lib;DXUTOpt.lib;Effects11.lib;d3dcompiler.lib</AdditionalDependencies>
+      <AdditionalDependencies>Dx11Sandboxd.lib;winmm.lib;comctl32.lib;%(AdditionalDependencies);DXUT.lib;DXUTOpt.lib;Effects11.lib;d3dcompiler.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

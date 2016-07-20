@@ -56,9 +56,10 @@ namespace Dx11Sandbox
 		return createQuatFromAxisAngle(axis[0], axis[1], axis[2], angle);
 	}
 
-	inline Quat multiplyQuat(const Quat& a, const Quat& b)
+	inline Quat& multiplyQuat(const Quat& a, const Quat& b, Quat& out)
 	{
-
+		gmtl::mult(out,a, b);
+		return out;
 	}
 
 	

@@ -49,7 +49,7 @@ namespace Dx11Sandbox
 
 		state->disableDepthStencil(true);
 		m_renderer->renderBegin(&m_cam, 0, state);
-		m_renderer->render(m_debugData.data(), m_debugData.size());
+		m_renderer->render(m_debugData.data(), static_cast<int>(m_debugData.size()));
 		m_renderer->renderEnd();
 
 

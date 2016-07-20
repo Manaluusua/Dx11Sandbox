@@ -87,7 +87,7 @@
     <ExcludePath>$(VC_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x86);</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\External\DXUT11\Core\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Optional\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Effects11\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <LinkIncremental>true</LinkIncremental>
     <TargetName>$(ProjectName)d</TargetName>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
@@ -113,7 +113,7 @@
     <ExcludePath>$(VC_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x86);</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\External\DXUT11\Core\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Optional\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(SolutionDir)\External\DXUT11\Effects11\Bin\Desktop_2013\$(PlatformName)\$(Configuration)\;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\$(Configuration)\Temp</IntDir>
     <ExcludePath>$(VC_IncludePath);$(MSBuild_ExecutablePath);$(VC_LibraryPath_x64);</ExcludePath>

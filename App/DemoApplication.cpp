@@ -177,18 +177,18 @@ void DemoApplication::createWorld(SceneManager* mngr)
 		float rat = (static_cast<float>(i) / lightsGenerated);
 
 		float r = 0.1f + Dx11Sandbox::MathUtil::randomFloat() * 0.9f;
-		color.x = r;
+		color[0] = r;
 		r = 0.1f + Dx11Sandbox::MathUtil::randomFloat() * 0.9f;
-		color.y = r;
+		color[1] = r;
 		r = 0.1f + Dx11Sandbox::MathUtil::randomFloat() * 0.9f;
-		color.z = r;
+		color[2] = r;
 
 		float circleRad = circleRadMin + (circleRadMax - circleRadMin)*Dx11Sandbox::MathUtil::randomFloat();
 		float lightRad = lightRadMin + (lightRadMax - lightRadMin)*Dx11Sandbox::MathUtil::randomFloat();
 
-		pos.x = std::cos(2.f * Dx11Sandbox::MathUtil::PI * rat) * circleRad;
-		pos.z = std::sin(2.f * Dx11Sandbox::MathUtil::PI * rat) * circleRad;
-		pos.y = minHeight + (maxHeight - minHeight) * Dx11Sandbox::MathUtil::randomFloat();
+		pos[0] = std::cos(2.f * Dx11Sandbox::MathUtil::PI * rat) * circleRad;
+		pos[1] = std::sin(2.f * Dx11Sandbox::MathUtil::PI * rat) * circleRad;
+		pos[2] = minHeight + (maxHeight - minHeight) * Dx11Sandbox::MathUtil::randomFloat();
 
 		l = m_mngr->createLight();
 		l->setLightType(Dx11Sandbox::Light::OMNI);
@@ -300,32 +300,32 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 
     if(m_leftDown)
     {
-        mov.x -= speed*dt;
+        mov[0] -= speed*dt;
     }
     if(m_rightDown)
     {
-        mov.x += speed*dt;
+		mov[0] += speed*dt;
     }
     if(m_forwardDown)
     {
-        mov.z += speed*dt;
+		mov[2] += speed*dt;
     }
     if(m_backwardDown)
     {
-		mov.z -= speed*dt;
+		mov[2] -= speed*dt;
     }
     if(m_upDown)
     {
-		mov.y += speed*dt;
+		mov[1] += speed*dt;
     }
     if(m_downDown)
     {
-		mov.y -= speed*dt;
+		mov[1] -= speed*dt;
     }
 
 	if (gmtl::lengthSquared(mov) > 0)
     {
-        cam->moveCameraViewRelative(mov.x, mov.y, mov.z);
+		cam->moveCameraViewRelative(mov[0], mov[1], mov[2]);
     }
 
 
@@ -363,7 +363,7 @@ void DemoApplication::handleInput(SceneManager* mngr, float dt, float elapsedTim
 
 	if (gmtl::lengthSquared(m_mouseDelta) > 0)
     {
-        cam->rotateCameraViewRelative(-m_mouseDelta.y*mouseSens*m_mouseSensitivity ,-m_mouseDelta.x*mouseSens*m_mouseSensitivity, 0);
+		cam->rotateCameraViewRelative(-m_mouseDelta[1] * mouseSens*m_mouseSensitivity, -m_mouseDelta[0] * mouseSens*m_mouseSensitivity, 0);
     }
 
 }
@@ -395,10 +395,10 @@ void DemoApplication::objectBeingRendered(CullableGeometry* obj)
        //temp
 	Dx11Sandbox::Vec3 translation = m_mngr->getMainCamera()->getTranslation();
 	Dx11Sandbox::Vec4 sunDir(std::cos(m_time), 0.f, std::sin(m_time), 0);
-	Dx11Sandbox::vecNormalize(sunDir, sunDir);
+	gmtl::normalize(sunDir);
 	Dx11Sandbox::Vec4 sunCol(1.0f, 1.f, 1.f, 0);
-	Dx11Sandbox::Vec4 transl(-translation.x, -translation.y, -translation.z,0.f);
-	Dx11Sandbox::Vec4 camPos(transl.x, transl.y, transl.z, 1);
+	Dx11Sandbox::Vec4 transl(-translation[0], -translation[1], -translation[2],0.f);
+	Dx11Sandbox::Vec4 camPos(transl[0], transl[1], transl[2], 1);
 
     ID3DX11Effect* effect =  mat->getShader()->getEffect();
     ID3DX11EffectConstantBuffer* buffer = effect->GetConstantBufferByName("sceneInfo");
